@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1 class="popup-title">WriteGooderer</h1>
+    </header>
+
+    <div class="status-section">
+      <div class="status-row">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Checking...</span>
+      </div>
+      <p class="status-hint" id="statusHint"></p>
+    </div>
+
+    <div class="toggle-section">
+      <label class="toggle-row">
+        <span class="toggle-label">Enable on this site</span>
+        <div class="toggle-switch">
+          <input type="checkbox" id="siteToggle" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </label>
+    </div>
+
+    <footer class="popup-footer">
+      <p>100% local. 0% cloud. Infinitely gooderer.</p>
+    </footer>
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

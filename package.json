@@ -1,0 +1,23 @@
+{
+  "name": "writegooderer",
+  "version": "1.0.0",
+  "description": "Makes your writing gooderer. Powered by your own computer.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf dist && mkdir -p dist",
+    "build:sw": "ENTRY=service-worker vite build",
+    "build:content": "ENTRY=content vite build",
+    "build:popup": "ENTRY=popup vite build",
+    "build": "npm run clean && npm run build:sw && npm run build:content && npm run build:popup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "simple-chromium-ai": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.40",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}

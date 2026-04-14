@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "WriteGooderer",
+  "version": "1.0.0",
+  "description": "Makes your writing gooderer. 100% local. 0% cloud. Powered by Chrome's built-in AI.",
+  "permissions": ["storage", "activeTab"],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.svg",
+      "32": "icons/icon-32.svg",
+      "48": "icons/icon-48.svg",
+      "128": "icons/icon-128.svg"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.svg",
+    "32": "icons/icon-32.svg",
+    "48": "icons/icon-48.svg",
+    "128": "icons/icon-128.svg"
+  },
+  "minimum_chrome_version": "138"
+}

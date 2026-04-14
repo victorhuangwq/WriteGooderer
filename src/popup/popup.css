@@ -1,0 +1,145 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 300px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  color: #2D3436;
+  background: #FFFFFF;
+}
+
+.popup-container {
+  padding: 0;
+}
+
+/* Header */
+.popup-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFF8F0 100%);
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #FE6B8B 0%, #FF8E53 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Status */
+.status-section {
+  padding: 16px 20px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-ready { background: #2ECC71; }
+.status-loading { background: #F1C40F; animation: pulse 1s infinite; }
+.status-error { background: #E74C3C; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-hint {
+  font-size: 12px;
+  color: #636E72;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Toggle */
+.toggle-section {
+  padding: 12px 20px;
+  border-top: 1px solid #E8E8E8;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.toggle-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #CCC;
+  border-radius: 22px;
+  transition: 0.2s;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #FE6B8B 0%, #FF8E53 100%);
+}
+
+input:checked + .toggle-slider::before {
+  transform: translateX(18px);
+}
+
+/* Footer */
+.popup-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #E8E8E8;
+  text-align: center;
+}
+
+.popup-footer p {
+  font-size: 11px;
+  color: #636E72;
+}
