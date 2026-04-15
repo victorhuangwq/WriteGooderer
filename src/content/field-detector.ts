@@ -9,7 +9,7 @@ const MIN_FIELD_WIDTH = 100;
 
 let warmedUp = false;
 
-function isValidField(el: Element): el is HTMLElement {
+export function isValidField(el: Element): el is HTMLElement {
   if (el instanceof HTMLTextAreaElement) {
     const rect = el.getBoundingClientRect();
     return rect.height >= MIN_FIELD_HEIGHT && rect.width >= MIN_FIELD_WIDTH;
