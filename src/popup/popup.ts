@@ -10,11 +10,11 @@ async function init() {
   const ai = (self as any).ai;
   if (ai?.languageModel) {
     statusDot.className = "status-dot status-ready";
-    statusText.textContent = "Available";
-    statusHint.textContent = "";
+    statusText.textContent = "Ready in this Chrome build";
+    statusHint.textContent = "The Prompt API is available, so proofread and tone rewrites can run locally.";
   } else {
     statusDot.className = "status-dot status-error";
-    statusText.textContent = "Unavailable";
+    statusText.textContent = "Prompt API unavailable";
     statusHint.textContent =
       'Enable "Prompt API for Gemini Nano" in chrome://flags and update the model in chrome://components.';
   }
@@ -33,6 +33,7 @@ async function init() {
     } catch {
       // chrome:// or other special pages
       siteToggle.disabled = true;
+      statusHint.textContent ||= "WriteGooderer does not run on special Chrome pages.";
     }
   }
 }

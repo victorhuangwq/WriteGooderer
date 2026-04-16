@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { isValidField } from "../field-detector";
+import { ensureFieldId, isValidField } from "../field-detector";
 
 function mockBoundingRect(
   el: Element,
@@ -159,5 +159,25 @@ describe("isValidField", () => {
       mockBoundingRect(el, 300, 100);
       expect(isValidField(el)).toBe(false);
     });
+  });
+});
+
+describe("ensureFieldId", () => {
+  it("assigns a stable id to a field", () => {
+    const el = document.createElement("textarea");
+
+    const firstId = ensureFieldId(el);
+    const secondId = ensureFieldId(el);
+
+    expect(firstId).toMatch(/^wg-field-\d+$/);
+    expect(secondId).toBe(firstId);
+    expect(el.dataset.wgFieldId).toBe(firstId);
+  });
+
+  it("reuses an existing field id", () => {
+    const el = document.createElement("textarea");
+    el.dataset.wgFieldId = "wg-field-existing";
+
+    expect(ensureFieldId(el)).toBe("wg-field-existing");
   });
 });

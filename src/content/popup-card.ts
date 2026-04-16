@@ -6,12 +6,19 @@ import { LoadingState } from "./loading-state";
 import { DiffView } from "./diff-view";
 import { ToneSelector } from "./tone-selector";
 
+const POPUP_WIDTH = 360;
+const POPUP_MAX_HEIGHT = 520;
+const POPUP_GAP = 8;
+const VIEWPORT_PADDING = 8;
+const MIN_BODY_HEIGHT = 120;
+
 export class PopupCard {
   private el: HTMLElement;
   private headerEl: HTMLElement;
   private bodyEl: HTMLElement;
   private actionsEl: HTMLElement;
   private footerEl: HTMLElement;
+  private emptyStateEl: HTMLElement;
   private scoreDisplay: ScoreDisplay;
   private loadingState: LoadingState;
   private diffView: DiffView;
@@ -19,13 +26,14 @@ export class PopupCard {
   private rewriteResult: HTMLElement;
 
   private activeField: HTMLElement | null = null;
+  private repositionRAF: number | null = null;
   private onLoadingChange: (loading: boolean) => void;
-  private onScoreReady: (score: number, color: string) => void;
+  private onScoreReady: (field: HTMLElement, score: number, color: string) => void;
 
   constructor(
     shadowRoot: ShadowRoot,
     onLoadingChange: (loading: boolean) => void,
-    onScoreReady: (score: number, color: string) => void
+    onScoreReady: (field: HTMLElement, score: number, color: string) => void
   ) {
     this.onLoadingChange = onLoadingChange;
     this.onScoreReady = onScoreReady;
@@ -37,14 +45,33 @@ export class PopupCard {
     this.headerEl = document.createElement("div");
     this.headerEl.className = "wg-popup-header";
     this.headerEl.innerHTML = `
-      <span class="wg-popup-title">WriteGooderer</span>
-      <button class="wg-close-btn">&times;</button>
+      <div class="wg-popup-heading">
+        <span class="wg-popup-kicker">On-device writing assist</span>
+        <span class="wg-popup-title">WriteGooderer</span>
+      </div>
+      <button class="wg-close-btn" aria-label="Close WriteGooderer">&times;</button>
     `;
     this.headerEl.querySelector(".wg-close-btn")!.addEventListener("click", () => this.hide());
 
     // Body (results area)
     this.bodyEl = document.createElement("div");
     this.bodyEl.className = "wg-popup-body";
+
+    // Empty state
+    this.emptyStateEl = document.createElement("div");
+    this.emptyStateEl.className = "wg-empty-state";
+    this.emptyStateEl.innerHTML = `
+      <div class="wg-empty-eyebrow">Ready on this field</div>
+      <div class="wg-empty-title">Proofread for mistakes or rewrite in a new tone.</div>
+      <p class="wg-empty-copy">
+        Grammar, spelling, punctuation, and punchier rewrites without sending your text to a cloud API.
+      </p>
+      <div class="wg-pill-row">
+        <span class="wg-pill">Grammar + clarity</span>
+        <span class="wg-pill">Tone presets</span>
+        <span class="wg-pill">Local only</span>
+      </div>
+    `;
 
     // Score display
     this.scoreDisplay = new ScoreDisplay();
@@ -66,6 +93,7 @@ export class PopupCard {
     this.rewriteResult.className = "wg-rewrite-result";
     this.rewriteResult.style.display = "none";
 
+    this.bodyEl.appendChild(this.emptyStateEl);
     this.bodyEl.appendChild(this.scoreDisplay.element);
     this.bodyEl.appendChild(this.loadingState.element);
     this.bodyEl.appendChild(this.diffView.element);
@@ -92,7 +120,7 @@ export class PopupCard {
     // Footer
     this.footerEl = document.createElement("div");
     this.footerEl.className = "wg-popup-footer";
-    this.footerEl.textContent = "Powered by your own computer";
+    this.footerEl.textContent = "Chrome Prompt API · local only";
 
     this.el.appendChild(this.headerEl);
     this.el.appendChild(this.bodyEl);
@@ -103,19 +131,27 @@ export class PopupCard {
   }
 
   show(field: HTMLElement): void {
-    this.activeField = field;
+    this.resetContent();
     this.el.classList.add("wg-visible");
-    this.scoreDisplay.element.style.display = "none";
-    this.diffView.hide();
-    this.toneSelector.hide();
-    this.rewriteResult.style.display = "none";
+    this.attachToField(field);
+    this.startTracking();
+  }
+
+  attachToField(field: HTMLElement): void {
+    const changedField = this.activeField !== field;
+    this.activeField = field;
+
+    if (changedField) {
+      this.resetContent();
+    }
+
     this.position();
   }
 
   hide(): void {
     this.el.classList.remove("wg-visible");
-    this.loadingState.hide();
-    this.toneSelector.hide();
+    this.stopTracking();
+    this.resetContent();
   }
 
   get isVisible(): boolean {
@@ -124,31 +160,76 @@ export class PopupCard {
 
   private position(): void {
     if (!this.activeField) return;
-    const rect = this.activeField.getBoundingClientRect();
-    const cardHeight = 400;
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const showBelow = spaceBelow > cardHeight || spaceBelow > rect.top;
-
-    if (showBelow) {
-      this.el.style.top = `${rect.bottom + window.scrollY + 8}px`;
-    } else {
-      this.el.style.top = `${rect.top + window.scrollY - cardHeight - 8}px`;
+    if (!this.activeField.isConnected) {
+      this.hide();
+      return;
     }
 
-    this.el.style.left = `${Math.max(8, rect.right + window.scrollX - 360)}px`;
+    const rect = this.activeField.getBoundingClientRect();
+    const desiredTop = rect.bottom + window.scrollY + POPUP_GAP;
+    const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING);
+
+    const chromeHeight =
+      this.headerEl.offsetHeight +
+      this.actionsEl.offsetHeight +
+      this.footerEl.offsetHeight +
+      2;
+    const popupMaxHeight = Math.max(
+      chromeHeight + MIN_BODY_HEIGHT,
+      Math.min(POPUP_MAX_HEIGHT, availableBelow)
+    );
+
+    this.el.style.top = `${desiredTop}px`;
+    this.el.style.maxHeight = `${popupMaxHeight}px`;
+    this.bodyEl.style.maxHeight = `${Math.max(MIN_BODY_HEIGHT, popupMaxHeight - chromeHeight)}px`;
+
+    const minLeft = window.scrollX + VIEWPORT_PADDING;
+    const maxLeft = window.scrollX + window.innerWidth - POPUP_WIDTH - VIEWPORT_PADDING;
+    const desiredLeft = rect.right + window.scrollX - POPUP_WIDTH;
+    const clampedLeft = Math.max(minLeft, Math.min(desiredLeft, maxLeft));
+
+    this.el.style.left = `${clampedLeft}px`;
   }
 
-  private getFieldText(): string {
-    if (!this.activeField) return "";
+  private startTracking(): void {
+    this.stopTracking();
+
+    const track = () => {
+      if (!this.isVisible) return;
+      this.position();
+      this.repositionRAF = requestAnimationFrame(track);
+    };
+
+    this.repositionRAF = requestAnimationFrame(track);
+  }
+
+  private stopTracking(): void {
+    if (this.repositionRAF !== null) {
+      cancelAnimationFrame(this.repositionRAF);
+      this.repositionRAF = null;
+    }
+  }
+
+  private resetContent(): void {
+    this.emptyStateEl.style.display = "block";
+    this.loadingState.hide();
+    this.scoreDisplay.element.style.display = "none";
+    this.diffView.hide();
+    this.toneSelector.hide();
+    this.rewriteResult.style.display = "none";
+  }
+
+  private getFieldText(field: HTMLElement | null = this.activeField): string {
+    if (!field) return "";
 
     // Check for selection first
-    if (this.activeField instanceof HTMLTextAreaElement) {
-      const start = this.activeField.selectionStart;
-      const end = this.activeField.selectionEnd;
+    if (field instanceof HTMLTextAreaElement) {
+      const start = field.selectionStart;
+      const end = field.selectionEnd;
       if (start !== end) {
-        return this.activeField.value.substring(start, end);
+        return field.value.substring(start, end);
       }
-      return this.activeField.value;
+      return field.value;
     }
 
     const selection = window.getSelection();
@@ -156,13 +237,15 @@ export class PopupCard {
       return selection.toString();
     }
 
-    return this.activeField.innerText || this.activeField.textContent || "";
+    return field.innerText || field.textContent || "";
   }
 
   private async handleProofread(): Promise<void> {
-    const text = this.getFieldText();
+    const requestField = this.activeField;
+    const text = this.getFieldText(requestField);
     if (!text.trim()) return;
 
+    this.emptyStateEl.style.display = "none";
     this.showLoading(true);
     this.diffView.hide();
     this.toneSelector.hide();
@@ -171,14 +254,23 @@ export class PopupCard {
     try {
       const result = await proofread(text);
 
+      const tier = getTierForScore(result.score);
+      if (requestField) {
+        this.onScoreReady(requestField, result.score, tier.color);
+      }
+
+      if (!requestField || this.activeField !== requestField) {
+        return;
+      }
+
       this.scoreDisplay.element.style.display = "block";
       this.scoreDisplay.setScore(result.score);
-
-      const tier = getTierForScore(result.score);
-      this.onScoreReady(result.score, tier.color);
-
       this.diffView.show(text, result.corrected, result.changes);
     } catch (err) {
+      if (!requestField || this.activeField !== requestField) {
+        return;
+      }
+
       this.showError(
         err instanceof Error ? err.message : "Failed to connect to the AI. Try again."
       );
@@ -188,9 +280,11 @@ export class PopupCard {
   }
 
   private async handleToneSelect(tone: TonePreset): Promise<void> {
-    const text = this.getFieldText();
+    const requestField = this.activeField;
+    const text = this.getFieldText(requestField);
     if (!text.trim()) return;
 
+    this.emptyStateEl.style.display = "none";
     this.showLoading(true);
     this.diffView.hide();
     this.rewriteResult.style.display = "none";
@@ -198,9 +292,17 @@ export class PopupCard {
     try {
       const result = await rewrite(text, tone);
 
+      if (!requestField || this.activeField !== requestField) {
+        return;
+      }
+
       this.toneSelector.hide();
       this.showRewriteResult(result.rewritten);
     } catch (err) {
+      if (!requestField || this.activeField !== requestField) {
+        return;
+      }
+
       this.showError(
         err instanceof Error ? err.message : "Failed to connect to the AI. Try again."
       );
@@ -211,6 +313,7 @@ export class PopupCard {
 
   private showRewriteResult(text: string): void {
     this.rewriteResult.innerHTML = "";
+    this.emptyStateEl.style.display = "none";
     this.rewriteResult.style.display = "block";
 
     const pre = document.createElement("div");
@@ -242,8 +345,9 @@ export class PopupCard {
 
   private toggleToneSelector(): void {
     if (this.toneSelector.element.style.display === "block") {
-      this.toneSelector.hide();
+      this.resetContent();
     } else {
+      this.emptyStateEl.style.display = "none";
       this.diffView.hide();
       this.rewriteResult.style.display = "none";
       this.toneSelector.show();
@@ -280,6 +384,7 @@ export class PopupCard {
 
   private showError(message: string): void {
     this.rewriteResult.innerHTML = "";
+    this.emptyStateEl.style.display = "none";
     this.rewriteResult.style.display = "block";
     const errEl = document.createElement("div");
     errEl.className = "wg-error";

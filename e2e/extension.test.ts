@@ -38,6 +38,33 @@ async function openPopupOnTextarea(p: Page, selector = "textarea") {
   await new Promise((r) => setTimeout(r, 400));
 }
 
+async function clickTextareaByIndex(p: Page, index: number) {
+  const textareas = await p.$$("textarea");
+  const target = textareas[index];
+  if (!target) {
+    throw new Error(`Missing textarea at index ${index}`);
+  }
+
+  await target.click();
+  await new Promise((r) => setTimeout(r, 400));
+}
+
+async function openPopupOnTextareaIndex(p: Page, index: number) {
+  await p.click("header");
+  await new Promise((r) => setTimeout(r, 400));
+
+  await clickTextareaByIndex(p, index);
+
+  const iconVisible = await shadowHasClass(p, ".wg-floating-icon", "wg-visible");
+  if (!iconVisible) {
+    await p.keyboard.type(" ");
+    await new Promise((r) => setTimeout(r, 300));
+  }
+
+  await shadowClick(p, ".wg-floating-icon");
+  await new Promise((r) => setTimeout(r, 400));
+}
+
 describe("WriteGooderer E2E", () => {
   beforeAll(async () => {
     browser = await launchBrowser();
@@ -170,6 +197,49 @@ describe("WriteGooderer E2E", () => {
       );
       expect(popupVisible).toBe(false);
     });
+
+    it("assigns unique ids to textareas and moves the popup when focus changes", async () => {
+      await openPopupOnTextareaIndex(page, 0);
+
+      const before = await page.evaluate(() => {
+        const textareas = Array.from(document.querySelectorAll("textarea"));
+        const popup = document
+          .querySelector("#writegooderer-root")
+          ?.shadowRoot?.querySelector(".wg-popup-card") as HTMLElement | null;
+
+        return {
+          firstId: textareas[0]?.getAttribute("data-wg-field-id"),
+          secondId: textareas[1]?.getAttribute("data-wg-field-id"),
+          popupTop: popup?.style.top ?? null,
+          popupLeft: popup?.style.left ?? null,
+        };
+      });
+
+      await clickTextareaByIndex(page, 1);
+
+      const after = await page.evaluate(() => {
+        const textareas = Array.from(document.querySelectorAll("textarea"));
+        const popup = document
+          .querySelector("#writegooderer-root")
+          ?.shadowRoot?.querySelector(".wg-popup-card") as HTMLElement | null;
+
+        return {
+          firstId: textareas[0]?.getAttribute("data-wg-field-id"),
+          secondId: textareas[1]?.getAttribute("data-wg-field-id"),
+          popupTop: popup?.style.top ?? null,
+          popupLeft: popup?.style.left ?? null,
+        };
+      });
+
+      expect(before.firstId).toMatch(/^wg-field-\d+$/);
+      expect(before.secondId).toMatch(/^wg-field-\d+$/);
+      expect(before.firstId).not.toBe(before.secondId);
+      expect(after.firstId).toBe(before.firstId);
+      expect(after.secondId).toBe(before.secondId);
+      expect(`${after.popupTop}:${after.popupLeft}`).not.toBe(
+        `${before.popupTop}:${before.popupLeft}`
+      );
+    });
   });
 
   describe("Proofreading", () => {
@@ -224,6 +294,62 @@ describe("WriteGooderer E2E", () => {
 
       const tierText = await shadowText(page, ".wg-tier-label");
       expect(tierText).toBeTruthy();
+    });
+
+    it("restores a textarea's score when refocusing it", async () => {
+      await openPopupOnTextareaIndex(page, 0);
+
+      await page.evaluate(() => {
+        const host = document.querySelector("#writegooderer-root");
+        const btn = host?.shadowRoot?.querySelector(".wg-popup-actions .wg-btn-primary") as
+          | HTMLElement
+          | null;
+        btn?.click();
+      });
+
+      await new Promise((r) => setTimeout(r, 3000));
+
+      const firstScore = await page.evaluate(() => {
+        const scoreEl = document
+          .querySelector("#writegooderer-root")
+          ?.shadowRoot?.querySelector(".wg-floating-score") as HTMLElement | null;
+
+        return {
+          text: scoreEl?.textContent ?? null,
+          display: scoreEl?.style.display ?? null,
+        };
+      });
+
+      expect(firstScore.display).toBe("flex");
+      expect(firstScore.text).toBeTruthy();
+
+      await clickTextareaByIndex(page, 1);
+
+      const secondScore = await page.evaluate(() => {
+        const scoreEl = document
+          .querySelector("#writegooderer-root")
+          ?.shadowRoot?.querySelector(".wg-floating-score") as HTMLElement | null;
+
+        return scoreEl?.style.display ?? null;
+      });
+
+      expect(secondScore).toBe("none");
+
+      await clickTextareaByIndex(page, 0);
+
+      const restoredScore = await page.evaluate(() => {
+        const scoreEl = document
+          .querySelector("#writegooderer-root")
+          ?.shadowRoot?.querySelector(".wg-floating-score") as HTMLElement | null;
+
+        return {
+          text: scoreEl?.textContent ?? null,
+          display: scoreEl?.style.display ?? null,
+        };
+      });
+
+      expect(restoredScore.display).toBe("flex");
+      expect(restoredScore.text).toBe(firstScore.text);
     });
 
     it("shows diff with additions and removals", async () => {

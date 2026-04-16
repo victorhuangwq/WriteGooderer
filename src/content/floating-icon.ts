@@ -58,9 +58,14 @@ export class FloatingIcon {
 
   private position(): void {
     if (!this.currentField) return;
+    if (!this.currentField.isConnected) {
+      this.hide();
+      return;
+    }
+
     const rect = this.currentField.getBoundingClientRect();
-    this.el.style.top = `${rect.bottom + window.scrollY - 40}px`;
-    this.el.style.left = `${rect.right + window.scrollX - 40}px`;
+    this.el.style.top = `${rect.bottom + window.scrollY - 46}px`;
+    this.el.style.left = `${rect.right + window.scrollX - 46}px`;
   }
 
   private startTracking(): void {

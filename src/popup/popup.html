@@ -8,10 +8,18 @@
 <body>
   <div class="popup-container">
     <header class="popup-header">
+      <p class="popup-kicker">Chrome local AI</p>
       <h1 class="popup-title">WriteGooderer</h1>
+      <p class="popup-subtitle">Proofread and rewrite text in place without sending it to a hosted API.</p>
+      <div class="feature-row">
+        <span class="feature-pill">Proofread</span>
+        <span class="feature-pill">Tone shifts</span>
+        <span class="feature-pill">On-device</span>
+      </div>
     </header>
 
     <div class="status-section">
+      <p class="section-label">Model Status</p>
       <div class="status-row">
         <span class="status-dot" id="statusDot"></span>
         <span class="status-text" id="statusText">Checking...</span>
@@ -20,8 +28,12 @@
     </div>
 
     <div class="toggle-section">
+      <p class="section-label">Current Site</p>
       <label class="toggle-row">
-        <span class="toggle-label">Enable on this site</span>
+        <span class="toggle-copy">
+          <span class="toggle-label">Enable on this site</span>
+          <span class="toggle-note">Hide the in-page button and card on the current hostname.</span>
+        </span>
         <div class="toggle-switch">
           <input type="checkbox" id="siteToggle" checked>
           <span class="toggle-slider"></span>
@@ -30,7 +42,7 @@
     </div>
 
     <footer class="popup-footer">
-      <p>100% local. 0% cloud. Infinitely gooderer.</p>
+      <p>Works on editable fields like textareas, rich text editors, and compose boxes.</p>
     </footer>
   </div>
   <script src="popup.js" type="module"></script>
