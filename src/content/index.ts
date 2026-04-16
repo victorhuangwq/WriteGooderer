@@ -12,7 +12,7 @@ async function main() {
   host.id = "writegooderer-root";
   host.style.cssText = "position:absolute;top:0;left:0;z-index:2147483647;pointer-events:none;";
   document.body.appendChild(host);
-  const shadow = host.attachShadow({ mode: "closed" });
+  const shadow = host.attachShadow({ mode: "open" });
 
   // Inject styles
   const style = document.createElement("style");

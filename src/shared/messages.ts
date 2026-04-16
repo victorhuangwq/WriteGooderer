@@ -1,10 +1,6 @@
 import type { ModelStatus, ProofreadResult, RewriteResult, TonePreset } from "./types";
 
 // Request types
-export interface WarmUpRequest {
-  type: "WARM_UP";
-}
-
 export interface ProofreadRequest {
   type: "PROOFREAD";
   text: string;
@@ -21,16 +17,11 @@ export interface GetModelStatusRequest {
 }
 
 export type MessageRequest =
-  | WarmUpRequest
   | ProofreadRequest
   | RewriteToneRequest
   | GetModelStatusRequest;
 
 // Response types
-export interface WarmUpResponse {
-  status: ModelStatus;
-}
-
 export interface ProofreadResponse {
   success: true;
   result: ProofreadResult;
@@ -52,7 +43,6 @@ export interface ErrorResponse {
 }
 
 export type MessageResponse =
-  | WarmUpResponse
   | ProofreadResponse
   | RewriteToneResponse
   | ModelStatusResponse

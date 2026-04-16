@@ -2,6 +2,7 @@ import ChromiumAI from "simple-chromium-ai";
 import type { ChromiumAIInstance } from "simple-chromium-ai";
 import type { MessageRequest, MessageResponse } from "../shared/messages";
 import type { ModelStatus, ProofreadResult, RewriteResult } from "../shared/types";
+import { getTierForScore } from "../shared/constants";
 import {
   PROOFREAD_INITIAL_PROMPTS,
   PROOFREAD_SCHEMA,
@@ -13,8 +14,13 @@ import {
 let aiInstance: ChromiumAIInstance | null = null;
 let modelStatus: ModelStatus = "loading";
 let initPromise: Promise<void> | null = null;
+let testMode = false;
 
 async function initModel(): Promise<void> {
+  if (testMode) {
+    modelStatus = "ready";
+    return;
+  }
   if (aiInstance) {
     modelStatus = "ready";
     return;
@@ -40,6 +46,10 @@ async function initModel(): Promise<void> {
 }
 
 async function ensureModel(): Promise<ChromiumAIInstance> {
+  if (testMode) {
+    modelStatus = "ready";
+    return { systemPrompt: "test", instanceId: "test" };
+  }
   await initModel();
   if (!aiInstance) {
     throw new Error(
@@ -49,7 +59,38 @@ async function ensureModel(): Promise<ChromiumAIInstance> {
   return aiInstance;
 }
 
+function mockProofread(text: string): ProofreadResult {
+  const changes: ProofreadResult["changes"] = [];
+  if (text.includes("has went")) {
+    changes.push({ original: "has went", replacement: "went", reason: "Incorrect auxiliary verb" });
+  }
+  if (text.includes("buyed")) {
+    changes.push({ original: "buyed", replacement: "bought", reason: "Irregular past tense" });
+  }
+  if (text.includes("stor ")) {
+    changes.push({ original: "stor", replacement: "store", reason: "Spelling" });
+  }
+  if (text.includes("mik")) {
+    changes.push({ original: "mik", replacement: "milk", reason: "Spelling" });
+  }
+
+  let corrected = text;
+  for (const c of changes) {
+    corrected = corrected.replace(c.original, c.replacement);
+  }
+
+  const score = changes.length === 0 ? 92 : Math.max(5, 80 - changes.length * 15);
+  const tier = getTierForScore(score);
+
+  return { corrected, changes, score, tier: tier.name };
+}
+
+function mockRewrite(text: string, tone: string): RewriteResult {
+  return { rewritten: `[${tone.toUpperCase()}] ${text}` };
+}
+
 async function handleProofread(text: string): Promise<ProofreadResult> {
+  if (testMode) return mockProofread(text);
   const ai = await ensureModel();
   const session = await ChromiumAI.createSession(ai, {
     initialPrompts: PROOFREAD_INITIAL_PROMPTS as any,
@@ -68,6 +109,7 @@ async function handleRewrite(
   text: string,
   tone: import("../shared/types").TonePreset
 ): Promise<RewriteResult> {
+  if (testMode) return mockRewrite(text, tone);
   const ai = await ensureModel();
   const session = await ChromiumAI.createSession(ai, {
     initialPrompts: TONE_INITIAL_PROMPTS as any,
@@ -85,16 +127,17 @@ async function handleRewrite(
 
 chrome.runtime.onMessage.addListener(
   (
-    message: MessageRequest,
+    message: MessageRequest | { type: "SET_TEST_MODE" },
     _sender: chrome.runtime.MessageSender,
-    sendResponse: (response: MessageResponse) => void
+    sendResponse: (response: MessageResponse | { testMode: boolean }) => void
   ) => {
     (async () => {
       try {
         switch (message.type) {
-          case "WARM_UP": {
-            await initModel();
-            sendResponse({ status: modelStatus });
+          case "SET_TEST_MODE": {
+            testMode = true;
+            modelStatus = "ready";
+            sendResponse({ testMode: true });
             break;
           }
           case "GET_MODEL_STATUS": {
@@ -102,12 +145,17 @@ chrome.runtime.onMessage.addListener(
             break;
           }
           case "PROOFREAD": {
-            const result = await handleProofread(message.text);
+            const result = await handleProofread(
+              (message as any).text
+            );
             sendResponse({ success: true, result });
             break;
           }
           case "REWRITE_TONE": {
-            const result = await handleRewrite(message.text, message.tone);
+            const result = await handleRewrite(
+              (message as any).text,
+              (message as any).tone
+            );
             sendResponse({ success: true, result });
             break;
           }
@@ -118,7 +166,7 @@ chrome.runtime.onMessage.addListener(
         sendResponse({ success: false, error: errorMsg });
       }
     })();
-    return true; // keep message channel open for async response
+    return true;
   }
 );
 

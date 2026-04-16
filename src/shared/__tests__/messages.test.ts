@@ -7,15 +7,6 @@ describe("sendMessage", () => {
     chrome.runtime.sendMessage.mockReset();
   });
 
-  it("sends a WARM_UP message", async () => {
-    chrome.runtime.sendMessage.mockImplementation(() =>
-      Promise.resolve({ status: "ready" }) as any
-    );
-    const response = await sendMessage({ type: "WARM_UP" });
-    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "WARM_UP" });
-    expect(response).toEqual({ status: "ready" });
-  });
-
   it("sends a PROOFREAD message with text", async () => {
     const mockResult = {
       success: true,

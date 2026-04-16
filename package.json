@@ -12,7 +12,8 @@
     "build": "npm run clean && npm run build:sw && npm run build:content && npm run build:popup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "xvfb-run vitest run --config vitest.e2e.config.ts"
   },
   "dependencies": {
     "simple-chromium-ai": "^0.1.0"
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/chrome": "^0.1.40",
     "jsdom": "^29.0.2",
+    "puppeteer": "^24.40.0",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
     "vitest": "^4.1.4",

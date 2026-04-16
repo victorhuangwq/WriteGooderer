@@ -1,13 +1,8 @@
-import { sendMessage } from "../shared/messages";
-import type { WarmUpResponse } from "../shared/messages";
-
 type FieldCallback = (field: HTMLElement | null) => void;
 
 const IGNORED_TYPES = new Set(["search", "password", "email", "number", "tel", "url", "date"]);
 const MIN_FIELD_HEIGHT = 32;
 const MIN_FIELD_WIDTH = 100;
-
-let warmedUp = false;
 
 export function isValidField(el: Element): el is HTMLElement {
   if (el instanceof HTMLTextAreaElement) {
@@ -31,15 +26,6 @@ export function isValidField(el: Element): el is HTMLElement {
   }
 
   return false;
-}
-
-function warmUpModel(): void {
-  if (warmedUp) return;
-  warmedUp = true;
-  sendMessage<WarmUpResponse>({ type: "WARM_UP" }).catch(() => {
-    // If service worker isn't ready, that's fine - it'll init on the actual request
-    warmedUp = false;
-  });
 }
 
 export function initFieldDetector(onFieldChange: FieldCallback): void {
@@ -69,12 +55,8 @@ export function initFieldDetector(onFieldChange: FieldCallback): void {
 
   document.addEventListener("focusin", handleFocusIn, true);
   document.addEventListener("focusout", handleFocusOut, true);
-  document.addEventListener("input", (e: Event) => {
-    const target = e.target as Element;
-    if (isValidField(target)) warmUpModel();
-  }, true);
 
-  // Also watch for dynamically added contenteditable elements
+  // Watch for dynamically added contenteditable elements
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       for (const node of mutation.addedNodes) {
