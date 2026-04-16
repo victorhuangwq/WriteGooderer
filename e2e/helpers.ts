@@ -38,16 +38,16 @@ export async function getExtensionId(browser: Browser): Promise<string> {
 }
 
 export async function enableTestMode(browser: Browser): Promise<void> {
-  // Send SET_TEST_MODE from the popup page context (has chrome.runtime access)
+  // Set wgTestMode flag in chrome.storage from the popup page context
   const extId = await getExtensionId(browser);
   const page = await browser.newPage();
   await page.goto(`chrome-extension://${extId}/popup.html`, {
     waitUntil: "domcontentloaded",
   });
-  const result = await page.evaluate(() => {
-    return chrome.runtime.sendMessage({ type: "SET_TEST_MODE" });
+  await page.evaluate(() => {
+    return chrome.storage.local.set({ wgTestMode: true });
   });
-  console.log("[E2E] Test mode enabled:", result);
+  console.log("[E2E] Test mode enabled via chrome.storage");
   await page.close();
 }
 

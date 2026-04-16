@@ -1,10 +1,5 @@
-import { sendMessage } from "../shared/messages";
+import { proofread, rewrite } from "./ai-client";
 import { getTierForScore } from "../shared/constants";
-import type {
-  ErrorResponse,
-  ProofreadResponse,
-  RewriteToneResponse,
-} from "../shared/messages";
 import type { TonePreset } from "../shared/types";
 import { ScoreDisplay } from "./score-display";
 import { LoadingState } from "./loading-state";
@@ -174,25 +169,19 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const response = await sendMessage<ProofreadResponse | ErrorResponse>({
-        type: "PROOFREAD",
-        text,
-      });
+      const result = await proofread(text);
 
-      if ("success" in response && response.success) {
-        const { result } = response as ProofreadResponse;
-        this.scoreDisplay.element.style.display = "block";
-        this.scoreDisplay.setScore(result.score);
+      this.scoreDisplay.element.style.display = "block";
+      this.scoreDisplay.setScore(result.score);
 
-        const tier = getTierForScore(result.score);
-        this.onScoreReady(result.score, tier.color);
+      const tier = getTierForScore(result.score);
+      this.onScoreReady(result.score, tier.color);
 
-        this.diffView.show(text, result.corrected, result.changes);
-      } else {
-        this.showError((response as ErrorResponse).error);
-      }
+      this.diffView.show(text, result.corrected, result.changes);
     } catch (err) {
-      this.showError("Failed to connect to the AI. Try again.");
+      this.showError(
+        err instanceof Error ? err.message : "Failed to connect to the AI. Try again."
+      );
     } finally {
       this.showLoading(false);
     }
@@ -207,21 +196,14 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const response = await sendMessage<RewriteToneResponse | ErrorResponse>({
-        type: "REWRITE_TONE",
-        text,
-        tone,
-      });
+      const result = await rewrite(text, tone);
 
-      if ("success" in response && response.success) {
-        const { result } = response as RewriteToneResponse;
-        this.toneSelector.hide();
-        this.showRewriteResult(result.rewritten);
-      } else {
-        this.showError((response as ErrorResponse).error);
-      }
+      this.toneSelector.hide();
+      this.showRewriteResult(result.rewritten);
     } catch (err) {
-      this.showError("Failed to connect to the AI. Try again.");
+      this.showError(
+        err instanceof Error ? err.message : "Failed to connect to the AI. Try again."
+      );
     } finally {
       this.showLoading(false);
     }

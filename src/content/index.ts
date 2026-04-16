@@ -1,4 +1,5 @@
 import { isSiteDisabled } from "../shared/storage";
+import { checkTestMode } from "./ai-client";
 import { initFieldDetector } from "./field-detector";
 import { FloatingIcon } from "./floating-icon";
 import { PopupCard } from "./popup-card";
@@ -6,6 +7,9 @@ import { PopupCard } from "./popup-card";
 async function main() {
   // Check if extension is disabled on this site
   if (await isSiteDisabled(window.location.hostname)) return;
+
+  // Check if test mode is enabled (for E2E tests)
+  await checkTestMode();
 
   // Create Shadow DOM container
   const host = document.createElement("div");

@@ -354,13 +354,14 @@ describe("WriteGooderer E2E", () => {
         `chrome-extension://${extensionId}/popup.html`,
         { waitUntil: "domcontentloaded" }
       );
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 500));
 
       const statusText = await popupPage.$eval(
         "#statusText",
         (el) => el.textContent
       );
-      expect(statusText).toBeTruthy();
+      // In test environment, self.ai is not available so status shows "Unavailable"
+      expect(statusText).toBe("Unavailable");
       await popupPage.close();
     });
 

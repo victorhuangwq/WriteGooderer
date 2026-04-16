@@ -1,5 +1,3 @@
-import { sendMessage } from "../shared/messages";
-import type { ModelStatusResponse } from "../shared/messages";
 import { isSiteDisabled, toggleSite } from "../shared/storage";
 
 const statusDot = document.getElementById("statusDot")!;
@@ -8,39 +6,17 @@ const statusHint = document.getElementById("statusHint")!;
 const siteToggle = document.getElementById("siteToggle") as HTMLInputElement;
 
 async function init() {
-  // Check model status
-  try {
-    const response = await sendMessage<ModelStatusResponse>({
-      type: "GET_MODEL_STATUS",
-    });
-
-    switch (response.status) {
-      case "ready":
-        statusDot.className = "status-dot status-ready";
-        statusText.textContent = "Ready";
-        statusHint.textContent = "";
-        break;
-      case "loading":
-        statusDot.className = "status-dot status-loading";
-        statusText.textContent = "Loading model...";
-        statusHint.textContent = "The AI model is warming up.";
-        break;
-      case "unavailable":
-        statusDot.className = "status-dot status-error";
-        statusText.textContent = "Unavailable";
-        statusHint.textContent =
-          'Enable "Prompt API for Gemini Nano" in chrome://flags and update the model in chrome://components.';
-        break;
-      case "error":
-        statusDot.className = "status-dot status-error";
-        statusText.textContent = "Error";
-        statusHint.textContent = response.error || "Something went wrong.";
-        break;
-    }
-  } catch {
+  // Check if Chrome AI API is available
+  const ai = (self as any).ai;
+  if (ai?.languageModel) {
+    statusDot.className = "status-dot status-ready";
+    statusText.textContent = "Available";
+    statusHint.textContent = "";
+  } else {
     statusDot.className = "status-dot status-error";
-    statusText.textContent = "Error";
-    statusHint.textContent = "Could not reach the service worker.";
+    statusText.textContent = "Unavailable";
+    statusHint.textContent =
+      'Enable "Prompt API for Gemini Nano" in chrome://flags and update the model in chrome://components.';
   }
 
   // Site toggle
