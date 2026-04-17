@@ -3,18 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="fonts/Inter-VariableFont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Fraunces-VariableFont.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="popup-container">
     <header class="popup-header">
-      <p class="popup-kicker">Chrome local AI</p>
+      <div class="popup-brand">
+        <span class="popup-mark" aria-hidden="true">W</span>
+        <p class="popup-kicker">Chrome local AI</p>
+      </div>
       <h1 class="popup-title">WriteGooderer</h1>
-      <p class="popup-subtitle">Proofread and rewrite text in place without sending it to a hosted API.</p>
+      <p class="popup-subtitle">Proofread and rewrite text in place &mdash; never leaves your browser.</p>
       <div class="feature-row">
-        <span class="feature-pill">Proofread</span>
-        <span class="feature-pill">Tone shifts</span>
         <span class="feature-pill">On-device</span>
+        <span class="feature-pill">Proofread &amp; tone</span>
       </div>
     </header>
 
@@ -22,9 +26,9 @@
       <p class="section-label">Model Status</p>
       <div class="status-row">
         <span class="status-dot" id="statusDot"></span>
-        <span class="status-text" id="statusText">Checking...</span>
+        <span class="status-text" id="statusText" aria-live="polite">Checking&hellip;</span>
       </div>
-      <p class="status-hint" id="statusHint"></p>
+      <div class="status-hint" id="statusHint"></div>
     </div>
 
     <div class="toggle-section">
@@ -42,7 +46,7 @@
     </div>
 
     <footer class="popup-footer">
-      <p>Works on editable fields like textareas, rich text editors, and compose boxes.</p>
+      <p>Works on textareas, rich editors, and compose boxes.</p>
     </footer>
   </div>
   <script src="popup.js" type="module"></script>

@@ -56,6 +56,12 @@ export default defineConfig({
           resolve(__dirname, "dist/icons"),
           { recursive: true }
         );
+        mkdirSync(resolve(__dirname, "dist/fonts"), { recursive: true });
+        cpSync(
+          resolve(__dirname, "public/fonts"),
+          resolve(__dirname, "dist/fonts"),
+          { recursive: true }
+        );
         cpSync(
           resolve(__dirname, "src/popup/popup.html"),
           resolve(__dirname, "dist/popup.html")

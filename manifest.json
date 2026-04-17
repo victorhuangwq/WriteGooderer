@@ -30,5 +30,11 @@
     "48": "icons/icon-48.svg",
     "128": "icons/icon-128.svg"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["fonts/*.woff2"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "minimum_chrome_version": "138"
 }
