@@ -1,17 +1,80 @@
 import { isSiteDisabled } from "../shared/storage";
+import {
+  FONT_TOKENS_CSS,
+  tokensToCssVars,
+  type ThemeMode,
+} from "../shared/design-tokens";
 import { checkTestMode, destroySessions, prewarmSessions } from "./ai-client";
 import { ensureFieldId, initFieldDetector } from "./field-detector";
 import { FloatingIcon } from "./floating-icon";
 import { PopupCard } from "./popup-card";
 
 const INIT_FLAG = "__writegoodererInitialized";
+const FONT_STYLE_ID = "writegooderer-fonts";
 
 function logDebug(message: string): void {
   console.debug(`[WriteGooderer] ${message}`);
 }
 
+function parseRgb(input: string): [number, number, number, number] | null {
+  const match = input.match(/rgba?\(([^)]+)\)/i);
+  if (!match) return null;
+  const parts = match[1].split(",").map((p) => parseFloat(p.trim()));
+  if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return null;
+  const [r, g, b] = parts;
+  const a = parts.length >= 4 ? parts[3] : 1;
+  return [r, g, b, a];
+}
+
+function detectHostTheme(): ThemeMode {
+  try {
+    const candidates = [document.body, document.documentElement].filter(
+      (el): el is HTMLElement => !!el
+    );
+    for (const el of candidates) {
+      const bg = getComputedStyle(el).backgroundColor;
+      const rgb = parseRgb(bg);
+      if (rgb && rgb[3] > 0.1) {
+        const luma = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+        return luma < 0.4 ? "dark" : "light";
+      }
+    }
+  } catch {
+    // fall through
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function injectFontFaces(): void {
+  if (document.getElementById(FONT_STYLE_ID)) return;
+  const interUrl = chrome.runtime.getURL("fonts/Inter-VariableFont.woff2");
+  const frauncesUrl = chrome.runtime.getURL(
+    "fonts/Fraunces-VariableFont.woff2"
+  );
+  const style = document.createElement("style");
+  style.id = FONT_STYLE_ID;
+  style.textContent = `
+    @font-face {
+      font-family: "Inter";
+      src: url("${interUrl}") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Fraunces";
+      src: url("${frauncesUrl}") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(style);
+}
+
 async function main() {
-  // Check if extension is disabled on this site
   if (await isSiteDisabled(window.location.hostname)) return;
 
   const globalWindow = window as Window & { [INIT_FLAG]?: boolean };
@@ -21,25 +84,31 @@ async function main() {
   }
   globalWindow[INIT_FLAG] = true;
 
-  // Check if test mode is enabled (for E2E tests)
   await checkTestMode();
 
-  // Create Shadow DOM container
+  injectFontFaces();
+
   const host = document.createElement("div");
   host.id = "writegooderer-root";
-  host.style.cssText = "position:absolute;top:0;left:0;z-index:2147483647;pointer-events:none;";
+  host.style.cssText =
+    "position:absolute;top:0;left:0;z-index:2147483647;pointer-events:none;";
+  host.setAttribute("data-wg-theme", detectHostTheme());
   document.body.appendChild(host);
   const shadow = host.attachShadow({ mode: "open" });
 
-  // Inject styles
   const style = document.createElement("style");
   style.textContent = CSS_TEXT;
   shadow.appendChild(style);
 
+  const darkMq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onSchemeChange = () => {
+    host.setAttribute("data-wg-theme", detectHostTheme());
+  };
+  darkMq.addEventListener?.("change", onSchemeChange);
+
   let activeField: HTMLElement | null = null;
   const fieldScores = new Map<string, { score: number; color: string }>();
 
-  // Init floating icon
   const icon = new FloatingIcon(shadow, () => {
     if (activeField) {
       if (popup.isVisible) {
@@ -50,7 +119,6 @@ async function main() {
     }
   });
 
-  // Init popup card
   const popup = new PopupCard(
     shadow,
     (loading) => icon.setLoading(loading),
@@ -64,7 +132,6 @@ async function main() {
     }
   );
 
-  // Init field detector
   initFieldDetector(
     (field) => {
       activeField = field;
@@ -99,26 +166,23 @@ async function main() {
     "pagehide",
     () => {
       globalWindow[INIT_FLAG] = false;
+      darkMq.removeEventListener?.("change", onSchemeChange);
       void destroySessions().catch(() => {});
     },
     { once: true }
   );
 }
 
-// All CSS injected into Shadow DOM
 const CSS_TEXT = `
 /* ===== Design Tokens ===== */
 :host {
-  --wg-gradient: linear-gradient(135deg, #ff8a57 0%, #ffb36b 100%);
-  --wg-bg-soft: linear-gradient(145deg, #fff0e3 0%, #fffaf4 100%);
-  --wg-bg-muted: #fffaf6;
-  --wg-text: #2f211a;
-  --wg-text-secondary: #755a4a;
-  --wg-border: rgba(190, 141, 109, 0.24);
-  --wg-card-bg: rgba(255, 252, 248, 0.96);
-  --wg-shadow: 0 24px 54px rgba(110, 70, 43, 0.18);
+  ${FONT_TOKENS_CSS}
+  ${tokensToCssVars("light")}
   --wg-radius: 18px;
-  --wg-font: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+:host([data-wg-theme="dark"]) {
+  ${tokensToCssVars("dark")}
 }
 
 * {
@@ -134,25 +198,27 @@ const CSS_TEXT = `
   height: 38px;
   border-radius: 14px;
   background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.38), transparent 42%),
+    radial-gradient(circle at top left, rgba(255,255,255,0.42), transparent 48%),
     var(--wg-gradient);
   color: white;
-  font-family: var(--wg-font);
-  font-size: 15px;
-  font-weight: 800;
+  font-family: var(--wg-font-display);
+  font-size: 20px;
+  font-weight: 700;
+  font-variation-settings: "opsz" 48, "SOFT" 60, "WONK" 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   opacity: 0;
   transform: scale(0.8);
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   pointer-events: none;
-  box-shadow: 0 14px 24px rgba(163, 97, 38, 0.28);
+  box-shadow: var(--wg-icon-shadow);
   z-index: 2147483647;
   user-select: none;
   border: 1px solid rgba(255, 255, 255, 0.34);
   backdrop-filter: blur(8px);
+  line-height: 1;
 }
 
 .wg-floating-icon.wg-visible {
@@ -163,7 +229,7 @@ const CSS_TEXT = `
 
 .wg-floating-icon:hover {
   transform: scale(1.08) translateY(-1px);
-  box-shadow: 0 18px 26px rgba(163, 97, 38, 0.34);
+  box-shadow: 0 18px 30px rgba(163, 97, 38, 0.38);
 }
 
 .wg-floating-icon.wg-loading {
@@ -184,13 +250,15 @@ const CSS_TEXT = `
   padding: 0 6px;
   border-radius: 999px;
   color: white;
-  font-size: 9px;
-  font-weight: 800;
+  font-family: var(--wg-font-body);
+  font-size: 10px;
+  font-weight: 700;
+  font-feature-settings: "tnum" 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-  border: 2px solid rgba(255, 250, 246, 0.96);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22);
+  border: 2px solid var(--wg-bg-muted);
 }
 
 /* ===== Popup Card ===== */
@@ -199,12 +267,12 @@ const CSS_TEXT = `
   width: 360px;
   max-height: 520px;
   background:
-    radial-gradient(circle at top right, rgba(255, 219, 188, 0.45), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 219, 188, 0.28), transparent 28%),
     var(--wg-card-bg);
   border-radius: var(--wg-radius);
   box-shadow: var(--wg-shadow);
   border: 1px solid var(--wg-border);
-  font-family: var(--wg-font);
+  font-family: var(--wg-font-body);
   color: var(--wg-text);
   overflow: hidden;
   opacity: 0;
@@ -213,6 +281,7 @@ const CSS_TEXT = `
   pointer-events: none;
   z-index: 2147483647;
   backdrop-filter: blur(18px);
+  -webkit-font-smoothing: antialiased;
 }
 
 .wg-popup-card.wg-visible {
@@ -227,7 +296,7 @@ const CSS_TEXT = `
   justify-content: space-between;
   padding: 14px 16px 12px;
   background: var(--wg-bg-soft);
-  border-bottom: 1px solid var(--wg-border);
+  border-bottom: 1px solid var(--wg-border-soft);
 }
 
 .wg-popup-heading {
@@ -237,24 +306,29 @@ const CSS_TEXT = `
 }
 
 .wg-popup-kicker {
+  font-family: var(--wg-font-body);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #a26640;
+  color: var(--wg-accent-strong);
 }
 
 .wg-popup-title {
-  font-size: 15px;
-  font-weight: 800;
+  font-family: var(--wg-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  font-variation-settings: "opsz" 36, "SOFT" 50, "WONK" 1;
   color: var(--wg-text);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
 }
 
 .wg-close-btn {
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--wg-button-secondary-bg);
   border: none;
   font-size: 18px;
   color: var(--wg-text-secondary);
@@ -265,8 +339,12 @@ const CSS_TEXT = `
 }
 .wg-close-btn:hover {
   color: var(--wg-text);
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--wg-button-secondary-hover-bg);
   transform: rotate(90deg);
+}
+.wg-close-btn:focus-visible {
+  outline: 2px solid var(--wg-focus-ring);
+  outline-offset: 2px;
 }
 
 .wg-popup-body {
@@ -278,29 +356,33 @@ const CSS_TEXT = `
 .wg-empty-state {
   padding: 14px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,246,239,0.88) 100%);
-  border: 1px solid rgba(190, 141, 109, 0.2);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+  background: var(--wg-surface-raised);
+  border: 1px solid var(--wg-border-soft);
+  box-shadow: inset 0 1px 0 var(--wg-glass-highlight);
 }
 
 .wg-empty-eyebrow {
   display: inline-flex;
   padding: 5px 9px;
   border-radius: 999px;
-  background: rgba(255, 138, 87, 0.12);
-  color: #a45b2d;
+  background: rgba(255, 138, 87, 0.14);
+  color: var(--wg-accent-strong);
+  font-family: var(--wg-font-body);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .wg-empty-title {
   margin-top: 10px;
-  font-size: 18px;
-  line-height: 1.25;
-  font-weight: 800;
+  font-family: var(--wg-font-display);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  font-variation-settings: "opsz" 36, "SOFT" 50, "WONK" 1;
   color: var(--wg-text);
+  letter-spacing: -0.01em;
 }
 
 .wg-empty-copy {
@@ -320,30 +402,31 @@ const CSS_TEXT = `
 .wg-pill {
   display: inline-flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(190, 141, 109, 0.2);
+  background: var(--wg-pill-bg);
+  border: 1px solid var(--wg-border-soft);
   font-size: 11px;
-  font-weight: 700;
-  color: #8e5c3b;
+  font-weight: 600;
+  color: var(--wg-accent-soft);
+  letter-spacing: 0.01em;
 }
 
 .wg-popup-actions {
   display: flex;
   gap: 8px;
   padding: 12px 16px 14px;
-  border-top: 1px solid var(--wg-border);
-  background: rgba(255, 250, 246, 0.82);
+  border-top: 1px solid var(--wg-border-soft);
+  background: var(--wg-bg-soft);
 }
 
 .wg-popup-footer {
   padding: 10px 16px 12px;
   text-align: center;
   font-size: 11px;
-  color: var(--wg-text-secondary);
-  border-top: 1px solid var(--wg-border);
-  background: rgba(255, 246, 239, 0.74);
+  color: var(--wg-text-tertiary);
+  border-top: 1px solid var(--wg-border-soft);
+  background: var(--wg-bg-soft);
 }
 
 /* ===== Buttons ===== */
@@ -351,31 +434,37 @@ const CSS_TEXT = `
   flex: 1;
   padding: 10px 16px;
   border-radius: 12px;
-  font-family: var(--wg-font);
+  font-family: var(--wg-font-body);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.wg-btn:focus-visible {
+  outline: 2px solid var(--wg-focus-ring);
+  outline-offset: 2px;
 }
 
 .wg-btn-primary {
   background: var(--wg-gradient);
   color: white;
+  font-weight: 700;
 }
 .wg-btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 20px rgba(163, 97, 38, 0.24);
+  box-shadow: 0 12px 22px rgba(163, 97, 38, 0.28);
 }
 
 .wg-btn-secondary {
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--wg-button-secondary-bg);
   color: var(--wg-text);
   border-color: var(--wg-border);
 }
 .wg-btn-secondary:hover {
-  background: rgba(255, 244, 235, 0.96);
-  border-color: rgba(190, 141, 109, 0.4);
+  background: var(--wg-button-secondary-hover-bg);
+  border-color: var(--wg-border);
 }
 
 /* ===== Score Display ===== */
@@ -384,8 +473,8 @@ const CSS_TEXT = `
   margin-bottom: 12px;
   padding: 14px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,247,241,0.92) 100%);
-  border: 1px solid rgba(190, 141, 109, 0.18);
+  background: var(--wg-surface-raised);
+  border: 1px solid var(--wg-border-soft);
 }
 
 .wg-gauge-wrap {
@@ -403,7 +492,7 @@ const CSS_TEXT = `
 
 .wg-gauge-bg {
   fill: none;
-  stroke: #f3e7dc;
+  stroke: var(--wg-gauge-track);
   stroke-width: 8;
 }
 
@@ -414,7 +503,7 @@ const CSS_TEXT = `
   stroke-linecap: round;
   stroke-dasharray: 314;
   stroke-dashoffset: 314;
-  transition: stroke 0.3s ease;
+  transition: stroke 0.3s ease, stroke-dashoffset 0.6s ease;
 }
 
 .wg-score-number {
@@ -423,14 +512,21 @@ const CSS_TEXT = `
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: 800;
+  font-family: var(--wg-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  font-variation-settings: "opsz" 48, "SOFT" 50, "WONK" 1;
+  font-feature-settings: "tnum" 1;
   color: var(--wg-text);
+  letter-spacing: -0.02em;
 }
 
 .wg-tier-label {
-  font-size: 14px;
+  font-family: var(--wg-font-display);
+  font-size: 15px;
   font-weight: 700;
+  font-variation-settings: "opsz" 24, "SOFT" 60, "WONK" 1;
+  letter-spacing: -0.005em;
 }
 
 /* ===== Loading ===== */
@@ -438,13 +534,13 @@ const CSS_TEXT = `
   text-align: center;
   padding: 18px 14px;
   border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.86) 0%, rgba(255,247,241,0.86) 100%);
-  border: 1px solid rgba(190, 141, 109, 0.18);
+  background: var(--wg-surface-raised);
+  border: 1px solid var(--wg-border-soft);
 }
 
 .wg-progress-bar {
   height: 6px;
-  background: #f3e7dc;
+  background: var(--wg-gauge-track);
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -488,36 +584,38 @@ const CSS_TEXT = `
   font-size: 13px;
   line-height: 1.6;
   padding: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,247,241,0.9) 100%);
+  background: var(--wg-surface-raised);
   border-radius: 14px;
-  border: 1px solid rgba(190, 141, 109, 0.18);
+  border: 1px solid var(--wg-border-soft);
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 180px;
   overflow-y: auto;
+  color: var(--wg-text);
 }
 
 .wg-diff-remove {
-  background: #FFE0E0;
-  color: #CC3333;
+  background: var(--wg-diff-remove-bg);
+  color: var(--wg-diff-remove-fg);
   text-decoration: line-through;
-  border-radius: 2px;
-  padding: 0 2px;
+  border-radius: 3px;
+  padding: 0 3px;
 }
 
 .wg-diff-add {
-  background: #DFFFDF;
-  color: #2E8B2E;
-  border-radius: 2px;
-  padding: 0 2px;
+  background: var(--wg-diff-add-bg);
+  color: var(--wg-diff-add-fg);
+  border-radius: 3px;
+  padding: 0 3px;
+  font-weight: 600;
 }
 
 .wg-diff-perfect {
-  color: #2ECC71;
+  color: var(--wg-diff-add-fg);
   font-size: 13px;
   text-align: center;
   padding: 8px;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .wg-diff-actions {
@@ -542,36 +640,41 @@ const CSS_TEXT = `
   flex-direction: column;
   align-items: flex-start;
   padding: 10px 11px;
-  border: 1px solid rgba(190, 141, 109, 0.22);
+  border: 1px solid var(--wg-border-soft);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--wg-pill-bg);
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: var(--wg-font);
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  font-family: var(--wg-font-body);
   text-align: left;
 }
 
 .wg-tone-btn:hover {
-  border-color: #ff9c66;
-  background: rgba(255, 241, 230, 0.98);
+  border-color: var(--wg-tone-selected-border);
+  background: var(--wg-tone-hover-bg);
+}
+
+.wg-tone-btn:focus-visible {
+  outline: 2px solid var(--wg-focus-ring);
+  outline-offset: 2px;
 }
 
 .wg-tone-btn.wg-tone-selected {
-  border-color: #ff9c66;
-  background: linear-gradient(135deg, #fff0e3 0%, #fff9f2 100%);
+  border-color: var(--wg-tone-selected-border);
+  background: var(--wg-tone-selected-bg);
   box-shadow: 0 0 0 1px rgba(255, 156, 102, 0.4);
 }
 
 .wg-tone-name {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--wg-text);
 }
 
 .wg-tone-sub {
-  font-size: 10px;
+  font-size: 10.5px;
   color: var(--wg-text-secondary);
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 /* ===== Rewrite Result ===== */
@@ -583,24 +686,25 @@ const CSS_TEXT = `
   font-size: 13px;
   line-height: 1.6;
   padding: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,247,241,0.9) 100%);
+  background: var(--wg-surface-raised);
   border-radius: 14px;
-  border: 1px solid rgba(190, 141, 109, 0.18);
+  border: 1px solid var(--wg-border-soft);
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 200px;
   overflow-y: auto;
+  color: var(--wg-text);
 }
 
 /* ===== Error ===== */
 .wg-error {
-  color: #CC3333;
+  color: var(--wg-error-fg);
   font-size: 13px;
   text-align: center;
   padding: 14px;
-  background: linear-gradient(180deg, #fff5f3 0%, #fff0ed 100%);
+  background: var(--wg-error-bg);
   border-radius: 14px;
-  border: 1px solid #ffd8d2;
+  border: 1px solid var(--wg-error-border);
 }
 
 /* ===== Reduced Motion ===== */

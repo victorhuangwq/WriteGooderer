@@ -5,21 +5,54 @@ const statusText = document.getElementById("statusText")!;
 const statusHint = document.getElementById("statusHint")!;
 const siteToggle = document.getElementById("siteToggle") as HTMLInputElement;
 
+function renderReady(): void {
+  statusDot.className = "status-dot status-ready";
+  statusText.textContent = "Ready in this Chrome build";
+  statusHint.textContent =
+    "The Prompt API is available, so proofread and tone rewrites run locally.";
+}
+
+function renderError(): void {
+  statusDot.className = "status-dot status-error";
+  statusText.textContent = "Prompt API unavailable";
+  statusHint.innerHTML = "";
+
+  const list = document.createElement("ol");
+
+  const flagsItem = document.createElement("li");
+  flagsItem.append('Enable "Prompt API for Gemini Nano" in ');
+  const flagsBtn = document.createElement("button");
+  flagsBtn.className = "status-link";
+  flagsBtn.type = "button";
+  flagsBtn.textContent = "chrome://flags";
+  flagsBtn.addEventListener("click", () => {
+    chrome.tabs.create({ url: "chrome://flags/#prompt-api-for-gemini-nano" });
+  });
+  flagsItem.append(flagsBtn, ".");
+
+  const componentsItem = document.createElement("li");
+  componentsItem.append("Update the on-device model in ");
+  const componentsBtn = document.createElement("button");
+  componentsBtn.className = "status-link";
+  componentsBtn.type = "button";
+  componentsBtn.textContent = "chrome://components";
+  componentsBtn.addEventListener("click", () => {
+    chrome.tabs.create({ url: "chrome://components" });
+  });
+  componentsItem.append(componentsBtn, ".");
+
+  list.append(flagsItem, componentsItem);
+  statusHint.appendChild(list);
+}
+
 async function init() {
-  // Check if Chrome AI API is available
   const ai = (self as any).ai;
   if (ai?.languageModel) {
-    statusDot.className = "status-dot status-ready";
-    statusText.textContent = "Ready in this Chrome build";
-    statusHint.textContent = "The Prompt API is available, so proofread and tone rewrites can run locally.";
+    renderReady();
   } else {
-    statusDot.className = "status-dot status-error";
-    statusText.textContent = "Prompt API unavailable";
-    statusHint.textContent =
-      'Enable "Prompt API for Gemini Nano" in chrome://flags and update the model in chrome://components.';
+    renderError();
   }
 
-  // Site toggle
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab?.url) {
     try {
@@ -31,9 +64,11 @@ async function init() {
         await toggleSite(hostname);
       });
     } catch {
-      // chrome:// or other special pages
       siteToggle.disabled = true;
-      statusHint.textContent ||= "WriteGooderer does not run on special Chrome pages.";
+      if (!statusHint.textContent?.trim() && !statusHint.childElementCount) {
+        statusHint.textContent =
+          "WriteGooderer does not run on special Chrome pages.";
+      }
     }
   }
 }

@@ -1,3 +1,5 @@
+import { getReadableBadgeBg } from "../shared/design-tokens";
+
 export class FloatingIcon {
   private el: HTMLElement;
   private scoreEl: HTMLElement;
@@ -10,7 +12,10 @@ export class FloatingIcon {
 
     this.el = document.createElement("div");
     this.el.className = "wg-floating-icon";
-    this.el.innerHTML = "W";
+    this.el.setAttribute("role", "button");
+    this.el.setAttribute("tabindex", "0");
+    this.el.setAttribute("aria-label", "Open WriteGooderer");
+    this.el.textContent = "W";
     this.el.addEventListener("mousedown", (e) => {
       e.preventDefault(); // prevent focusout on the field
       e.stopPropagation();
@@ -19,6 +24,12 @@ export class FloatingIcon {
       e.preventDefault();
       e.stopPropagation();
       this.onClick();
+    });
+    this.el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        this.onClick();
+      }
     });
 
     this.scoreEl = document.createElement("span");
@@ -48,7 +59,7 @@ export class FloatingIcon {
 
   showScore(score: number, color: string): void {
     this.scoreEl.textContent = String(score);
-    this.scoreEl.style.backgroundColor = color;
+    this.scoreEl.style.backgroundColor = getReadableBadgeBg(color);
     this.scoreEl.style.display = "flex";
   }
 
