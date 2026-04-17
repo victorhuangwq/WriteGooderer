@@ -6,7 +6,7 @@ import { LoadingState } from "./loading-state";
 import { DiffView } from "./diff-view";
 import { ToneSelector } from "./tone-selector";
 
-const POPUP_WIDTH = 360;
+const POPUP_WIDTH = 520;
 const POPUP_MAX_HEIGHT = 520;
 const POPUP_GAP = 8;
 const VIEWPORT_PADDING = 8;
@@ -17,7 +17,6 @@ export class PopupCard {
   private headerEl: HTMLElement;
   private bodyEl: HTMLElement;
   private actionsEl: HTMLElement;
-  private footerEl: HTMLElement;
   private emptyStateEl: HTMLElement;
   private scoreDisplay: ScoreDisplay;
   private loadingState: LoadingState;
@@ -46,7 +45,6 @@ export class PopupCard {
     this.headerEl.className = "wg-popup-header";
     this.headerEl.innerHTML = `
       <div class="wg-popup-heading">
-        <span class="wg-popup-kicker">On-device writing assist</span>
         <span class="wg-popup-title">WriteGooderer</span>
       </div>
       <button class="wg-close-btn" aria-label="Close WriteGooderer">&times;</button>
@@ -66,11 +64,6 @@ export class PopupCard {
       <p class="wg-empty-copy">
         Grammar, spelling, punctuation, and punchier rewrites without sending your text to a cloud API.
       </p>
-      <div class="wg-pill-row">
-        <span class="wg-pill">Grammar + clarity</span>
-        <span class="wg-pill">Tone presets</span>
-        <span class="wg-pill">Local only</span>
-      </div>
     `;
 
     // Score display
@@ -117,15 +110,9 @@ export class PopupCard {
     this.actionsEl.appendChild(proofreadBtn);
     this.actionsEl.appendChild(toneBtn);
 
-    // Footer
-    this.footerEl = document.createElement("div");
-    this.footerEl.className = "wg-popup-footer";
-    this.footerEl.textContent = "Chrome Prompt API · local only";
-
     this.el.appendChild(this.headerEl);
     this.el.appendChild(this.bodyEl);
     this.el.appendChild(this.actionsEl);
-    this.el.appendChild(this.footerEl);
 
     shadowRoot.appendChild(this.el);
   }
@@ -172,7 +159,6 @@ export class PopupCard {
     const chromeHeight =
       this.headerEl.offsetHeight +
       this.actionsEl.offsetHeight +
-      this.footerEl.offsetHeight +
       2;
     const popupMaxHeight = Math.max(
       chromeHeight + MIN_BODY_HEIGHT,

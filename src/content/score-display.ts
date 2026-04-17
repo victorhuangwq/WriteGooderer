@@ -34,20 +34,20 @@ export class ScoreDisplay {
     svg.appendChild(bgCircle);
     svg.appendChild(this.gaugeCircle);
 
-    // Score number overlay
-    this.scoreText = document.createElement("span");
-    this.scoreText.className = "wg-score-number";
-
     const gaugeWrap = document.createElement("div");
     gaugeWrap.className = "wg-gauge-wrap";
     gaugeWrap.appendChild(svg);
-    gaugeWrap.appendChild(this.scoreText);
+
+    // Score number (sibling of the gauge, inline)
+    this.scoreText = document.createElement("span");
+    this.scoreText.className = "wg-score-number";
 
     // Tier label
     this.tierLabel = document.createElement("div");
     this.tierLabel.className = "wg-tier-label";
 
     this.el.appendChild(gaugeWrap);
+    this.el.appendChild(this.scoreText);
     this.el.appendChild(this.tierLabel);
   }
 
