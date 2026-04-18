@@ -264,7 +264,7 @@ const CSS_TEXT = `
 /* ===== Popup Card ===== */
 .wg-popup-card {
   position: absolute;
-  width: 360px;
+  width: 520px;
   max-height: 520px;
   background:
     radial-gradient(circle at top right, rgba(255, 219, 188, 0.28), transparent 28%),
@@ -305,15 +305,6 @@ const CSS_TEXT = `
   gap: 3px;
 }
 
-.wg-popup-kicker {
-  font-family: var(--wg-font-body);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--wg-accent-strong);
-}
-
 .wg-popup-title {
   font-family: var(--wg-font-display);
   font-size: 17px;
@@ -349,7 +340,6 @@ const CSS_TEXT = `
 
 .wg-popup-body {
   padding: 16px;
-  max-height: 380px;
   overflow-y: auto;
 }
 
@@ -392,39 +382,10 @@ const CSS_TEXT = `
   color: var(--wg-text-secondary);
 }
 
-.wg-pill-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.wg-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--wg-pill-bg);
-  border: 1px solid var(--wg-border-soft);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--wg-accent-soft);
-  letter-spacing: 0.01em;
-}
-
 .wg-popup-actions {
   display: flex;
   gap: 8px;
   padding: 12px 16px 14px;
-  border-top: 1px solid var(--wg-border-soft);
-  background: var(--wg-bg-soft);
-}
-
-.wg-popup-footer {
-  padding: 10px 16px 12px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--wg-text-tertiary);
   border-top: 1px solid var(--wg-border-soft);
   background: var(--wg-bg-soft);
 }
@@ -469,9 +430,11 @@ const CSS_TEXT = `
 
 /* ===== Score Display ===== */
 .wg-score-display {
-  text-align: center;
-  margin-bottom: 12px;
-  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding: 10px 14px;
   border-radius: 16px;
   background: var(--wg-surface-raised);
   border: 1px solid var(--wg-border-soft);
@@ -479,9 +442,10 @@ const CSS_TEXT = `
 
 .wg-gauge-wrap {
   position: relative;
-  width: 90px;
-  height: 90px;
-  margin: 0 auto 8px;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .wg-gauge {
@@ -493,13 +457,13 @@ const CSS_TEXT = `
 .wg-gauge-bg {
   fill: none;
   stroke: var(--wg-gauge-track);
-  stroke-width: 8;
+  stroke-width: 6;
 }
 
 .wg-gauge-fill {
   fill: none;
   stroke: #4ECDC4;
-  stroke-width: 8;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-dasharray: 314;
   stroke-dashoffset: 314;
@@ -507,26 +471,23 @@ const CSS_TEXT = `
 }
 
 .wg-score-number {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: var(--wg-font-display);
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   font-variation-settings: "opsz" 48, "SOFT" 50, "WONK" 1;
   font-feature-settings: "tnum" 1;
   color: var(--wg-text);
   letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 .wg-tier-label {
   font-family: var(--wg-font-display);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   font-variation-settings: "opsz" 24, "SOFT" 60, "WONK" 1;
   letter-spacing: -0.005em;
+  margin-left: auto;
 }
 
 /* ===== Loading ===== */
