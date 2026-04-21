@@ -250,6 +250,7 @@ export class PopupCard {
       }
 
       this.scoreDisplay.element.style.display = "block";
+      this.scoreDisplay.setChangeCount(result.changes.length);
       this.scoreDisplay.setScore(result.score);
       this.diffView.show(text, result.corrected, result.changes);
     } catch (err) {
