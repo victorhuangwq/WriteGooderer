@@ -21,7 +21,7 @@ export class ToneSelector {
       const tone = key as TonePreset;
       const btn = document.createElement("button");
       btn.className = "wg-tone-btn";
-      btn.innerHTML = `<span class="wg-tone-name">${config.name}</span><span class="wg-tone-sub">${config.subtitle}</span>`;
+      btn.innerHTML = `<span class="wg-tone-emoji">${config.emoji}</span><span class="wg-tone-text"><span class="wg-tone-name">${config.name}</span><span class="wg-tone-sub">${config.subtitle}</span></span>`;
       btn.addEventListener("click", () => this.selectTone(tone));
       grid.appendChild(btn);
       this.buttons.set(tone, btn);
