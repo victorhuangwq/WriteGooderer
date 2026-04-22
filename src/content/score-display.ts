@@ -58,9 +58,13 @@ export class ScoreDisplay {
     this.metaLabel = document.createElement("div");
     this.metaLabel.className = "wg-score-meta";
 
+    const info = document.createElement("div");
+    info.className = "wg-score-info";
+    info.appendChild(this.tierLabel);
+    info.appendChild(this.metaLabel);
+
     this.el.appendChild(this.gaugeWrap);
-    this.el.appendChild(this.tierLabel);
-    this.el.appendChild(this.metaLabel);
+    this.el.appendChild(info);
   }
 
   get element(): HTMLElement {

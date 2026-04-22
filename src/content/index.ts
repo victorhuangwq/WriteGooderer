@@ -197,15 +197,13 @@ const CSS_TEXT = `
 /* ===== Floating Icon ===== */
 .wg-floating-icon {
   position: absolute;
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.42), transparent 48%),
-    var(--wg-gradient);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--wg-gradient);
   color: white;
   font-family: var(--wg-font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   font-variation-settings: "opsz" 48, "SOFT" 60, "WONK" 1;
   display: flex;
@@ -216,11 +214,10 @@ const CSS_TEXT = `
   transform: scale(0.8);
   transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   pointer-events: none;
-  box-shadow: var(--wg-icon-shadow);
+  box-shadow: 0 4px 10px rgba(163, 97, 38, 0.22);
   z-index: 2147483647;
   user-select: none;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  backdrop-filter: blur(8px);
+  border: none;
   line-height: 1;
 }
 
@@ -231,17 +228,17 @@ const CSS_TEXT = `
 }
 
 .wg-floating-icon:hover {
-  transform: scale(1.08) translateY(-1px);
-  box-shadow: 0 18px 30px rgba(163, 97, 38, 0.38);
-  animation: wg-wobble 0.6s var(--wg-spring);
+  transform: scale(1.06);
+  box-shadow: 0 8px 16px rgba(163, 97, 38, 0.28);
+  animation: wg-wobble 0.5s var(--wg-spring);
 }
 
 @keyframes wg-wobble {
-  0% { transform: scale(1.08) translateY(-1px) rotate(0deg); }
-  25% { transform: scale(1.08) translateY(-1px) rotate(-6deg); }
-  50% { transform: scale(1.08) translateY(-1px) rotate(6deg); }
-  75% { transform: scale(1.08) translateY(-1px) rotate(-3deg); }
-  100% { transform: scale(1.08) translateY(-1px) rotate(0deg); }
+  0% { transform: scale(1.06) rotate(0deg); }
+  25% { transform: scale(1.06) rotate(-5deg); }
+  50% { transform: scale(1.06) rotate(5deg); }
+  75% { transform: scale(1.06) rotate(-2deg); }
+  100% { transform: scale(1.06) rotate(0deg); }
 }
 
 .wg-floating-icon.wg-loading {
@@ -278,11 +275,9 @@ const CSS_TEXT = `
   position: absolute;
   width: 520px;
   max-height: 520px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 219, 188, 0.28), transparent 28%),
-    var(--wg-card-bg);
+  background: var(--wg-card-bg);
   border-radius: var(--wg-radius);
-  box-shadow: var(--wg-shadow);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid var(--wg-border);
   font-family: var(--wg-font-body);
   color: var(--wg-text);
@@ -292,7 +287,6 @@ const CSS_TEXT = `
   transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
   z-index: 2147483647;
-  backdrop-filter: blur(18px);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -356,11 +350,10 @@ const CSS_TEXT = `
 }
 
 .wg-empty-state {
-  padding: 14px;
-  border-radius: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
   background: var(--wg-surface-raised);
   border: 1px solid var(--wg-border-soft);
-  box-shadow: inset 0 1px 0 var(--wg-glass-highlight);
 }
 
 .wg-empty-eyebrow {
@@ -427,7 +420,7 @@ const CSS_TEXT = `
 }
 .wg-btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 22px rgba(163, 97, 38, 0.28);
+  box-shadow: 0 4px 10px rgba(163, 97, 38, 0.2);
 }
 
 .wg-btn-secondary {
@@ -442,32 +435,26 @@ const CSS_TEXT = `
 
 /* ===== Score Display ===== */
 .wg-score-display {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 14px;
-  row-gap: 2px;
+  display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: var(--wg-surface-raised);
-  border: 1px solid var(--wg-border-soft);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  gap: 16px;
+  margin-bottom: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  transition: opacity 0.3s ease;
 }
 
-.wg-score-display.is-perfect {
-  border-color: var(--wg-tier-color);
-  box-shadow: 0 0 0 1px var(--wg-tier-color), 0 12px 30px color-mix(in srgb, var(--wg-tier-color) 28%, transparent);
+.wg-score-display.is-perfect .wg-gauge-fill {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--wg-tier-color) 60%, transparent));
 }
 
 .wg-gauge-wrap {
   position: relative;
-  width: 72px;
-  height: 72px;
-  margin: 0;
+  width: 76px;
+  height: 76px;
   flex-shrink: 0;
-  grid-row: 1 / span 2;
+  display: block;
 }
 
 .wg-gauge-wrap.wg-bump {
@@ -480,11 +467,9 @@ const CSS_TEXT = `
   100% { transform: scale(1); }
 }
 
-.wg-score-display.is-perfect .wg-gauge-wrap {
-  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--wg-tier-color) 55%, transparent));
-}
-
 .wg-gauge {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
@@ -508,49 +493,55 @@ const CSS_TEXT = `
 
 .wg-gauge-inner {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  line-height: 1;
   pointer-events: none;
+  text-align: center;
 }
 
 .wg-tier-emoji {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1;
+  margin-bottom: 2px;
 }
 
 .wg-score-number {
   font-family: var(--wg-font-display);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   font-variation-settings: "opsz" 48, "SOFT" 50, "WONK" 1;
   font-feature-settings: "tnum" 1;
   color: var(--wg-text);
   letter-spacing: -0.02em;
-  line-height: 1.1;
+  line-height: 1;
+}
+
+.wg-score-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .wg-tier-label {
   font-family: var(--wg-font-display);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-variation-settings: "opsz" 24, "SOFT" 60, "WONK" 1;
   letter-spacing: -0.005em;
-  grid-column: 2;
-  grid-row: 1;
-  align-self: end;
+  line-height: 1.2;
 }
 
 .wg-score-meta {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: start;
   font-size: 12px;
   color: var(--wg-text-secondary);
-  font-style: italic;
+  line-height: 1.3;
 }
 
 /* ===== Loading ===== */
@@ -848,7 +839,6 @@ const CSS_TEXT = `
 .wg-tone-btn.wg-tone-selected {
   border-color: var(--wg-tone-selected-border);
   background: var(--wg-tone-selected-bg);
-  box-shadow: 0 0 0 1px rgba(255, 156, 102, 0.4);
 }
 
 .wg-tone-name {
