@@ -305,6 +305,7 @@ export class PopupCard {
     this.rewriteResult.innerHTML = "";
     this.emptyStateEl.style.display = "none";
     this.rewriteResult.style.display = "block";
+    this.actionsEl.style.display = "none";
 
     const pre = document.createElement("div");
     pre.className = "wg-rewrite-text";
