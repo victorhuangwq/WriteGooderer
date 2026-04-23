@@ -50,6 +50,7 @@ export class PopupCard {
       <button class="wg-close-btn" aria-label="Close WriteGooderer">&times;</button>
     `;
     this.headerEl.querySelector(".wg-close-btn")!.addEventListener("click", () => this.hide());
+    const headingEl = this.headerEl.querySelector(".wg-popup-heading") as HTMLElement;
 
     // Body (results area)
     this.bodyEl = document.createElement("div");
@@ -86,8 +87,9 @@ export class PopupCard {
     this.rewriteResult.className = "wg-rewrite-result";
     this.rewriteResult.style.display = "none";
 
+    headingEl.appendChild(this.scoreDisplay.element);
+
     this.bodyEl.appendChild(this.emptyStateEl);
-    this.bodyEl.appendChild(this.scoreDisplay.element);
     this.bodyEl.appendChild(this.loadingState.element);
     this.bodyEl.appendChild(this.diffView.element);
     this.bodyEl.appendChild(this.toneSelector.element);
@@ -203,6 +205,7 @@ export class PopupCard {
     this.diffView.hide();
     this.toneSelector.hide();
     this.rewriteResult.style.display = "none";
+    this.actionsEl.style.display = "";
   }
 
   private getFieldText(field: HTMLElement | null = this.activeField): string {
@@ -249,10 +252,10 @@ export class PopupCard {
         return;
       }
 
-      this.scoreDisplay.element.style.display = "block";
-      this.scoreDisplay.setChangeCount(result.changes.length);
+      this.scoreDisplay.element.style.display = "inline-flex";
       this.scoreDisplay.setScore(result.score);
       this.diffView.show(text, result.corrected, result.changes);
+      this.actionsEl.style.display = "none";
     } catch (err) {
       if (!requestField || this.activeField !== requestField) {
         return;

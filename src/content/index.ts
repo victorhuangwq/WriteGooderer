@@ -307,8 +307,9 @@ const CSS_TEXT = `
 
 .wg-popup-heading {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .wg-popup-title {
@@ -435,13 +436,13 @@ const CSS_TEXT = `
 
 /* ===== Score Display ===== */
 .wg-score-display {
-  display: flex;
+  display: none;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 12px;
-  padding: 0;
-  background: transparent;
-  border: none;
+  gap: 6px;
+  padding: 3px 10px 3px 4px;
+  background: var(--wg-surface-raised);
+  border: 1px solid var(--wg-border-soft);
+  border-radius: 999px;
   transition: opacity 0.3s ease;
 }
 
@@ -451,8 +452,8 @@ const CSS_TEXT = `
 
 .wg-gauge-wrap {
   position: relative;
-  width: 76px;
-  height: 76px;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
   display: block;
 }
@@ -505,43 +506,25 @@ const CSS_TEXT = `
   text-align: center;
 }
 
-.wg-tier-emoji {
-  font-size: 14px;
-  line-height: 1;
-  margin-bottom: 2px;
-}
-
 .wg-score-number {
   font-family: var(--wg-font-display);
-  font-size: 22px;
+  font-size: 11px;
   font-weight: 700;
-  font-variation-settings: "opsz" 48, "SOFT" 50, "WONK" 1;
+  font-variation-settings: "opsz" 18, "SOFT" 50, "WONK" 1;
   font-feature-settings: "tnum" 1;
   color: var(--wg-text);
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
-.wg-score-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
 .wg-tier-label {
   font-family: var(--wg-font-display);
-  font-size: 16px;
-  font-weight: 700;
-  font-variation-settings: "opsz" 24, "SOFT" 60, "WONK" 1;
-  letter-spacing: -0.005em;
-  line-height: 1.2;
-}
-
-.wg-score-meta {
   font-size: 12px;
-  color: var(--wg-text-secondary);
-  line-height: 1.3;
+  font-weight: 700;
+  font-variation-settings: "opsz" 18, "SOFT" 60, "WONK" 1;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* ===== Loading ===== */
@@ -598,79 +581,15 @@ const CSS_TEXT = `
 .wg-diff-content {
   font-size: 13px;
   line-height: 1.6;
-  padding: 4px 2px;
+  padding: 12px;
   max-height: 280px;
   overflow-y: auto;
   color: var(--wg-text);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.wg-suggestion {
-  padding: 10px 12px;
   background: var(--wg-surface-raised);
-  border-radius: 12px;
   border: 1px solid var(--wg-border-soft);
-  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.wg-suggestion.is-leaving {
-  opacity: 0;
-  transform: translateX(16px);
-}
-
-.wg-suggestion.is-ignored {
-  opacity: 0.5;
-  background: transparent;
-}
-
-.wg-suggestion-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-  gap: 8px;
-}
-
-.wg-suggestion-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.wg-btn-mini {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-family: var(--wg-font-body);
-  font-size: 11px;
-  font-weight: 600;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-}
-.wg-btn-mini:hover { transform: translateY(-1px); }
-.wg-btn-mini:focus-visible {
-  outline: 2px solid var(--wg-focus-ring);
-  outline-offset: 2px;
-}
-
-.wg-btn-accept {
-  background: var(--wg-diff-add-bg);
-  color: var(--wg-diff-add-fg);
-  border-color: color-mix(in srgb, var(--wg-diff-add-fg) 30%, transparent);
-}
-.wg-btn-accept:hover {
-  background: color-mix(in srgb, var(--wg-diff-add-bg) 75%, var(--wg-diff-add-fg) 25%);
-}
-
-.wg-btn-ignore {
-  background: transparent;
-  color: var(--wg-text-secondary);
-  border-color: var(--wg-border);
-}
-.wg-btn-ignore:hover {
-  color: var(--wg-text);
-  background: var(--wg-button-secondary-hover-bg);
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .wg-chip {
@@ -696,29 +615,6 @@ const CSS_TEXT = `
 .wg-chip-style {
   background: rgba(255, 138, 87, 0.16);
   color: var(--wg-accent-strong);
-}
-
-.wg-suggestion-diff {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 13px;
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.wg-diff-arrow {
-  color: var(--wg-text-secondary);
-  font-weight: 600;
-}
-
-.wg-suggestion-reason {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--wg-text-secondary);
-  font-style: italic;
-  line-height: 1.45;
 }
 
 .wg-diff-remove {
@@ -915,7 +811,6 @@ const CSS_TEXT = `
   .wg-floating-icon,
   .wg-popup-card,
   .wg-gauge-fill,
-  .wg-suggestion,
   .wg-tone-btn,
   .wg-score-display {
     transition: none;

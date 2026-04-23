@@ -7,11 +7,8 @@ export class ScoreDisplay {
   private gaugeWrap: HTMLElement;
   private gaugeCircle: SVGCircleElement;
   private scoreText: HTMLElement;
-  private tierEmoji: HTMLElement;
   private tierLabel: HTMLElement;
-  private metaLabel: HTMLElement;
   private currentScore = 0;
-  private changeCount = 0;
 
   constructor() {
     this.el = document.createElement("div");
@@ -36,15 +33,11 @@ export class ScoreDisplay {
     svg.appendChild(bgCircle);
     svg.appendChild(this.gaugeCircle);
 
-    this.tierEmoji = document.createElement("span");
-    this.tierEmoji.className = "wg-tier-emoji";
-
     this.scoreText = document.createElement("span");
     this.scoreText.className = "wg-score-number";
 
     const gaugeInner = document.createElement("div");
     gaugeInner.className = "wg-gauge-inner";
-    gaugeInner.appendChild(this.tierEmoji);
     gaugeInner.appendChild(this.scoreText);
 
     this.gaugeWrap = document.createElement("div");
@@ -52,19 +45,11 @@ export class ScoreDisplay {
     this.gaugeWrap.appendChild(svg);
     this.gaugeWrap.appendChild(gaugeInner);
 
-    this.tierLabel = document.createElement("div");
+    this.tierLabel = document.createElement("span");
     this.tierLabel.className = "wg-tier-label";
 
-    this.metaLabel = document.createElement("div");
-    this.metaLabel.className = "wg-score-meta";
-
-    const info = document.createElement("div");
-    info.className = "wg-score-info";
-    info.appendChild(this.tierLabel);
-    info.appendChild(this.metaLabel);
-
     this.el.appendChild(this.gaugeWrap);
-    this.el.appendChild(info);
+    this.el.appendChild(this.tierLabel);
   }
 
   get element(): HTMLElement {
@@ -77,28 +62,12 @@ export class ScoreDisplay {
     this.animateScore(score, tier);
   }
 
-  setChangeCount(n: number): void {
-    this.changeCount = n;
-    this.updateMeta();
-  }
-
-  private updateMeta(): void {
-    if (this.changeCount === 0) {
-      this.metaLabel.textContent = "no changes needed";
-    } else if (this.changeCount === 1) {
-      this.metaLabel.textContent = "1 suggestion";
-    } else {
-      this.metaLabel.textContent = `${this.changeCount} suggestions`;
-    }
-  }
-
   private animateScore(target: number, tier: ScoreTierConfig): void {
     const circumference = 2 * Math.PI * 50;
     const start = this.currentScore;
     const duration = 600;
     const startTime = performance.now();
 
-    this.tierEmoji.textContent = tier.emoji;
     this.gaugeWrap.classList.remove("wg-bump");
     void this.gaugeWrap.offsetWidth;
     this.gaugeWrap.classList.add("wg-bump");
