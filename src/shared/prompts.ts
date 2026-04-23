@@ -105,3 +105,76 @@ export function buildTonePrompt(text: string, tone: TonePreset): string {
   const config = TONES[tone];
   return `Tone: ${config.name} (${config.description})\n\nText: ${text}`;
 }
+
+export const DUAL_SYSTEM_PROMPT =
+  "You are WriteGooderer. You handle two tasks on user text: (a) proofread — return corrections, a 0-100 quality score, and a tier name; (b) rewrite in a specified tone — preserve meaning, commit fully to the tone. The user will first share a paragraph; acknowledge briefly with the single word READY and wait. When the user then asks you to proofread or rewrite, respond only with JSON matching the requested schema. Honest scoring: perfect text 90+, minor issues 60-80, significant issues below 50.";
+
+export const DUAL_INITIAL_PROMPTS: (
+  | { role: "system"; content: string }
+  | { role: "user"; content: string }
+  | { role: "assistant"; content: string }
+)[] = [
+  { role: "system", content: DUAL_SYSTEM_PROMPT },
+  {
+    role: "user",
+    content:
+      "Paragraph:\n\nI has went to the stor yesterday and buyed some mik.",
+  },
+  { role: "assistant", content: "READY" },
+  {
+    role: "user",
+    content: "Now proofread the paragraph above.",
+  },
+  {
+    role: "assistant",
+    content: JSON.stringify({
+      corrected: "I went to the store yesterday and bought some milk.",
+      changes: [
+        {
+          original: "has went",
+          replacement: "went",
+          reason: "Incorrect auxiliary verb",
+        },
+        { original: "stor", replacement: "store", reason: "Spelling" },
+        {
+          original: "buyed",
+          replacement: "bought",
+          reason: "Irregular past tense",
+        },
+        { original: "mik", replacement: "milk", reason: "Spelling" },
+      ],
+      score: 18,
+      tier: "Caveman",
+    }),
+  },
+  {
+    role: "user",
+    content: "Paragraph:\n\nI got promoted at work today.",
+  },
+  { role: "assistant", content: "READY" },
+  {
+    role: "user",
+    content:
+      "Now rewrite the paragraph above in this tone: LinkedIn Influencer (performative self-help hustle energy).",
+  },
+  {
+    role: "assistant",
+    content: JSON.stringify({
+      rewritten:
+        "I'm thrilled to announce that after years of dedication, countless late nights, and unwavering belief in myself...\n\nI got a promotion.\n\nBut this isn't about the title. It's about the JOURNEY.\n\nHere are 3 lessons I learned along the way:\n\n1. Show up every day\n2. Be authentic\n3. Never stop grinding\n\nAgree? \u{1F447}",
+    }),
+  },
+];
+
+export function buildWarmupPrompt(text: string): string {
+  return `Paragraph:\n\n${text}`;
+}
+
+export function buildProofreadInstruction(): string {
+  return "Now proofread the paragraph above.";
+}
+
+export function buildRewriteInstruction(tone: TonePreset): string {
+  const config = TONES[tone];
+  return `Now rewrite the paragraph above in this tone: ${config.name} (${config.description}).`;
+}

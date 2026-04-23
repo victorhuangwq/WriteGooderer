@@ -1,4 +1,12 @@
-import { proofread, rewrite } from "./ai-client";
+import {
+  canWarmText,
+  finalizeProofread,
+  finalizeRewrite,
+  proofread,
+  rewrite,
+  warmCloneForText,
+  type WarmClone,
+} from "./ai-client";
 import { getTierForScore } from "../shared/constants";
 import type { TonePreset } from "../shared/types";
 import { ScoreDisplay } from "./score-display";
@@ -25,6 +33,7 @@ export class PopupCard {
 
   private activeField: HTMLElement | null = null;
   private repositionRAF: number | null = null;
+  private pendingWarm: WarmClone | null = null;
   private onLoadingChange: (loading: boolean) => void;
   private onScoreReady: (field: HTMLElement, score: number, color: string) => void;
 
@@ -109,6 +118,7 @@ export class PopupCard {
     this.el.classList.add("wg-visible");
     this.attachToField(field);
     this.startTracking();
+    this.kickoffWarmup(field);
   }
 
   attachToField(field: HTMLElement): void {
@@ -116,6 +126,7 @@ export class PopupCard {
     this.activeField = field;
 
     if (changedField) {
+      this.disposePendingWarm();
       this.resetContent();
     }
 
@@ -125,7 +136,43 @@ export class PopupCard {
   hide(): void {
     this.el.classList.remove("wg-visible");
     this.stopTracking();
+    this.disposePendingWarm();
     this.resetContent();
+  }
+
+  private disposePendingWarm(): void {
+    if (this.pendingWarm) {
+      this.pendingWarm.dispose();
+      this.pendingWarm = null;
+    }
+  }
+
+  private kickoffWarmup(field: HTMLElement): void {
+    const text = this.getFieldText(field);
+    if (!canWarmText(text)) return;
+    this.disposePendingWarm();
+    warmCloneForText(text)
+      .then((warm) => {
+        if (this.activeField !== field || this.getFieldText(field) !== text) {
+          warm.dispose();
+          return;
+        }
+        this.pendingWarm = warm;
+      })
+      .catch(() => {
+        // swallow — finalize path will fall back to a fresh session
+      });
+  }
+
+  private takeWarmFor(text: string): WarmClone | null {
+    const warm = this.pendingWarm;
+    if (!warm) return null;
+    if (warm.text !== text) {
+      this.disposePendingWarm();
+      return null;
+    }
+    this.pendingWarm = null;
+    return warm;
   }
 
   get isVisible(): boolean {
@@ -220,7 +267,8 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const result = await proofread(text);
+      const warm = this.takeWarmFor(text);
+      const result = warm ? await finalizeProofread(warm) : await proofread(text);
 
       const tier = getTierForScore(result.score);
       if (requestField) {
@@ -258,7 +306,8 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const result = await rewrite(text, tone);
+      const warm = this.takeWarmFor(text);
+      const result = warm ? await finalizeRewrite(warm, tone) : await rewrite(text, tone);
 
       if (!requestField || this.activeField !== requestField) {
         return;

@@ -3,19 +3,28 @@ import type { ChromiumAIInstance } from "simple-chromium-ai";
 import type { ProofreadResult, RewriteResult, TonePreset } from "../shared/types";
 import { getTierForScore } from "../shared/constants";
 import {
-  PROOFREAD_INITIAL_PROMPTS,
+  DUAL_INITIAL_PROMPTS,
   PROOFREAD_SCHEMA,
-  TONE_INITIAL_PROMPTS,
   TONE_REWRITE_SCHEMA,
-  buildTonePrompt,
+  buildProofreadInstruction,
+  buildRewriteInstruction,
+  buildWarmupPrompt,
 } from "../shared/prompts";
+
+const WARMUP_MAX_CHARS = 1500;
 
 let aiInstance: ChromiumAIInstance | null = null;
 let testMode = false;
 type AISession = Awaited<ReturnType<typeof ChromiumAI.createSession>>;
 
-let proofreadBaseSessionPromise: Promise<AISession> | null = null;
-let toneBaseSessionPromise: Promise<AISession> | null = null;
+let dualBaseSessionPromise: Promise<AISession> | null = null;
+
+export type WarmClone = {
+  session: AISession;
+  warmup: Promise<void>;
+  text: string;
+  dispose: () => void;
+};
 
 function logSessionEvent(message: string): void {
   console.debug(`[WriteGooderer AI] ${message}`);
@@ -33,95 +42,98 @@ async function ensureModel(): Promise<ChromiumAIInstance> {
   return aiInstance;
 }
 
-async function createBaseSession(
-  kind: "proofread" | "tone",
-  initialPrompts: typeof PROOFREAD_INITIAL_PROMPTS
-): Promise<AISession> {
-  logSessionEvent(`Creating base ${kind} session`);
+async function createDualBaseSession(): Promise<AISession> {
+  logSessionEvent("Creating dual base session");
   const ai = await ensureModel();
   const session = await ChromiumAI.createSession(ai, {
-    initialPrompts: initialPrompts as any,
+    initialPrompts: DUAL_INITIAL_PROMPTS as any,
   });
-  logSessionEvent(`Created base ${kind} session`);
+  logSessionEvent("Created dual base session");
   return session;
 }
 
-function getBaseSessionPromise(kind: "proofread" | "tone"): Promise<AISession> {
-  const existingPromise =
-    kind === "proofread" ? proofreadBaseSessionPromise : toneBaseSessionPromise;
-  if (existingPromise) return existingPromise;
+function getDualBaseSessionPromise(): Promise<AISession> {
+  if (dualBaseSessionPromise) return dualBaseSessionPromise;
 
-  const initialPrompts =
-    kind === "proofread" ? PROOFREAD_INITIAL_PROMPTS : TONE_INITIAL_PROMPTS;
-
-  const sessionPromise = createBaseSession(kind, initialPrompts).catch((error) => {
-    logSessionEvent(`Base ${kind} session creation failed: ${String(error)}`);
-    if (kind === "proofread") {
-      proofreadBaseSessionPromise = null;
-    } else {
-      toneBaseSessionPromise = null;
-    }
+  const sessionPromise = createDualBaseSession().catch((error) => {
+    logSessionEvent(`Dual base session creation failed: ${String(error)}`);
+    dualBaseSessionPromise = null;
     throw error;
   });
 
-  if (kind === "proofread") {
-    proofreadBaseSessionPromise = sessionPromise;
-  } else {
-    toneBaseSessionPromise = sessionPromise;
-  }
-
+  dualBaseSessionPromise = sessionPromise;
   return sessionPromise;
 }
 
-async function cloneSession(kind: "proofread" | "tone"): Promise<AISession> {
+async function cloneDualSession(): Promise<AISession> {
   try {
-    const baseSession = await getBaseSessionPromise(kind);
-    logSessionEvent(`Cloning ${kind} session`);
+    const baseSession = await getDualBaseSessionPromise();
+    logSessionEvent("Cloning dual session");
     const clonedSession = await baseSession.clone();
-    logSessionEvent(`Cloned ${kind} session`);
+    logSessionEvent("Cloned dual session");
     return clonedSession;
   } catch (error) {
-    logSessionEvent(`Clone failed for ${kind}, rebuilding base session: ${String(error)}`);
-    if (kind === "proofread") {
-      proofreadBaseSessionPromise = null;
-    } else {
-      toneBaseSessionPromise = null;
-    }
-
-    const rebuiltSession = await getBaseSessionPromise(kind);
+    logSessionEvent(`Clone failed, rebuilding dual base session: ${String(error)}`);
+    dualBaseSessionPromise = null;
+    const rebuiltSession = await getDualBaseSessionPromise();
     const clonedSession = await rebuiltSession.clone();
-    logSessionEvent(`Rebuilt and cloned ${kind} session`);
+    logSessionEvent("Rebuilt and cloned dual session");
     return clonedSession;
   }
 }
 
 export async function prewarmSessions(): Promise<void> {
   if (testMode) return;
-
-  logSessionEvent("Prewarming proofread and tone base sessions");
-  await Promise.all([
-    getBaseSessionPromise("proofread"),
-    getBaseSessionPromise("tone"),
-  ]);
-  logSessionEvent("Prewarmed proofread and tone base sessions");
+  logSessionEvent("Prewarming dual base session");
+  await getDualBaseSessionPromise();
+  logSessionEvent("Prewarmed dual base session");
 }
 
 export async function destroySessions(): Promise<void> {
-  logSessionEvent("Destroying cached base sessions");
-  const sessions = await Promise.allSettled([
-    proofreadBaseSessionPromise,
-    toneBaseSessionPromise,
-  ]);
-
-  for (const result of sessions) {
-    if (result.status === "fulfilled" && result.value) {
-      result.value.destroy();
+  logSessionEvent("Destroying cached base session");
+  const result = await Promise.allSettled([dualBaseSessionPromise]);
+  for (const r of result) {
+    if (r.status === "fulfilled" && r.value) {
+      r.value.destroy();
     }
   }
+  dualBaseSessionPromise = null;
+  logSessionEvent("Destroyed cached base session");
+}
 
-  proofreadBaseSessionPromise = null;
-  toneBaseSessionPromise = null;
-  logSessionEvent("Destroyed cached base sessions");
+export function canWarmText(text: string): boolean {
+  if (testMode) return false;
+  const trimmed = text.trim();
+  return trimmed.length > 0 && trimmed.length <= WARMUP_MAX_CHARS;
+}
+
+export async function warmCloneForText(text: string): Promise<WarmClone> {
+  const session = await cloneDualSession();
+  let disposed = false;
+
+  const dispose = () => {
+    if (disposed) return;
+    disposed = true;
+    try {
+      session.destroy();
+      logSessionEvent("Disposed warm clone");
+    } catch (err) {
+      logSessionEvent(`Warm clone dispose failed: ${String(err)}`);
+    }
+  };
+
+  logSessionEvent("Warm clone: prompting paragraph");
+  const warmup = session
+    .prompt(buildWarmupPrompt(text))
+    .then(() => {
+      logSessionEvent("Warm clone: paragraph ingested");
+    })
+    .catch((err: unknown) => {
+      logSessionEvent(`Warm clone prompt failed: ${String(err)}`);
+      throw err;
+    });
+
+  return { session, warmup, text, dispose };
 }
 
 function mockProofread(text: string): ProofreadResult {
@@ -153,33 +165,73 @@ function mockRewrite(text: string, tone: string): RewriteResult {
   return { rewritten: `[${tone.toUpperCase()}] ${text}` };
 }
 
-export async function proofread(text: string): Promise<ProofreadResult> {
-  if (testMode) return mockProofread(text);
-  const session = await cloneSession("proofread");
+export async function finalizeProofread(warm: WarmClone): Promise<ProofreadResult> {
   try {
-    logSessionEvent("Running proofread prompt");
-    const raw = await session.prompt(text, {
+    logSessionEvent("Finalize proofread: awaiting warmup");
+    await warm.warmup;
+    logSessionEvent("Finalize proofread: running instruction");
+    const raw = await warm.session.prompt(buildProofreadInstruction(), {
       responseConstraint: PROOFREAD_SCHEMA,
     });
     return JSON.parse(raw) as ProofreadResult;
   } finally {
-    logSessionEvent("Destroying proofread clone");
-    session.destroy();
+    warm.dispose();
+  }
+}
+
+export async function finalizeRewrite(
+  warm: WarmClone,
+  tone: TonePreset
+): Promise<RewriteResult> {
+  try {
+    logSessionEvent("Finalize rewrite: awaiting warmup");
+    await warm.warmup;
+    logSessionEvent(`Finalize rewrite: running instruction for ${tone}`);
+    const raw = await warm.session.prompt(buildRewriteInstruction(tone), {
+      responseConstraint: TONE_REWRITE_SCHEMA,
+    });
+    return JSON.parse(raw) as RewriteResult;
+  } finally {
+    warm.dispose();
+  }
+}
+
+export async function proofread(text: string): Promise<ProofreadResult> {
+  if (testMode) return mockProofread(text);
+  try {
+    const warm = await warmCloneForText(text);
+    return await finalizeProofread(warm);
+  } catch (err) {
+    logSessionEvent(`Proofread wrapper failed, falling back: ${String(err)}`);
+    const session = await cloneDualSession();
+    try {
+      const raw = await session.prompt(
+        `${buildWarmupPrompt(text)}\n\n${buildProofreadInstruction()}`,
+        { responseConstraint: PROOFREAD_SCHEMA }
+      );
+      return JSON.parse(raw) as ProofreadResult;
+    } finally {
+      session.destroy();
+    }
   }
 }
 
 export async function rewrite(text: string, tone: TonePreset): Promise<RewriteResult> {
   if (testMode) return mockRewrite(text, tone);
-  const session = await cloneSession("tone");
   try {
-    const prompt = buildTonePrompt(text, tone);
-    logSessionEvent(`Running tone rewrite prompt for ${tone}`);
-    const raw = await session.prompt(prompt, {
-      responseConstraint: TONE_REWRITE_SCHEMA,
-    });
-    return JSON.parse(raw) as RewriteResult;
-  } finally {
-    logSessionEvent("Destroying tone clone");
-    session.destroy();
+    const warm = await warmCloneForText(text);
+    return await finalizeRewrite(warm, tone);
+  } catch (err) {
+    logSessionEvent(`Rewrite wrapper failed, falling back: ${String(err)}`);
+    const session = await cloneDualSession();
+    try {
+      const raw = await session.prompt(
+        `${buildWarmupPrompt(text)}\n\n${buildRewriteInstruction(tone)}`,
+        { responseConstraint: TONE_REWRITE_SCHEMA }
+      );
+      return JSON.parse(raw) as RewriteResult;
+    } finally {
+      session.destroy();
+    }
   }
 }
