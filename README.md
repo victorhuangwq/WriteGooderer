@@ -58,6 +58,10 @@ npm run test:e2e
 
 `demo.html` is included as a local page for exercising supported fields like textareas, contenteditable editors, and compose boxes.
 
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and PR guidelines, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations.
+
 ## How It Works
 
 - `src/content/` injects the floating button and in-page card UI
@@ -84,3 +88,7 @@ Unit tests cover storage, prompts, constants, and field detection logic. End-to-
 - This is a Manifest V3 extension
 - It does not run on special Chrome pages like `chrome://...`
 - Site-level enable/disable state is stored in `chrome.storage.local`
+
+## License
+
+Released under the [MIT License](LICENSE).
