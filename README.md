@@ -48,12 +48,6 @@ The rest of the code is organized like this:
 
 Contributions welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, dev commands, and PR guidelines, and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community expectations.
 
-## Notes
-
-- Manifest V3 extension
-- Does not run on `chrome://...` pages — Chrome won't let it, and fair enough
-- Per-site enable/disable state lives in `chrome.storage.local`
-
 ## License
 
 Released under the [MIT License](LICENSE).
