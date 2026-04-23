@@ -12,6 +12,20 @@ function renderReady(): void {
     "The Prompt API is available, so proofread and tone rewrites run locally.";
 }
 
+function renderDownloading(): void {
+  statusDot.className = "status-dot status-ready";
+  statusText.textContent = "Model downloading";
+  statusHint.textContent =
+    "Chrome is downloading Gemini Nano in the background. It'll be ready shortly.";
+}
+
+function renderDownloadable(): void {
+  statusDot.className = "status-dot status-ready";
+  statusText.textContent = "Ready to download";
+  statusHint.textContent =
+    "The Prompt API is enabled; the model will download on first use.";
+}
+
 function renderError(): void {
   statusDot.className = "status-dot status-error";
   statusText.textContent = "Prompt API unavailable";
@@ -45,10 +59,34 @@ function renderError(): void {
   statusHint.appendChild(list);
 }
 
+async function detectModel(): Promise<"available" | "downloadable" | "downloading" | "unavailable"> {
+  const LM =
+    (self as any).LanguageModel ?? (self as any).ai?.languageModel ?? null;
+  if (!LM || typeof LM.availability !== "function") return "unavailable";
+  try {
+    const status = await LM.availability();
+    if (
+      status === "available" ||
+      status === "downloadable" ||
+      status === "downloading" ||
+      status === "unavailable"
+    ) {
+      return status;
+    }
+    return "unavailable";
+  } catch {
+    return "unavailable";
+  }
+}
+
 async function init() {
-  const ai = (self as any).ai;
-  if (ai?.languageModel) {
+  const status = await detectModel();
+  if (status === "available") {
     renderReady();
+  } else if (status === "downloading") {
+    renderDownloading();
+  } else if (status === "downloadable") {
+    renderDownloadable();
   } else {
     renderError();
   }
