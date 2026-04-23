@@ -350,50 +350,34 @@ const CSS_TEXT = `
   overflow-y: auto;
 }
 
-.wg-empty-state {
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--wg-surface-raised);
-  border: 1px solid var(--wg-border-soft);
-}
-
-.wg-empty-eyebrow {
-  display: inline-flex;
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: rgba(255, 138, 87, 0.14);
-  color: var(--wg-accent-strong);
-  font-family: var(--wg-font-body);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.wg-empty-title {
-  margin-top: 10px;
-  font-family: var(--wg-font-display);
-  font-size: 20px;
-  line-height: 1.2;
-  font-weight: 700;
-  font-variation-settings: "opsz" 36, "SOFT" 50, "WONK" 1;
-  color: var(--wg-text);
-  letter-spacing: -0.01em;
-}
-
-.wg-empty-copy {
-  margin-top: 8px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--wg-text-secondary);
-}
-
-.wg-popup-actions {
+.wg-action-surface {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wg-proofread-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 12px 16px 14px;
-  border-top: 1px solid var(--wg-border-soft);
-  background: var(--wg-bg-soft);
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.wg-proofread-emoji {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.wg-tone-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wg-text-secondary);
+  margin-top: 2px;
 }
 
 /* ===== Buttons ===== */
@@ -684,7 +668,7 @@ const CSS_TEXT = `
 
 /* ===== Tone Selector ===== */
 .wg-tone-selector {
-  margin-top: 8px;
+  display: block;
 }
 
 .wg-tone-grid {

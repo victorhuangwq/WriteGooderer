@@ -40,14 +40,6 @@ export class ToneSelector {
     return this.el;
   }
 
-  show(): void {
-    this.el.style.display = "block";
-  }
-
-  hide(): void {
-    this.el.style.display = "none";
-  }
-
   private selectTone(tone: TonePreset): void {
     this.selected = tone;
     this.updateSelection();
