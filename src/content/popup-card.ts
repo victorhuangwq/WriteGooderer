@@ -16,8 +16,7 @@ export class PopupCard {
   private el: HTMLElement;
   private headerEl: HTMLElement;
   private bodyEl: HTMLElement;
-  private actionsEl: HTMLElement;
-  private emptyStateEl: HTMLElement;
+  private actionSurfaceEl: HTMLElement;
   private scoreDisplay: ScoreDisplay;
   private loadingState: LoadingState;
   private diffView: DiffView;
@@ -56,17 +55,6 @@ export class PopupCard {
     this.bodyEl = document.createElement("div");
     this.bodyEl.className = "wg-popup-body";
 
-    // Empty state
-    this.emptyStateEl = document.createElement("div");
-    this.emptyStateEl.className = "wg-empty-state";
-    this.emptyStateEl.innerHTML = `
-      <div class="wg-empty-eyebrow">Ready on this field</div>
-      <div class="wg-empty-title">Proofread for mistakes or rewrite in a new tone.</div>
-      <p class="wg-empty-copy">
-        Grammar, spelling, punctuation, and punchier rewrites without sending your text to a cloud API.
-      </p>
-    `;
-
     // Score display
     this.scoreDisplay = new ScoreDisplay();
 
@@ -78,9 +66,8 @@ export class PopupCard {
     this.diffView = new DiffView((text) => this.applyText(text));
     this.diffView.hide();
 
-    // Tone selector
+    // Tone selector (always mounted within the action surface)
     this.toneSelector = new ToneSelector((tone) => this.handleToneSelect(tone));
-    this.toneSelector.hide();
 
     // Rewrite result
     this.rewriteResult = document.createElement("div");
@@ -89,32 +76,30 @@ export class PopupCard {
 
     headingEl.appendChild(this.scoreDisplay.element);
 
-    this.bodyEl.appendChild(this.emptyStateEl);
-    this.bodyEl.appendChild(this.loadingState.element);
-    this.bodyEl.appendChild(this.diffView.element);
-    this.bodyEl.appendChild(this.toneSelector.element);
-    this.bodyEl.appendChild(this.rewriteResult);
-
-    // Action buttons
-    this.actionsEl = document.createElement("div");
-    this.actionsEl.className = "wg-popup-actions";
+    // Action surface: primary Proofread CTA + tone grid (shown when idle)
+    this.actionSurfaceEl = document.createElement("div");
+    this.actionSurfaceEl.className = "wg-action-surface";
 
     const proofreadBtn = document.createElement("button");
-    proofreadBtn.className = "wg-btn wg-btn-primary";
-    proofreadBtn.textContent = "Proofread";
+    proofreadBtn.className = "wg-btn wg-btn-primary wg-proofread-btn";
+    proofreadBtn.innerHTML = `<span class="wg-proofread-emoji">✨</span><span>Proofread</span>`;
     proofreadBtn.addEventListener("click", () => this.handleProofread());
 
-    const toneBtn = document.createElement("button");
-    toneBtn.className = "wg-btn wg-btn-secondary";
-    toneBtn.textContent = "Change Tone";
-    toneBtn.addEventListener("click", () => this.toggleToneSelector());
+    const toneLabel = document.createElement("div");
+    toneLabel.className = "wg-tone-label";
+    toneLabel.textContent = "or rewrite in a tone";
 
-    this.actionsEl.appendChild(proofreadBtn);
-    this.actionsEl.appendChild(toneBtn);
+    this.actionSurfaceEl.appendChild(proofreadBtn);
+    this.actionSurfaceEl.appendChild(toneLabel);
+    this.actionSurfaceEl.appendChild(this.toneSelector.element);
+
+    this.bodyEl.appendChild(this.actionSurfaceEl);
+    this.bodyEl.appendChild(this.loadingState.element);
+    this.bodyEl.appendChild(this.diffView.element);
+    this.bodyEl.appendChild(this.rewriteResult);
 
     this.el.appendChild(this.headerEl);
     this.el.appendChild(this.bodyEl);
-    this.el.appendChild(this.actionsEl);
 
     shadowRoot.appendChild(this.el);
   }
@@ -158,10 +143,7 @@ export class PopupCard {
     const desiredTop = rect.bottom + window.scrollY + POPUP_GAP;
     const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING);
 
-    const chromeHeight =
-      this.headerEl.offsetHeight +
-      this.actionsEl.offsetHeight +
-      2;
+    const chromeHeight = this.headerEl.offsetHeight + 2;
     const popupMaxHeight = Math.max(
       chromeHeight + MIN_BODY_HEIGHT,
       Math.min(POPUP_MAX_HEIGHT, availableBelow)
@@ -199,13 +181,11 @@ export class PopupCard {
   }
 
   private resetContent(): void {
-    this.emptyStateEl.style.display = "block";
+    this.actionSurfaceEl.style.display = "";
     this.loadingState.hide();
     this.scoreDisplay.element.style.display = "none";
     this.diffView.hide();
-    this.toneSelector.hide();
     this.rewriteResult.style.display = "none";
-    this.actionsEl.style.display = "";
   }
 
   private getFieldText(field: HTMLElement | null = this.activeField): string {
@@ -234,10 +214,9 @@ export class PopupCard {
     const text = this.getFieldText(requestField);
     if (!text.trim()) return;
 
-    this.emptyStateEl.style.display = "none";
+    this.actionSurfaceEl.style.display = "none";
     this.showLoading(true);
     this.diffView.hide();
-    this.toneSelector.hide();
     this.rewriteResult.style.display = "none";
 
     try {
@@ -255,7 +234,6 @@ export class PopupCard {
       this.scoreDisplay.element.style.display = "inline-flex";
       this.scoreDisplay.setScore(result.score);
       this.diffView.show(text, result.corrected, result.changes);
-      this.actionsEl.style.display = "none";
     } catch (err) {
       if (!requestField || this.activeField !== requestField) {
         return;
@@ -274,7 +252,7 @@ export class PopupCard {
     const text = this.getFieldText(requestField);
     if (!text.trim()) return;
 
-    this.emptyStateEl.style.display = "none";
+    this.actionSurfaceEl.style.display = "none";
     this.showLoading(true);
     this.diffView.hide();
     this.rewriteResult.style.display = "none";
@@ -286,7 +264,6 @@ export class PopupCard {
         return;
       }
 
-      this.toneSelector.hide();
       this.showRewriteResult(result.rewritten);
     } catch (err) {
       if (!requestField || this.activeField !== requestField) {
@@ -303,9 +280,8 @@ export class PopupCard {
 
   private showRewriteResult(text: string): void {
     this.rewriteResult.innerHTML = "";
-    this.emptyStateEl.style.display = "none";
+    this.actionSurfaceEl.style.display = "none";
     this.rewriteResult.style.display = "block";
-    this.actionsEl.style.display = "none";
 
     const pre = document.createElement("div");
     pre.className = "wg-rewrite-text";
@@ -332,17 +308,6 @@ export class PopupCard {
 
     this.rewriteResult.appendChild(pre);
     this.rewriteResult.appendChild(actions);
-  }
-
-  private toggleToneSelector(): void {
-    if (this.toneSelector.element.style.display === "block") {
-      this.resetContent();
-    } else {
-      this.emptyStateEl.style.display = "none";
-      this.diffView.hide();
-      this.rewriteResult.style.display = "none";
-      this.toneSelector.show();
-    }
   }
 
   private applyText(text: string): void {
@@ -375,7 +340,7 @@ export class PopupCard {
 
   private showError(message: string): void {
     this.rewriteResult.innerHTML = "";
-    this.emptyStateEl.style.display = "none";
+    this.actionSurfaceEl.style.display = "none";
     this.rewriteResult.style.display = "block";
     const errEl = document.createElement("div");
     errEl.className = "wg-error";
