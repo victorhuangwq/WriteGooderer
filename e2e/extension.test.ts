@@ -198,7 +198,7 @@ describe("WriteGooderer E2E", () => {
       expect(popupVisible).toBe(false);
     });
 
-    it("assigns unique ids to textareas and moves the popup when focus changes", async () => {
+    it("assigns unique ids to textareas and closes the popup when focus changes", async () => {
       await openPopupOnTextareaIndex(page, 0);
 
       const before = await page.evaluate(() => {
@@ -210,10 +210,11 @@ describe("WriteGooderer E2E", () => {
         return {
           firstId: textareas[0]?.getAttribute("data-wg-field-id"),
           secondId: textareas[1]?.getAttribute("data-wg-field-id"),
-          popupTop: popup?.style.top ?? null,
-          popupLeft: popup?.style.left ?? null,
+          popupVisible: popup?.classList.contains("wg-visible") ?? false,
         };
       });
+
+      expect(before.popupVisible).toBe(true);
 
       await clickTextareaByIndex(page, 1);
 
@@ -226,8 +227,7 @@ describe("WriteGooderer E2E", () => {
         return {
           firstId: textareas[0]?.getAttribute("data-wg-field-id"),
           secondId: textareas[1]?.getAttribute("data-wg-field-id"),
-          popupTop: popup?.style.top ?? null,
-          popupLeft: popup?.style.left ?? null,
+          popupVisible: popup?.classList.contains("wg-visible") ?? false,
         };
       });
 
@@ -236,9 +236,7 @@ describe("WriteGooderer E2E", () => {
       expect(before.firstId).not.toBe(before.secondId);
       expect(after.firstId).toBe(before.firstId);
       expect(after.secondId).toBe(before.secondId);
-      expect(`${after.popupTop}:${after.popupLeft}`).not.toBe(
-        `${before.popupTop}:${before.popupLeft}`
-      );
+      expect(after.popupVisible).toBe(false);
     });
   });
 

@@ -1,29 +1,29 @@
 import { describe, it, expect } from "vitest";
 import {
-  buildTonePrompt,
-  PROOFREAD_INITIAL_PROMPTS,
+  DUAL_INITIAL_PROMPTS,
+  DUAL_SYSTEM_PROMPT,
   PROOFREAD_SCHEMA,
-  TONE_INITIAL_PROMPTS,
   TONE_REWRITE_SCHEMA,
+  buildProofreadInstruction,
+  buildRewriteInstruction,
 } from "../prompts";
 import type { TonePreset } from "../types";
 
-describe("buildTonePrompt", () => {
-  it("includes the tone name and description", () => {
-    const result = buildTonePrompt("Hello world", "professional");
+describe("buildProofreadInstruction", () => {
+  it("includes the user text", () => {
+    const result = buildProofreadInstruction("I has went to the stor.");
+    expect(result).toContain("I has went to the stor.");
+    expect(result.toLowerCase()).toContain("proofread");
+  });
+});
+
+describe("buildRewriteInstruction", () => {
+  it("includes the tone name, description, and user text", () => {
+    const text = "I got promoted at work today.";
+    const result = buildRewriteInstruction("professional", text);
     expect(result).toContain("Professional");
     expect(result).toContain("Formal, clear, and business-appropriate");
-  });
-
-  it("includes the user text", () => {
-    const text = "I got promoted at work today.";
-    const result = buildTonePrompt(text, "casual");
     expect(result).toContain(text);
-  });
-
-  it("formats as 'Tone: ... Text: ...'", () => {
-    const result = buildTonePrompt("test", "linkedin-influencer");
-    expect(result).toMatch(/^Tone: .+\n\nText: .+$/s);
   });
 
   it("works for all tone presets", () => {
@@ -38,31 +38,69 @@ describe("buildTonePrompt", () => {
       "corporate-buzzword",
     ];
     for (const tone of tones) {
-      const result = buildTonePrompt("test text", tone);
-      expect(result).toContain("Tone:");
+      const result = buildRewriteInstruction(tone, "test text");
       expect(result).toContain("test text");
     }
   });
 });
 
-describe("PROOFREAD_INITIAL_PROMPTS", () => {
-  it("starts with a system message", () => {
-    expect(PROOFREAD_INITIAL_PROMPTS[0].role).toBe("system");
+describe("DUAL_INITIAL_PROMPTS", () => {
+  it("starts with the dual system message", () => {
+    expect(DUAL_INITIAL_PROMPTS[0].role).toBe("system");
+    expect(DUAL_INITIAL_PROMPTS[0].content).toBe(DUAL_SYSTEM_PROMPT);
   });
 
-  it("has a user/assistant few-shot pair", () => {
-    expect(PROOFREAD_INITIAL_PROMPTS[1].role).toBe("user");
-    expect(PROOFREAD_INITIAL_PROMPTS[2].role).toBe("assistant");
+  it("contains single-turn instruction → JSON pairs (no intermediate READY)", () => {
+    for (const entry of DUAL_INITIAL_PROMPTS) {
+      expect(entry.content).not.toBe("READY");
+    }
   });
 
-  it("the assistant response is valid JSON matching the schema", () => {
-    const parsed = JSON.parse(PROOFREAD_INITIAL_PROMPTS[2].content);
+  it("each user turn carries both an instruction and the paragraph inline", () => {
+    const userTurns = DUAL_INITIAL_PROMPTS.filter((p) => p.role === "user");
+    expect(userTurns.length).toBeGreaterThan(0);
+    for (const turn of userTurns) {
+      expect(turn.content.length).toBeGreaterThan(20);
+      // Must not be a bare "Paragraph: ..." prompt (the pattern that caused
+      // the warmup to complete into a full JSON response).
+      expect(turn.content.startsWith("Paragraph:")).toBe(false);
+    }
+  });
+
+  it("proofread few-shot assistant response parses into a valid result shape", () => {
+    const proofreadAssistant = DUAL_INITIAL_PROMPTS.find(
+      (p, i) =>
+        p.role === "assistant" &&
+        DUAL_INITIAL_PROMPTS[i - 1]?.role === "user" &&
+        DUAL_INITIAL_PROMPTS[i - 1]?.content.toLowerCase().includes("proofread")
+    );
+    expect(proofreadAssistant).toBeDefined();
+    const parsed = JSON.parse(proofreadAssistant!.content);
     expect(parsed).toHaveProperty("corrected");
     expect(parsed).toHaveProperty("changes");
     expect(parsed).toHaveProperty("score");
     expect(parsed).toHaveProperty("tier");
     expect(Array.isArray(parsed.changes)).toBe(true);
     expect(typeof parsed.score).toBe("number");
+  });
+
+  it("rewrite few-shot assistant response parses into a valid result shape", () => {
+    const rewriteAssistant = DUAL_INITIAL_PROMPTS.find(
+      (p, i) =>
+        p.role === "assistant" &&
+        DUAL_INITIAL_PROMPTS[i - 1]?.role === "user" &&
+        DUAL_INITIAL_PROMPTS[i - 1]?.content.toLowerCase().includes("rewrite")
+    );
+    expect(rewriteAssistant).toBeDefined();
+    const parsed = JSON.parse(rewriteAssistant!.content);
+    expect(parsed).toHaveProperty("rewritten");
+    expect(typeof parsed.rewritten).toBe("string");
+  });
+});
+
+describe("DUAL_SYSTEM_PROMPT", () => {
+  it("does not mention the retired READY protocol", () => {
+    expect(DUAL_SYSTEM_PROMPT).not.toMatch(/READY/);
   });
 });
 
@@ -85,18 +123,6 @@ describe("PROOFREAD_SCHEMA", () => {
     expect(tierSchema.enum).toContain("Caveman");
     expect(tierSchema.enum).toContain("WriteGooderer");
     expect(tierSchema.enum).toHaveLength(6);
-  });
-});
-
-describe("TONE_INITIAL_PROMPTS", () => {
-  it("starts with a system message", () => {
-    expect(TONE_INITIAL_PROMPTS[0].role).toBe("system");
-  });
-
-  it("the assistant response is valid JSON with a rewritten field", () => {
-    const parsed = JSON.parse(TONE_INITIAL_PROMPTS[2].content);
-    expect(parsed).toHaveProperty("rewritten");
-    expect(typeof parsed.rewritten).toBe("string");
   });
 });
 

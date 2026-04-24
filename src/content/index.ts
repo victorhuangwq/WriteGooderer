@@ -146,8 +146,8 @@ async function main() {
           icon.hideScore();
         }
 
-        if (popup.isVisible) {
-          popup.attachToField(field);
+        if (popup.isVisible && popup.currentField !== field) {
+          popup.hide();
         }
       } else if (!popup.isVisible) {
         icon.hide();

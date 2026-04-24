@@ -1,18 +1,27 @@
-import {
-  canWarmText,
-  finalizeProofread,
-  finalizeRewrite,
-  proofread,
-  rewrite,
-  warmCloneForText,
-  type WarmClone,
-} from "./ai-client";
+import { proofread, rewrite } from "./ai-client";
 import { getTierForScore } from "../shared/constants";
-import type { TonePreset } from "../shared/types";
+import type { ProofreadResult, RewriteResult, TonePreset } from "../shared/types";
 import { ScoreDisplay } from "./score-display";
 import { LoadingState } from "./loading-state";
 import { DiffView } from "./diff-view";
 import { ToneSelector } from "./tone-selector";
+
+type SpeculativeIntent =
+  | { kind: "proofread" }
+  | { kind: "rewrite"; tone: TonePreset };
+
+type Speculative = {
+  intent: SpeculativeIntent;
+  text: string;
+  promise: Promise<ProofreadResult | RewriteResult>;
+  abort: AbortController;
+};
+
+function intentsEqual(a: SpeculativeIntent, b: SpeculativeIntent): boolean {
+  if (a.kind !== b.kind) return false;
+  if (a.kind === "rewrite" && b.kind === "rewrite") return a.tone === b.tone;
+  return true;
+}
 
 const POPUP_WIDTH = 520;
 const POPUP_MAX_HEIGHT = 520;
@@ -33,7 +42,7 @@ export class PopupCard {
 
   private activeField: HTMLElement | null = null;
   private repositionRAF: number | null = null;
-  private pendingWarm: WarmClone | null = null;
+  private speculative: Speculative | null = null;
   private onLoadingChange: (loading: boolean) => void;
   private onScoreReady: (field: HTMLElement, score: number, color: string) => void;
 
@@ -76,7 +85,10 @@ export class PopupCard {
     this.diffView.hide();
 
     // Tone selector (always mounted within the action surface)
-    this.toneSelector = new ToneSelector((tone) => this.handleToneSelect(tone));
+    this.toneSelector = new ToneSelector(
+      (tone) => this.handleToneSelect(tone),
+      (tone) => this.speculateFor({ kind: "rewrite", tone })
+    );
 
     // Rewrite result
     this.rewriteResult = document.createElement("div");
@@ -93,6 +105,9 @@ export class PopupCard {
     proofreadBtn.className = "wg-btn wg-btn-primary wg-proofread-btn";
     proofreadBtn.innerHTML = `<span class="wg-proofread-emoji">✨</span><span>Proofread</span>`;
     proofreadBtn.addEventListener("click", () => this.handleProofread());
+    proofreadBtn.addEventListener("pointerenter", () =>
+      this.speculateFor({ kind: "proofread" })
+    );
 
     const toneLabel = document.createElement("div");
     toneLabel.className = "wg-tone-label";
@@ -118,7 +133,6 @@ export class PopupCard {
     this.el.classList.add("wg-visible");
     this.attachToField(field);
     this.startTracking();
-    this.kickoffWarmup(field);
   }
 
   attachToField(field: HTMLElement): void {
@@ -126,7 +140,7 @@ export class PopupCard {
     this.activeField = field;
 
     if (changedField) {
-      this.disposePendingWarm();
+      this.abortSpeculative();
       this.resetContent();
     }
 
@@ -136,47 +150,65 @@ export class PopupCard {
   hide(): void {
     this.el.classList.remove("wg-visible");
     this.stopTracking();
-    this.disposePendingWarm();
+    this.abortSpeculative();
     this.resetContent();
   }
 
-  private disposePendingWarm(): void {
-    if (this.pendingWarm) {
-      this.pendingWarm.dispose();
-      this.pendingWarm = null;
+  private abortSpeculative(): void {
+    if (this.speculative) {
+      this.speculative.abort.abort();
+      // Keep a reference so awaiters still see the rejection; drop our handle.
+      this.speculative = null;
     }
   }
 
-  private kickoffWarmup(field: HTMLElement): void {
-    const text = this.getFieldText(field);
-    if (!canWarmText(text)) return;
-    this.disposePendingWarm();
-    warmCloneForText(text)
-      .then((warm) => {
-        if (this.activeField !== field || this.getFieldText(field) !== text) {
-          warm.dispose();
-          return;
-        }
-        this.pendingWarm = warm;
-      })
-      .catch(() => {
-        // swallow — finalize path will fall back to a fresh session
-      });
+  private speculateFor(intent: SpeculativeIntent): void {
+    const text = this.getFieldText();
+    if (!text.trim()) return;
+
+    // Already speculating on this exact intent+text — nothing to do.
+    if (
+      this.speculative &&
+      this.speculative.text === text &&
+      intentsEqual(this.speculative.intent, intent)
+    ) {
+      return;
+    }
+
+    this.abortSpeculative();
+
+    const abort = new AbortController();
+    const promise: Promise<ProofreadResult | RewriteResult> =
+      intent.kind === "proofread"
+        ? proofread(text, { signal: abort.signal })
+        : rewrite(text, intent.tone, { signal: abort.signal });
+
+    // Swallow unhandled-rejection noise for aborted speculations.
+    promise.catch(() => {});
+
+    this.speculative = { intent, text, promise, abort };
   }
 
-  private takeWarmFor(text: string): WarmClone | null {
-    const warm = this.pendingWarm;
-    if (!warm) return null;
-    if (warm.text !== text) {
-      this.disposePendingWarm();
+  private takeSpeculative(
+    intent: SpeculativeIntent,
+    text: string
+  ): Promise<ProofreadResult | RewriteResult> | null {
+    const s = this.speculative;
+    if (!s) return null;
+    if (s.text !== text || !intentsEqual(s.intent, intent)) {
+      this.abortSpeculative();
       return null;
     }
-    this.pendingWarm = null;
-    return warm;
+    this.speculative = null;
+    return s.promise;
   }
 
   get isVisible(): boolean {
     return this.el.classList.contains("wg-visible");
+  }
+
+  get currentField(): HTMLElement | null {
+    return this.activeField;
   }
 
   private position(): void {
@@ -267,8 +299,10 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const warm = this.takeWarmFor(text);
-      const result = warm ? await finalizeProofread(warm) : await proofread(text);
+      const speculative = this.takeSpeculative({ kind: "proofread" }, text);
+      const result = (speculative
+        ? await speculative
+        : await proofread(text)) as ProofreadResult;
 
       const tier = getTierForScore(result.score);
       if (requestField) {
@@ -306,8 +340,10 @@ export class PopupCard {
     this.rewriteResult.style.display = "none";
 
     try {
-      const warm = this.takeWarmFor(text);
-      const result = warm ? await finalizeRewrite(warm, tone) : await rewrite(text, tone);
+      const speculative = this.takeSpeculative({ kind: "rewrite", tone }, text);
+      const result = (speculative
+        ? await speculative
+        : await rewrite(text, tone)) as RewriteResult;
 
       if (!requestField || this.activeField !== requestField) {
         return;

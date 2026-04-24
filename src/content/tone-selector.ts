@@ -6,10 +6,15 @@ export class ToneSelector {
   private el: HTMLElement;
   private selected: TonePreset = "professional";
   private onSelect: (tone: TonePreset) => void;
+  private onHover?: (tone: TonePreset) => void;
   private buttons: Map<TonePreset, HTMLElement> = new Map();
 
-  constructor(onSelect: (tone: TonePreset) => void) {
+  constructor(
+    onSelect: (tone: TonePreset) => void,
+    onHover?: (tone: TonePreset) => void
+  ) {
     this.onSelect = onSelect;
+    this.onHover = onHover;
 
     this.el = document.createElement("div");
     this.el.className = "wg-tone-selector";
@@ -23,6 +28,9 @@ export class ToneSelector {
       btn.className = "wg-tone-btn";
       btn.innerHTML = `<span class="wg-tone-emoji">${config.emoji}</span><span class="wg-tone-text"><span class="wg-tone-name">${config.name}</span><span class="wg-tone-sub">${config.subtitle}</span></span>`;
       btn.addEventListener("click", () => this.selectTone(tone));
+      if (this.onHover) {
+        btn.addEventListener("pointerenter", () => this.onHover?.(tone));
+      }
       grid.appendChild(btn);
       this.buttons.set(tone, btn);
     }
