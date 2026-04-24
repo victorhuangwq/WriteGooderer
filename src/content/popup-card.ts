@@ -105,7 +105,7 @@ export class PopupCard {
     proofreadBtn.className = "wg-btn wg-btn-primary wg-proofread-btn";
     proofreadBtn.innerHTML = `<span class="wg-proofread-emoji">✨</span><span>Proofread</span>`;
     proofreadBtn.addEventListener("click", () => this.handleProofread());
-    proofreadBtn.addEventListener("pointerenter", () =>
+    proofreadBtn.addEventListener("pointerdown", () =>
       this.speculateFor({ kind: "proofread" })
     );
 
