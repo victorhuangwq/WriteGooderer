@@ -3,281 +3,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WriteGooderer - Demo &amp; Test Page</title>
+  <title>WriteGooderer — Demo</title>
   <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("public/fonts/Inter-VariableFont.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Fraunces";
+      src: url("public/fonts/Fraunces-VariableFont.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --wg-font-display: "Fraunces", Georgia, "Iowan Old Style", serif;
+      --wg-font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      --wg-gradient: linear-gradient(135deg, #ff7a3e 0%, #ffab5c 100%);
+      --wg-page-bg:
+        radial-gradient(circle at top right, rgba(255, 196, 145, 0.38), transparent 42%),
+        linear-gradient(180deg, #fffaf6 0%, #fff4ea 100%);
+      --wg-header-bg:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.85), transparent 32%),
+        linear-gradient(135deg, #ffede0 0%, #fff7f1 100%);
+      --wg-section-bg: rgba(255, 255, 255, 0.82);
+      --wg-pill-bg: rgba(255, 255, 255, 0.82);
+      --wg-text: #2a1a11;
+      --wg-text-secondary: #5c3f2e;
+      --wg-text-tertiary: #7a5a46;
+      --wg-accent-strong: #8a4a1f;
+      --wg-accent-soft: #73431a;
+      --wg-border: rgba(170, 118, 82, 0.28);
+      --wg-border-soft: rgba(190, 141, 109, 0.22);
+      --wg-shadow: 0 18px 40px rgba(115, 68, 37, 0.12);
+      --wg-shadow-soft: 0 12px 26px rgba(133, 86, 45, 0.08);
+      --wg-focus-ring: rgba(138, 74, 31, 0.38);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      color: #2D3436;
-      background: #FAFAFA;
-      line-height: 1.6;
+      font-family: var(--wg-font-body);
+      color: var(--wg-text);
+      background: var(--wg-page-bg);
+      background-attachment: fixed;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: "cv11" 1, "ss01" 1;
     }
 
-    header {
-      background: linear-gradient(135deg, #FE6B8B 0%, #FF8E53 100%);
-      color: white;
-      padding: 40px 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 8px;
-    }
-
-    header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-      max-width: 600px;
-      margin: 0 auto;
+    ::selection {
+      background: rgba(255, 154, 92, 0.32);
+      color: var(--wg-text);
     }
 
     .container {
-      max-width: 900px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 32px 20px;
+      padding: 32px 20px 64px;
     }
 
-    .section-title {
-      font-size: 1.3rem;
+    /* Hero — mirrors .popup-header */
+    header.hero {
+      position: relative;
+      padding: 32px 32px 28px;
+      background: var(--wg-header-bg);
+      border: 1px solid var(--wg-border);
+      border-radius: 22px;
+      box-shadow: var(--wg-shadow);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    header.hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -72px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: rgba(255, 154, 92, 0.22);
+      filter: blur(14px);
+      pointer-events: none;
+    }
+
+    .kicker {
+      font-size: 10px;
       font-weight: 700;
-      margin: 40px 0 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #FE6B8B;
-      display: inline-block;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--wg-accent-strong);
+      margin-bottom: 14px;
+      position: relative;
     }
 
-    .section-title:first-of-type {
-      margin-top: 0;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.42), transparent 48%),
+        var(--wg-gradient);
+      color: white;
+      font-family: var(--wg-font-display);
+      font-size: 28px;
+      font-weight: 700;
+      font-variation-settings: "opsz" 48, "SOFT" 60, "WONK" 1;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 18px rgba(163, 97, 38, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-family: var(--wg-font-display);
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 700;
+      font-variation-settings: "opsz" 144, "SOFT" 50, "WONK" 1;
+      color: var(--wg-text);
+      letter-spacing: -0.015em;
+    }
+
+    .hero-subtitle {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--wg-text-secondary);
+      max-width: 540px;
+      position: relative;
+    }
+
+    .feature-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      position: relative;
+    }
+
+    .feature-pill {
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--wg-pill-bg);
+      border: 1px solid var(--wg-border-soft);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--wg-accent-soft);
+      letter-spacing: 0.01em;
+    }
+
+    /* Instructions — mirrors .status-section */
+    .instructions {
+      padding: 16px 20px;
+      border-radius: 18px;
+      background: var(--wg-section-bg);
+      border: 1px solid var(--wg-border-soft);
+      box-shadow: var(--wg-shadow-soft);
+      backdrop-filter: blur(10px);
+      margin-bottom: 32px;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--wg-accent-strong);
+      margin-bottom: 10px;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .instructions li {
+      font-size: 13px;
+      color: var(--wg-text-secondary);
+      line-height: 1.5;
+    }
+
+    .instructions code {
+      font-size: 0.9em;
+      background: rgba(138, 74, 31, 0.08);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--wg-accent-soft);
+    }
+
+    .group-title {
+      font-family: var(--wg-font-display);
+      font-weight: 600;
+      font-size: 1.25rem;
+      color: var(--wg-text);
+      margin: 28px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .group-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--wg-border-soft);
     }
 
     .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      border: 1px solid #E8E8E8;
-      padding: 20px;
-      margin-bottom: 20px;
+      background: var(--wg-section-bg);
+      border: 1px solid var(--wg-border);
+      border-radius: 18px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--wg-shadow-soft);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(133, 86, 45, 0.1);
+    }
+
+    .card.excluded {
+      border-style: dashed;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .card.excluded:hover {
+      transform: none;
+      box-shadow: none;
     }
 
     .card h3 {
-      font-size: 1rem;
+      font-family: var(--wg-font-display);
       font-weight: 600;
-      margin-bottom: 4px;
+      font-size: 1.1rem;
+      letter-spacing: -0.005em;
+      color: var(--wg-text);
+      margin-bottom: 6px;
+      font-variation-settings: "opsz" 48, "SOFT" 50;
     }
 
-    .card .expect {
+    .expect {
       font-size: 0.85rem;
-      color: #636E72;
-      margin-bottom: 12px;
-      padding: 6px 10px;
-      background: linear-gradient(135deg, #FFF5F5 0%, #FFF8F0 100%);
-      border-radius: 6px;
-      border-left: 3px solid #FE6B8B;
-    }
-
-    .card label {
-      display: block;
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #636E72;
-      margin-bottom: 4px;
-    }
-
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #DDD;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 14px;
-      resize: vertical;
+      color: var(--wg-text-secondary);
+      margin-bottom: 14px;
       line-height: 1.5;
     }
 
-    textarea:focus, [contenteditable]:focus {
-      outline: none;
-      border-color: #FE6B8B;
-      box-shadow: 0 0 0 2px rgba(254,107,139,0.15);
-    }
-
+    textarea,
     input[type="text"],
-    input[type="search"],
-    input[type="password"],
-    input[type="email"] {
+    input[type="search"] {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #DDD;
-      border-radius: 8px;
-      font-family: inherit;
+      padding: 12px 14px;
+      border: 1px solid var(--wg-border);
+      border-radius: 12px;
+      font-family: var(--wg-font-body);
       font-size: 14px;
+      line-height: 1.55;
+      color: var(--wg-text);
+      background: rgba(255, 255, 255, 0.92);
+      resize: vertical;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
-    input:focus {
+    textarea::placeholder,
+    input::placeholder {
+      color: var(--wg-text-tertiary);
+      opacity: 0.7;
+    }
+
+    textarea:hover,
+    input:hover {
+      background: #fff;
+    }
+
+    textarea:focus,
+    input:focus,
+    [contenteditable]:focus {
       outline: none;
-      border-color: #FE6B8B;
-      box-shadow: 0 0 0 2px rgba(254,107,139,0.15);
+      border-color: var(--wg-accent-strong);
+      box-shadow: 0 0 0 3px var(--wg-focus-ring);
+      background: #fff;
     }
 
-    [contenteditable] {
-      border: 1px solid #DDD;
-      border-radius: 8px;
-      padding: 12px;
-      min-height: 80px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    @media (max-width: 640px) {
-      .columns { grid-template-columns: 1fr; }
-    }
-
-    /* Gmail-like compose */
     .gmail-compose {
-      border: 1px solid #DDD;
-      border-radius: 8px;
+      border: 1px solid var(--wg-border);
+      border-radius: 12px;
       overflow: hidden;
+      background: rgba(255, 255, 255, 0.95);
     }
     .gmail-compose-header {
-      background: #F5F5F5;
-      padding: 8px 12px;
-      font-size: 13px;
-      color: #636E72;
-      border-bottom: 1px solid #DDD;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: var(--wg-text-tertiary);
+      border-bottom: 1px solid var(--wg-border-soft);
+      background: rgba(138, 74, 31, 0.04);
     }
     .gmail-compose-body {
-      padding: 12px;
-      min-height: 120px;
+      padding: 14px;
+      min-height: 140px;
       font-size: 14px;
+      line-height: 1.55;
       outline: none;
-    }
-    .gmail-compose-body:focus {
-      background: #FEFEFE;
-    }
-
-    /* Slack-like message */
-    .slack-box {
-      border: 2px solid #DDD;
-      border-radius: 8px;
-      padding: 12px;
-      min-height: 60px;
-      font-size: 14px;
-      position: relative;
-    }
-    .slack-box:empty::before {
-      content: "Message #general";
-      color: #AAA;
-      pointer-events: none;
-    }
-    .slack-box:focus {
-      border-color: #FE6B8B;
+      color: var(--wg-text);
+      white-space: pre-wrap;
     }
 
-    /* Small textarea that should be ignored */
-    .tiny-textarea {
-      width: 80px;
-      height: 24px;
-      font-size: 11px;
-      padding: 2px 4px;
-      resize: none;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .badge-yes { background: #DFFFDF; color: #2E8B2E; }
-    .badge-no { background: #FFE0E0; color: #CC3333; }
-
-    .instructions {
-      background: #F8F9FA;
-      border: 1px dashed #CCC;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 24px;
-      font-size: 0.9rem;
-    }
-    .instructions h3 {
-      margin-bottom: 8px;
-    }
-    .instructions ol {
-      padding-left: 20px;
-    }
-    .instructions li {
-      margin-bottom: 4px;
+    .tip {
+      font-size: 0.8rem;
+      color: var(--wg-text-tertiary);
+      margin-top: 8px;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>WriteGooderer</h1>
-  <p>Demo &amp; Test Page &mdash; Every text field scenario in one place. Load the extension, open this page, and test away.</p>
-</header>
-
 <div class="container">
 
+  <header class="hero">
+    <div class="kicker">Demo &amp; Test Page</div>
+    <div class="brand">
+      <span class="mark" aria-hidden="true">W</span>
+      <div class="hero-title">WriteGooderer</div>
+    </div>
+    <p class="hero-subtitle">A focused playground for verifying detection, proofreading, and tone rewrites on the text fields that actually matter.</p>
+    <div class="feature-row">
+      <span class="feature-pill">Proofread</span>
+      <span class="feature-pill">Change Tone</span>
+      <span class="feature-pill">Runs local</span>
+    </div>
+  </header>
+
   <div class="instructions">
-    <h3>How to Test</h3>
+    <p class="section-label">How to test</p>
     <ol>
-      <li>Build the extension: <code>npm run build</code></li>
-      <li>Load <code>dist/</code> as an unpacked extension in <code>chrome://extensions</code></li>
-      <li>Open this page (<code>demo.html</code>) in Chrome</li>
-      <li>Click into any text field &mdash; the "W" icon should appear on eligible fields</li>
-      <li>Click "W" to open the popup, then try Proofread or Change Tone</li>
-      <li>Fields marked <span class="badge badge-no">NO ICON</span> should NOT show the "W" icon</li>
+      <li>Build the extension with <code>npm run build</code>, then load <code>dist/</code> at <code>chrome://extensions</code>.</li>
+      <li>Open this page in Chrome and click into any field below.</li>
+      <li>The "W" button should appear on the four cards below, and stay hidden on the negative control.</li>
+      <li>Click "W" to open the popup, then try Proofread or Change Tone.</li>
     </ol>
   </div>
 
-  <!-- ===== SECTION: Should Detect ===== -->
-  <div class="section-title">Text Fields That SHOULD Show the "W" Icon</div>
+  <div class="group-title">Proofread &amp; Tone</div>
 
   <div class="card">
-    <h3>Standard Textarea <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears at bottom-right. Proofread should find 4+ errors and give a low Gooderness score.</div>
+    <h3>Standard textarea</h3>
+    <div class="expect">Grammar-heavy sample. Proofread should surface 4+ corrections and a low Gooderness score.</div>
     <textarea rows="4">I has went to the stor yesterday and buyed some mik. The whether was really nice tho and I enjoied the walk alot. Their was many people outside to.</textarea>
   </div>
 
   <div class="card">
-    <h3>Large Blog Editor Textarea <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears. Good text should score 70+. Try "Change Tone" to rewrite in different styles.</div>
-    <textarea rows="8">Writing well is an underappreciated skill. In a world dominated by quick messages and emoji reactions, the ability to craft clear, compelling prose still matters. Whether you're drafting an email to your team, writing a blog post, or composing a cover letter, your words shape how others perceive you.
+    <h3>Long-form prose</h3>
+    <div class="expect">Clean writing that should score 70+. Use Change Tone to rewrite across styles.</div>
+    <textarea rows="7">Writing well is an underappreciated skill. In a world dominated by quick messages and emoji reactions, the ability to craft clear, compelling prose still matters. Whether you're drafting an email to your team, writing a blog post, or composing a cover letter, your words shape how others perceive you.
 
-The good news? You don't need to be Shakespeare. You just need to be clear, concise, and correct. That's where WriteGooderer comes in.</textarea>
+The good news? You don't need to be Shakespeare. You just need to be clear, concise, and correct.</textarea>
   </div>
 
   <div class="card">
-    <h3>Contenteditable Div <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears. This simulates rich text editors like Google Docs or Notion.</div>
-    <div contenteditable="true">This is a contenteditable div that simulates a rich text editor. You can type freely hear and the extension should detect it as a valid input field. Try adding some bad grammer to see what happens when you proofread.</div>
-  </div>
-
-  <div class="card">
-    <h3>Rich Content Contenteditable <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears. Contains formatted text with bold, italic, and links.</div>
-    <div contenteditable="true">
-      <p>This paragraph has <b>bold text</b> and <i>italic text</i> and even a <a href="#">link</a> inside it.</p>
-      <p>The extension should handle rich content gracefuly. It should extract the text, proofread it, and let you apply corrections back without destroying the formating.</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Gmail-Style Compose Box <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears on the compose body. This mimics Gmail's compose UI.</div>
+    <h3>Gmail-style compose</h3>
+    <div class="expect">Contenteditable inside a realistic compose shell. Tests rich-content extraction and formatting preservation.</div>
     <div class="gmail-compose">
-      <div class="gmail-compose-header">To: boss@company.com &mdash; Subject: Quartely Report</div>
+      <div class="gmail-compose-header">To: boss@company.com &nbsp;·&nbsp; Subject: Quartely Report</div>
       <div class="gmail-compose-body" contenteditable="true">Hi there,
 
 I wanted to followup on are discussion from last week about the quartely report. I think we should definately include the new metrics that was discussed. Me and the team has been working on it and its almost ready.
@@ -290,146 +400,18 @@ John</div>
   </div>
 
   <div class="card">
-    <h3>Slack-Style Message Box <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears. Empty box shows placeholder text. Type something with errors, then proofread.</div>
-    <div class="slack-box" contenteditable="true"></div>
-  </div>
-
-  <div class="card">
-    <h3>Textarea in a Form <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: "W" icon appears. Tests that form context doesn't interfere with detection.</div>
-    <form onsubmit="return false;">
-      <label for="feedback">Your Feedback:</label>
-      <textarea id="feedback" rows="4">This product is grate but their are some things I think could be improved. The user interface is confusing sometimes and I dont always know where to find the settings. Also, the loading time could definately be faster.</textarea>
-    </form>
-  </div>
-
-  <div class="card">
-    <h3>Selection Test <span class="badge badge-yes">ICON</span></h3>
-    <div class="expect">Expect: Select ONLY the second sentence, then proofread. Only the selected text should be processed.</div>
+    <h3>Selection-only proofread</h3>
+    <div class="expect">Select just the middle sentence, then proofread. Only the selected text should be sent to the model.</div>
     <textarea rows="4">This first sentence is perfectly fine. This second sentense has a speling eror and bad grammer that needs fixing. This third sentence is also perfectly fine.</textarea>
-    <p style="font-size:12px; color:#636E72; margin-top:6px;">Tip: Select "This second sentense has a speling eror and bad grammer that needs fixing." then click the W icon and proofread.</p>
+    <div class="tip">Tip: highlight "This second sentense … needs fixing." before clicking the W button.</div>
   </div>
 
-  <!-- ===== SECTION: Tone Rewrite Samples ===== -->
-  <div class="section-title">Tone Rewrite Test Cases</div>
+  <div class="group-title">Negative control</div>
 
-  <div class="columns">
-    <div class="card">
-      <h3>Short &amp; Simple</h3>
-      <div class="expect">Try each of the 8 tones. Short text = quick results.</div>
-      <textarea rows="2">I got promoted at work today. I'm pretty happy about it.</textarea>
-    </div>
-
-    <div class="card">
-      <h3>Complaint Email</h3>
-      <div class="expect">Try "Passive Aggressive" and "Corporate Buzzword" tones.</div>
-      <textarea rows="3">I ordered a laptop two weeks ago and it still hasn't arrived. The tracking number doesn't work and nobody answers the phone when I call support.</textarea>
-    </div>
-
-    <div class="card">
-      <h3>Project Update</h3>
-      <div class="expect">Try "LinkedIn Influencer" and "Overly Enthusiastic" tones.</div>
-      <textarea rows="3">We finished the project on time and under budget. The client was satisfied with the results and signed off on the deliverables.</textarea>
-    </div>
-
-    <div class="card">
-      <h3>Meeting Request</h3>
-      <div class="expect">Try "Professional" and "Casual" to see the contrast.</div>
-      <textarea rows="3">Hey, can we meet sometime this week to talk about the new feature? I have some ideas I want to run by you before we start building.</textarea>
-    </div>
-  </div>
-
-  <!-- ===== SECTION: Should NOT Detect ===== -->
-  <div class="section-title">Fields That Should NOT Show the "W" Icon</div>
-
-  <div class="columns">
-    <div class="card">
-      <h3>Tiny Textarea <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Too small (80x24px). Should be filtered out.</div>
-      <textarea class="tiny-textarea">tiny</textarea>
-    </div>
-
-    <div class="card">
-      <h3>Search Input <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Type "search" is in the ignore list.</div>
-      <input type="search" placeholder="Search...">
-    </div>
-
-    <div class="card">
-      <h3>Password Input <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Type "password" is in the ignore list.</div>
-      <input type="password" placeholder="Enter password">
-    </div>
-
-    <div class="card">
-      <h3>Email Input <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Type "email" is in the ignore list.</div>
-      <input type="email" placeholder="you@example.com">
-    </div>
-
-    <div class="card">
-      <h3>Number Input <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Type "number" is in the ignore list.</div>
-      <input type="number" placeholder="42">
-    </div>
-
-    <div class="card">
-      <h3>Small Text Input <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Regular text input, but too small (default height &lt; 32px on most browsers).</div>
-      <input type="text" placeholder="Short text input" style="width:120px;">
-    </div>
-
-    <div class="card">
-      <h3>Search-Role Contenteditable <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Has role="search" parent, should be filtered out.</div>
-      <div role="search">
-        <div contenteditable="true" style="min-height:40px; padding:8px; border:1px solid #DDD; border-radius:4px;">Search contenteditable...</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Tiny Contenteditable <span class="badge badge-no">NO ICON</span></h3>
-      <div class="expect">Too small (only 20px tall). Should be filtered out.</div>
-      <div contenteditable="true" style="height:20px; width:80px; font-size:10px; border:1px solid #DDD; overflow:hidden;">tiny</div>
-    </div>
-  </div>
-
-  <!-- ===== SECTION: Edge Cases ===== -->
-  <div class="section-title">Edge Cases</div>
-
-  <div class="card">
-    <h3>Empty Textarea</h3>
-    <div class="expect">Clicking proofread on empty text should be a no-op (the button shouldn't submit an empty request).</div>
-    <textarea rows="3" placeholder="This is empty. Try proofreading nothing."></textarea>
-  </div>
-
-  <div class="card">
-    <h3>Perfect Text</h3>
-    <div class="expect">Should score 85+ and show "no changes needed" or minimal corrections.</div>
-    <textarea rows="3">The quarterly earnings report demonstrates a significant increase in revenue compared to the previous fiscal year. All departments exceeded their projected targets, and the board has approved the proposed expansion plan.</textarea>
-  </div>
-
-  <div class="card">
-    <h3>Very Long Text</h3>
-    <div class="expect">Tests model token limits. May produce partial results or an error if text is too long.</div>
-    <textarea rows="6">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-
-Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</textarea>
-  </div>
-
-  <div class="card">
-    <h3>Mixed Languages</h3>
-    <div class="expect">Tests how the AI handles non-English text mixed with English.</div>
-    <textarea rows="3">This meeting was very productif. We need to finalize the rapport by Friday. The neue design looks magnifique but needs some kleine adjustments.</textarea>
-  </div>
-
-  <div class="card">
-    <h3>All Caps / Unconventional Casing</h3>
-    <div class="expect">Should handle text that's ALL CAPS or has weird casing patterns.</div>
-    <textarea rows="2">I CANT BELIEVE THIS IS HAPPENING RIGHT NOW. THIS IS THE WORST DAY EVER AND NOBODY IS HELPING ME FIX THE PROBLEM.</textarea>
+  <div class="card excluded">
+    <h3>Search input</h3>
+    <div class="expect"><code>input[type="search"]</code> is in the ignore list — the W button should not appear here.</div>
+    <input type="search" placeholder="Search…">
   </div>
 
 </div>
