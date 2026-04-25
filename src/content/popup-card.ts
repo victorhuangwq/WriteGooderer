@@ -132,6 +132,7 @@ export class PopupCard {
     this.resetContent();
     this.el.classList.add("wg-visible");
     this.attachToField(field);
+    this.speculateFor({ kind: "proofread" });
     this.startTracking();
   }
 
