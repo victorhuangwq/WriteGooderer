@@ -15,6 +15,14 @@ WriteGooderer is a Chrome extension that proofreads and rewrites text in the pag
 
 Click into a text field, a floating `W` appears, and from there you can catch typos, score how the sentence is landing, or swap the whole thing into a different tone without tabbing away.
 
+## Install
+
+1. Clone this repo: `git clone https://github.com/victorhuangwq/WriteGooderer.git`
+2. Open `chrome://extensions` and turn on **Developer mode**
+3. Click **Load unpacked** and select the `dist/` folder
+
+That's it — the extension is now active. See [Requirements](#requirements) if the popup says the Prompt API is unavailable.
+
 ## What It Does
 
 - Catches grammar, spelling, punctuation, and clarity slips

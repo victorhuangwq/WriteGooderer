@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="fonts/Inter-VariableFont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Fraunces-VariableFont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <div class="popup-brand">
+        <span class="popup-mark" aria-hidden="true">W</span>
+        <h1 class="popup-title">WriteGooderer</h1>
+      </div>
+      <p class="popup-subtitle">Help you make your writing, spelling, tone gooderer. Runs local, leaks zero.</p>
+    </header>
+
+    <div class="status-section">
+      <p class="section-label">Model Status</p>
+      <div class="status-row">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText" aria-live="polite">Checking&hellip;</span>
+      </div>
+      <div class="status-hint" id="statusHint"></div>
+    </div>
+
+    <div class="toggle-section">
+      <p class="section-label">Current Site</p>
+      <label class="toggle-row">
+        <span class="toggle-copy">
+          <span class="toggle-label">Enable on this site</span>
+          <span class="toggle-note">Hide the in-page button and card on the current hostname.</span>
+        </span>
+        <div class="toggle-switch">
+          <input type="checkbox" id="siteToggle" checked>
+          <span class="toggle-slider"></span>
+        </div>
+      </label>
+    </div>
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
