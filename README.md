@@ -1,5 +1,14 @@
 # WriteGooderer
 
+![License: MIT](https://img.shields.io/github/license/victorhuangwq/WriteGooderer)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?logo=vite&logoColor=white)
+![Vitest](https://img.shields.io/badge/tested%20with-vitest-6E9F18?logo=vitest&logoColor=white)
+![Chrome MV3](https://img.shields.io/badge/Chrome-MV3-4285F4?logo=googlechrome&logoColor=white)
+![On-device AI](https://img.shields.io/badge/AI-on--device-00A67E)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+![GitHub stars](https://img.shields.io/github/stars/victorhuangwq/WriteGooderer?style=social)
+
 WriteGooderer is a Chrome extension that proofreads and rewrites text in the page you're already typing in. It runs on Chrome's built-in, on-device AI — nothing you write leaves the browser.
 
 Click into a text field, a floating `W` appears, and from there you can catch typos, score how the sentence is landing, or swap the whole thing into a different tone without tabbing away.
