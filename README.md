@@ -2,7 +2,8 @@
 
 ![License: MIT](https://img.shields.io/github/license/victorhuangwq/WriteGooderer)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
-![Vitest](https://img.shields.io/badge/tested%20with-vitest-6E9F18?logo=vitest&logoColor=white)
+![On-device AI](https://img.shields.io/badge/AI-on--device-00A67E)
+![GitHub stars](https://img.shields.io/github/stars/victorhuangwq/WriteGooderer?style=social)
 
 A Chrome extension that proofreads and rewrites text in the page you're already typing in. Runs on Chrome's built-in, on-device AI (Gemini Nano via the Prompt API). Nothing you type leaves the browser.
 
