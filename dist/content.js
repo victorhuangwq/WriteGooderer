@@ -1260,9 +1260,18 @@ ${text}`;
     }
   }
   const IGNORED_TYPES = /* @__PURE__ */ new Set(["search", "password", "email", "number", "tel", "url", "date"]);
-  const MIN_FIELD_HEIGHT = 32;
+  const MIN_FIELD_HEIGHT = 24;
   const MIN_FIELD_WIDTH = 100;
-  const FIELD_SELECTOR = 'textarea, input, [contenteditable="true"], [contenteditable="plaintext-only"]';
+  const EDITABLE_HOST_SELECTOR = '[contenteditable="true"], [contenteditable=""], [contenteditable="plaintext-only"]';
+  const FIELD_SELECTOR = `textarea, input, ${EDITABLE_HOST_SELECTOR}`;
+  function findEditableHost(el) {
+    if (!el) return null;
+    if (!(el instanceof HTMLElement)) {
+      const parent = el.parentElement;
+      return parent ? findEditableHost(parent) : null;
+    }
+    return el.closest(EDITABLE_HOST_SELECTOR);
+  }
   let nextFieldId = 1;
   function isValidField(el) {
     if (el instanceof HTMLTextAreaElement) {
@@ -1320,13 +1329,20 @@ ${text}`;
     }
     function handleFocusIn(e) {
       const target = e.target;
-      if (!isValidField(target)) return;
+      let field = null;
+      if (target && isValidField(target)) {
+        field = target;
+      } else {
+        const host = findEditableHost(target);
+        if (host && isValidField(host)) field = host;
+      }
+      if (!field) return;
       if (hideTimeout) {
         clearTimeout(hideTimeout);
         hideTimeout = null;
       }
-      registerValidField(target);
-      activeField = target;
+      registerValidField(field);
+      activeField = field;
       onFieldChange(activeField);
     }
     function handleFocusOut(_e) {
@@ -1933,14 +1949,15 @@ ${text}`;
         return;
       }
       const rect = this.activeField.getBoundingClientRect();
-      const desiredTop = rect.bottom + window.scrollY + POPUP_GAP;
-      const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING);
+      const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING - POPUP_GAP);
+      const availableAbove = Math.max(0, rect.top - VIEWPORT_PADDING - POPUP_GAP);
       const chromeHeight = this.headerEl.offsetHeight + 2;
-      const popupMaxHeight = Math.max(
-        chromeHeight + MIN_BODY_HEIGHT,
-        Math.min(POPUP_MAX_HEIGHT, availableBelow)
-      );
-      this.el.style.top = `${desiredTop}px`;
+      const minNeeded = chromeHeight + MIN_BODY_HEIGHT;
+      const placeAbove = availableBelow < minNeeded && availableAbove > availableBelow;
+      const space = placeAbove ? availableAbove : availableBelow;
+      const popupMaxHeight = Math.max(minNeeded, Math.min(POPUP_MAX_HEIGHT, space));
+      const top = placeAbove ? rect.top + window.scrollY - POPUP_GAP - popupMaxHeight : rect.bottom + window.scrollY + POPUP_GAP;
+      this.el.style.top = `${top}px`;
       this.el.style.maxHeight = `${popupMaxHeight}px`;
       this.bodyEl.style.maxHeight = `${Math.max(MIN_BODY_HEIGHT, popupMaxHeight - chromeHeight)}px`;
       const minLeft = window.scrollX + VIEWPORT_PADDING;

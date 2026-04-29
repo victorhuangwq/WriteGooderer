@@ -2,9 +2,21 @@ type FieldCallback = (field: HTMLElement | null) => void;
 type ValidFieldCallback = () => void;
 
 const IGNORED_TYPES = new Set(["search", "password", "email", "number", "tel", "url", "date"]);
-const MIN_FIELD_HEIGHT = 32;
+const MIN_FIELD_HEIGHT = 24;
 const MIN_FIELD_WIDTH = 100;
-const FIELD_SELECTOR = 'textarea, input, [contenteditable="true"], [contenteditable="plaintext-only"]';
+const EDITABLE_HOST_SELECTOR = '[contenteditable="true"], [contenteditable=""], [contenteditable="plaintext-only"]';
+const FIELD_SELECTOR = `textarea, input, ${EDITABLE_HOST_SELECTOR}`;
+
+function findEditableHost(el: Element | null): HTMLElement | null {
+  if (!el) return null;
+  if (!(el instanceof HTMLElement)) {
+    const parent = el.parentElement;
+    return parent ? findEditableHost(parent) : null;
+  }
+  // Climb to the element that owns the contenteditable attribute (Draft.js,
+  // ProseMirror, etc. focus inner nodes that inherit isContentEditable).
+  return el.closest(EDITABLE_HOST_SELECTOR) as HTMLElement | null;
+}
 
 let nextFieldId = 1;
 
@@ -78,16 +90,26 @@ export function initFieldDetector(
   }
 
   function handleFocusIn(e: FocusEvent): void {
-    const target = e.target as Element;
-    if (!isValidField(target)) return;
+    const target = e.target as Element | null;
+    let field: HTMLElement | null = null;
+
+    if (target && isValidField(target)) {
+      field = target;
+    } else {
+      // Focus may land on an inner node of a rich editor (Draft.js on x.com,
+      // ProseMirror, etc.). Walk up to the contenteditable host.
+      const host = findEditableHost(target);
+      if (host && isValidField(host)) field = host;
+    }
+    if (!field) return;
 
     if (hideTimeout) {
       clearTimeout(hideTimeout);
       hideTimeout = null;
     }
 
-    registerValidField(target);
-    activeField = target;
+    registerValidField(field);
+    activeField = field;
     onFieldChange(activeField);
   }
 

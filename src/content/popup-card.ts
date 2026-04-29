@@ -220,16 +220,22 @@ export class PopupCard {
     }
 
     const rect = this.activeField.getBoundingClientRect();
-    const desiredTop = rect.bottom + window.scrollY + POPUP_GAP;
-    const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING);
+    const availableBelow = Math.max(0, window.innerHeight - rect.bottom - VIEWPORT_PADDING - POPUP_GAP);
+    const availableAbove = Math.max(0, rect.top - VIEWPORT_PADDING - POPUP_GAP);
 
     const chromeHeight = this.headerEl.offsetHeight + 2;
-    const popupMaxHeight = Math.max(
-      chromeHeight + MIN_BODY_HEIGHT,
-      Math.min(POPUP_MAX_HEIGHT, availableBelow)
-    );
+    const minNeeded = chromeHeight + MIN_BODY_HEIGHT;
 
-    this.el.style.top = `${desiredTop}px`;
+    // Flip above when there isn't enough room below and above has more space.
+    const placeAbove = availableBelow < minNeeded && availableAbove > availableBelow;
+    const space = placeAbove ? availableAbove : availableBelow;
+    const popupMaxHeight = Math.max(minNeeded, Math.min(POPUP_MAX_HEIGHT, space));
+
+    const top = placeAbove
+      ? rect.top + window.scrollY - POPUP_GAP - popupMaxHeight
+      : rect.bottom + window.scrollY + POPUP_GAP;
+
+    this.el.style.top = `${top}px`;
     this.el.style.maxHeight = `${popupMaxHeight}px`;
     this.bodyEl.style.maxHeight = `${Math.max(MIN_BODY_HEIGHT, popupMaxHeight - chromeHeight)}px`;
 
