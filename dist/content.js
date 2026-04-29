@@ -99,44 +99,44 @@
     dark: DARK_TOKENS
   };
   function tokensToCssVars(mode) {
-    const t = THEME_TOKENS[mode];
+    const t2 = THEME_TOKENS[mode];
     return `
-    --wg-gradient: ${t.gradient};
-    --wg-bg-soft: ${t.bgSoft};
-    --wg-bg-muted: ${t.bgMuted};
-    --wg-card-bg: ${t.cardBg};
-    --wg-popup-bg: ${t.popupBg};
-    --wg-popup-header-bg: ${t.popupHeaderBg};
-    --wg-section-bg: ${t.sectionBg};
-    --wg-text: ${t.text};
-    --wg-text-secondary: ${t.textSecondary};
-    --wg-text-tertiary: ${t.textTertiary};
-    --wg-accent-strong: ${t.accentStrong};
-    --wg-accent-soft: ${t.accentSoft};
-    --wg-link: ${t.link};
-    --wg-border: ${t.border};
-    --wg-border-soft: ${t.borderSoft};
-    --wg-shadow: ${t.shadow};
-    --wg-shadow-soft: ${t.shadowSoft};
-    --wg-pill-bg: ${t.pillBg};
-    --wg-button-secondary-bg: ${t.buttonSecondaryBg};
-    --wg-button-secondary-hover-bg: ${t.buttonSecondaryHoverBg};
-    --wg-toggle-track: ${t.toggleTrack};
-    --wg-focus-ring: ${t.focusRing};
-    --wg-glass-highlight: ${t.glassHighlight};
-    --wg-surface-raised: ${t.surfaceRaised};
-    --wg-gauge-track: ${t.gaugeTrack};
-    --wg-diff-remove-bg: ${t.diffRemoveBg};
-    --wg-diff-remove-fg: ${t.diffRemoveFg};
-    --wg-diff-add-bg: ${t.diffAddBg};
-    --wg-diff-add-fg: ${t.diffAddFg};
-    --wg-error-bg: ${t.errorBg};
-    --wg-error-border: ${t.errorBorder};
-    --wg-error-fg: ${t.errorFg};
-    --wg-tone-selected-bg: ${t.toneSelectedBg};
-    --wg-tone-selected-border: ${t.toneSelectedBorder};
-    --wg-tone-hover-bg: ${t.toneHoverBg};
-    --wg-icon-shadow: ${t.iconShadow};
+    --wg-gradient: ${t2.gradient};
+    --wg-bg-soft: ${t2.bgSoft};
+    --wg-bg-muted: ${t2.bgMuted};
+    --wg-card-bg: ${t2.cardBg};
+    --wg-popup-bg: ${t2.popupBg};
+    --wg-popup-header-bg: ${t2.popupHeaderBg};
+    --wg-section-bg: ${t2.sectionBg};
+    --wg-text: ${t2.text};
+    --wg-text-secondary: ${t2.textSecondary};
+    --wg-text-tertiary: ${t2.textTertiary};
+    --wg-accent-strong: ${t2.accentStrong};
+    --wg-accent-soft: ${t2.accentSoft};
+    --wg-link: ${t2.link};
+    --wg-border: ${t2.border};
+    --wg-border-soft: ${t2.borderSoft};
+    --wg-shadow: ${t2.shadow};
+    --wg-shadow-soft: ${t2.shadowSoft};
+    --wg-pill-bg: ${t2.pillBg};
+    --wg-button-secondary-bg: ${t2.buttonSecondaryBg};
+    --wg-button-secondary-hover-bg: ${t2.buttonSecondaryHoverBg};
+    --wg-toggle-track: ${t2.toggleTrack};
+    --wg-focus-ring: ${t2.focusRing};
+    --wg-glass-highlight: ${t2.glassHighlight};
+    --wg-surface-raised: ${t2.surfaceRaised};
+    --wg-gauge-track: ${t2.gaugeTrack};
+    --wg-diff-remove-bg: ${t2.diffRemoveBg};
+    --wg-diff-remove-fg: ${t2.diffRemoveFg};
+    --wg-diff-add-bg: ${t2.diffAddBg};
+    --wg-diff-add-fg: ${t2.diffAddFg};
+    --wg-error-bg: ${t2.errorBg};
+    --wg-error-border: ${t2.errorBorder};
+    --wg-error-fg: ${t2.errorFg};
+    --wg-tone-selected-bg: ${t2.toneSelectedBg};
+    --wg-tone-selected-border: ${t2.toneSelectedBorder};
+    --wg-tone-hover-bg: ${t2.toneHoverBg};
+    --wg-icon-shadow: ${t2.iconShadow};
   `.trim();
   }
   const FONT_TOKENS_CSS = `
@@ -150,292 +150,278 @@
   function getReadableBadgeBg(color) {
     return SCORE_BADGE_COLORS[color] ?? color;
   }
-  const ir = {
-    withStackTrace: false
-  }, Y = (t, r, e = ir) => {
-    const n = r.isOk() ? { type: "Ok", value: r.value } : { type: "Err", value: r.error }, i = e.withStackTrace ? new Error().stack : void 0;
-    return {
-      data: n,
-      message: t,
-      stack: i
-    };
-  };
-  function x(t, r, e, n) {
-    function i(o) {
-      return o instanceof e ? o : new e(function(s) {
-        s(o);
+  var e = { withStackTrace: false }, t = (t2, n2, r2 = e) => ({
+    data: n2.isOk() ? {
+      type: "Ok",
+      value: n2.value
+    } : {
+      type: "Err",
+      value: n2.error
+    },
+    message: t2,
+    stack: r2.withStackTrace ? (/* @__PURE__ */ Error()).stack : void 0
+  });
+  function n(e2, t2, n2, r2) {
+    function i2(e3) {
+      return e3 instanceof n2 ? e3 : new n2(function(t3) {
+        t3(e3);
       });
     }
-    return new (e || (e = Promise))(function(o, s) {
-      function a(m) {
+    return new (n2 ||= Promise)(function(n3, a2) {
+      function o2(e3) {
         try {
-          h(n.next(m));
-        } catch (j) {
-          s(j);
+          c2(r2.next(e3));
+        } catch (e4) {
+          a2(e4);
         }
       }
-      function p(m) {
+      function s2(e3) {
         try {
-          h(n.throw(m));
-        } catch (j) {
-          s(j);
+          c2(r2.throw(e3));
+        } catch (e4) {
+          a2(e4);
         }
       }
-      function h(m) {
-        m.done ? o(m.value) : i(m.value).then(a, p);
+      function c2(e3) {
+        e3.done ? n3(e3.value) : i2(e3.value).then(o2, s2);
       }
-      h((n = n.apply(t, [])).next());
+      c2((r2 = r2.apply(e2, [])).next());
     });
   }
-  function J(t) {
-    var r = typeof Symbol == "function" && Symbol.iterator, e = r && t[r], n = 0;
-    if (e) return e.call(t);
-    if (t && typeof t.length == "number") return {
-      next: function() {
-        return t && n >= t.length && (t = void 0), { value: t && t[n++], done: !t };
-      }
-    };
-    throw new TypeError(r ? "Object is not iterable." : "Symbol.iterator is not defined.");
+  function r(e2) {
+    var t2 = typeof Symbol == "function" && Symbol.iterator, n2 = t2 && e2[t2], r2 = 0;
+    if (n2) return n2.call(e2);
+    if (e2 && typeof e2.length == "number") return { next: function() {
+      return e2 && r2 >= e2.length && (e2 = void 0), {
+        value: e2 && e2[r2++],
+        done: !e2
+      };
+    } };
+    throw TypeError(t2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
   }
-  function E(t) {
-    return this instanceof E ? (this.v = t, this) : new E(t);
+  function i(e2) {
+    return this instanceof i ? (this.v = e2, this) : new i(e2);
   }
-  function q(t, r, e) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var n = e.apply(t, r || []), i, o = [];
-    return i = Object.create((typeof AsyncIterator == "function" ? AsyncIterator : Object).prototype), a("next"), a("throw"), a("return", s), i[Symbol.asyncIterator] = function() {
+  function a(e2, t2, n2) {
+    if (!Symbol.asyncIterator) throw TypeError("Symbol.asyncIterator is not defined.");
+    var r2 = n2.apply(e2, t2 || []), a2, o2 = [];
+    return a2 = Object.create((typeof AsyncIterator == "function" ? AsyncIterator : Object).prototype), c2("next"), c2("throw"), c2("return", s2), a2[Symbol.asyncIterator] = function() {
       return this;
-    }, i;
-    function s(f) {
-      return function(k) {
-        return Promise.resolve(k).then(f, j);
+    }, a2;
+    function s2(e3) {
+      return function(t3) {
+        return Promise.resolve(t3).then(e3, f2);
       };
     }
-    function a(f, k) {
-      n[f] && (i[f] = function(W) {
-        return new Promise(function(tr, nr) {
-          o.push([f, W, tr, nr]) > 1 || p(f, W);
+    function c2(e3, t3) {
+      r2[e3] && (a2[e3] = function(t4) {
+        return new Promise(function(n3, r3) {
+          o2.push([
+            e3,
+            t4,
+            n3,
+            r3
+          ]) > 1 || l2(e3, t4);
         });
-      }, k && (i[f] = k(i[f])));
+      }, t3 && (a2[e3] = t3(a2[e3])));
     }
-    function p(f, k) {
+    function l2(e3, t3) {
       try {
-        h(n[f](k));
-      } catch (W) {
-        V(o[0][3], W);
+        u2(r2[e3](t3));
+      } catch (e4) {
+        p2(o2[0][3], e4);
       }
     }
-    function h(f) {
-      f.value instanceof E ? Promise.resolve(f.value.v).then(m, j) : V(o[0][2], f);
+    function u2(e3) {
+      e3.value instanceof i ? Promise.resolve(e3.value.v).then(d2, f2) : p2(o2[0][2], e3);
     }
-    function m(f) {
-      p("next", f);
+    function d2(e3) {
+      l2("next", e3);
     }
-    function j(f) {
-      p("throw", f);
+    function f2(e3) {
+      l2("throw", e3);
     }
-    function V(f, k) {
-      f(k), o.shift(), o.length && p(o[0][0], o[0][1]);
-    }
-  }
-  function or(t) {
-    var r, e;
-    return r = {}, n("next"), n("throw", function(i) {
-      throw i;
-    }), n("return"), r[Symbol.iterator] = function() {
-      return this;
-    }, r;
-    function n(i, o) {
-      r[i] = t[i] ? function(s) {
-        return (e = !e) ? { value: E(t[i](s)), done: false } : o ? o(s) : s;
-      } : o;
+    function p2(e3, t3) {
+      e3(t3), o2.shift(), o2.length && l2(o2[0][0], o2[0][1]);
     }
   }
-  function sr(t) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var r = t[Symbol.asyncIterator], e;
-    return r ? r.call(t) : (t = typeof J == "function" ? J(t) : t[Symbol.iterator](), e = {}, n("next"), n("throw"), n("return"), e[Symbol.asyncIterator] = function() {
+  function o(e2) {
+    var t2, n2;
+    return t2 = {}, r2("next"), r2("throw", function(e3) {
+      throw e3;
+    }), r2("return"), t2[Symbol.iterator] = function() {
       return this;
-    }, e);
-    function n(o) {
-      e[o] = t[o] && function(s) {
-        return new Promise(function(a, p) {
-          s = t[o](s), i(a, p, s.done, s.value);
+    }, t2;
+    function r2(r3, a2) {
+      t2[r3] = e2[r3] ? function(t3) {
+        return (n2 = !n2) ? {
+          value: i(e2[r3](t3)),
+          done: false
+        } : a2 ? a2(t3) : t3;
+      } : a2;
+    }
+  }
+  function s(e2) {
+    if (!Symbol.asyncIterator) throw TypeError("Symbol.asyncIterator is not defined.");
+    var t2 = e2[Symbol.asyncIterator], n2;
+    return t2 ? t2.call(e2) : (e2 = typeof r == "function" ? r(e2) : e2[Symbol.iterator](), n2 = {}, i2("next"), i2("throw"), i2("return"), n2[Symbol.asyncIterator] = function() {
+      return this;
+    }, n2);
+    function i2(t3) {
+      n2[t3] = e2[t3] && function(n3) {
+        return new Promise(function(r2, i3) {
+          n3 = e2[t3](n3), a2(r2, i3, n3.done, n3.value);
         });
       };
     }
-    function i(o, s, a, p) {
-      Promise.resolve(p).then(function(h) {
-        o({ value: h, done: a });
-      }, s);
+    function a2(e3, t3, n3, r2) {
+      Promise.resolve(r2).then(function(t4) {
+        e3({
+          value: t4,
+          done: n3
+        });
+      }, t3);
     }
   }
-  class c {
-    constructor(r) {
-      this._promise = r;
+  var c = class e2 {
+    constructor(e3) {
+      this._promise = e3;
     }
-    static fromSafePromise(r) {
-      const e = r.then((n) => new v(n));
-      return new c(e);
+    static fromSafePromise(t2) {
+      return new e2(t2.then((e3) => new _(e3)));
     }
-    static fromPromise(r, e) {
-      const n = r.then((i) => new v(i)).catch((i) => new w(e(i)));
-      return new c(n);
+    static fromPromise(t2, n2) {
+      return new e2(t2.then((e3) => new _(e3)).catch((e3) => new v(n2(e3))));
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    static fromThrowable(r, e) {
-      return (...n) => new c(x(this, void 0, void 0, function* () {
+    static fromThrowable(t2, r2) {
+      return (...i2) => new e2(n(this, void 0, void 0, function* () {
         try {
-          return new v(yield r(...n));
-        } catch (i) {
-          return new w(e ? e(i) : i);
+          return new _(yield t2(...i2));
+        } catch (e3) {
+          return new v(r2 ? r2(e3) : e3);
         }
       }));
     }
-    static combine(r) {
-      return ar(r);
+    static combine(e3) {
+      return d(e3);
     }
-    static combineWithAllErrors(r) {
-      return ur(r);
+    static combineWithAllErrors(e3) {
+      return p(e3);
     }
-    map(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        return e.isErr() ? new w(e.error) : new v(yield r(e.value));
+    map(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        return e3.isErr() ? new v(e3.error) : new _(yield t2(e3.value));
       })));
     }
-    andThrough(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        if (e.isErr())
-          return new w(e.error);
-        const n = yield r(e.value);
-        return n.isErr() ? new w(n.error) : new v(e.value);
+    andThrough(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        if (e3.isErr()) return new v(e3.error);
+        let n2 = yield t2(e3.value);
+        return n2.isErr() ? new v(n2.error) : new _(e3.value);
       })));
     }
-    andTee(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        if (e.isErr())
-          return new w(e.error);
+    andTee(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        if (e3.isErr()) return new v(e3.error);
         try {
-          yield r(e.value);
+          yield t2(e3.value);
         } catch {
         }
-        return new v(e.value);
+        return new _(e3.value);
       })));
     }
-    orTee(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        if (e.isOk())
-          return new v(e.value);
+    orTee(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        if (e3.isOk()) return new _(e3.value);
         try {
-          yield r(e.error);
+          yield t2(e3.error);
         } catch {
         }
-        return new w(e.error);
+        return new v(e3.error);
       })));
     }
-    mapErr(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        return e.isOk() ? new v(e.value) : new w(yield r(e.error));
+    mapErr(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        return e3.isOk() ? new _(e3.value) : new v(yield t2(e3.error));
       })));
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    andThen(r) {
-      return new c(this._promise.then((e) => {
-        if (e.isErr())
-          return new w(e.error);
-        const n = r(e.value);
-        return n instanceof c ? n._promise : n;
+    andThen(t2) {
+      return new e2(this._promise.then((n2) => {
+        if (n2.isErr()) return new v(n2.error);
+        let r2 = t2(n2.value);
+        return r2 instanceof e2 ? r2._promise : r2;
       }));
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    orElse(r) {
-      return new c(this._promise.then((e) => x(this, void 0, void 0, function* () {
-        return e.isErr() ? r(e.error) : new v(e.value);
+    orElse(t2) {
+      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
+        return e3.isErr() ? t2(e3.error) : new _(e3.value);
       })));
     }
-    match(r, e) {
-      return this._promise.then((n) => n.match(r, e));
+    match(e3, t2) {
+      return this._promise.then((n2) => n2.match(e3, t2));
     }
-    unwrapOr(r) {
-      return this._promise.then((e) => e.unwrapOr(r));
+    unwrapOr(e3) {
+      return this._promise.then((t2) => t2.unwrapOr(e3));
     }
-    /**
-     * @deprecated will be removed in 9.0.0.
-     *
-     * You can use `safeTry` without this method.
-     * @example
-     * ```typescript
-     * safeTry(async function* () {
-     *   const okValue = yield* yourResult
-     * })
-     * ```
-     * Emulates Rust's `?` operator in `safeTry`'s body. See also `safeTry`.
-     */
     safeUnwrap() {
-      return q(this, arguments, function* () {
-        return yield E(yield E(yield* or(sr(yield E(this._promise.then((e) => e.safeUnwrap()))))));
+      return a(this, arguments, function* () {
+        return yield i(yield i(yield* o(s(yield i(this._promise.then((e3) => e3.safeUnwrap()))))));
       });
     }
-    // Makes ResultAsync implement PromiseLike<Result>
-    then(r, e) {
-      return this._promise.then(r, e);
+    then(e3, t2) {
+      return this._promise.then(e3, t2);
     }
     [Symbol.asyncIterator]() {
-      return q(this, arguments, function* () {
-        const e = yield E(this._promise);
-        return e.isErr() && (yield yield E(M(e.error))), yield E(e.value);
+      return a(this, arguments, function* () {
+        let e3 = yield i(this._promise);
+        return e3.isErr() && (yield yield i(l(e3.error))), yield i(e3.value);
       });
     }
+  };
+  function l(e2) {
+    return new c(Promise.resolve(new v(e2)));
   }
-  function M(t) {
-    return new c(Promise.resolve(new w(t)));
-  }
-  const H = (t) => {
-    let r = S([]);
-    for (const e of t)
-      if (e.isErr()) {
-        r = d(e.error);
-        break;
-      } else
-        r.map((n) => n.push(e.value));
-    return r;
-  }, ar = (t) => c.fromSafePromise(Promise.all(t)).andThen(H), X = (t) => {
-    let r = S([]);
-    for (const e of t)
-      e.isErr() && r.isErr() ? r.error.push(e.error) : e.isErr() && r.isOk() ? r = d([e.error]) : e.isOk() && r.isOk() && r.value.push(e.value);
-    return r;
-  }, ur = (t) => c.fromSafePromise(Promise.all(t)).andThen(X);
-  var z;
-  (function(t) {
-    function r(i, o) {
-      return (...s) => {
+  var u = (e2) => {
+    let t2 = h([]);
+    for (let n2 of e2) if (n2.isErr()) {
+      t2 = g(n2.error);
+      break;
+    } else t2.map((e3) => e3.push(n2.value));
+    return t2;
+  }, d = (e2) => c.fromSafePromise(Promise.all(e2)).andThen(u), f = (e2) => {
+    let t2 = h([]);
+    for (let n2 of e2) n2.isErr() && t2.isErr() ? t2.error.push(n2.error) : n2.isErr() && t2.isOk() ? t2 = g([n2.error]) : n2.isOk() && t2.isOk() && t2.value.push(n2.value);
+    return t2;
+  }, p = (e2) => c.fromSafePromise(Promise.all(e2)).andThen(f), m;
+  (function(e2) {
+    function t2(e3, t3) {
+      return (...n3) => {
         try {
-          const a = i(...s);
-          return S(a);
-        } catch (a) {
-          return d(o ? o(a) : a);
+          return h(e3(...n3));
+        } catch (e4) {
+          return g(t3 ? t3(e4) : e4);
         }
       };
     }
-    t.fromThrowable = r;
-    function e(i) {
-      return H(i);
+    e2.fromThrowable = t2;
+    function n2(e3) {
+      return u(e3);
     }
-    t.combine = e;
-    function n(i) {
-      return X(i);
+    e2.combine = n2;
+    function r2(e3) {
+      return f(e3);
     }
-    t.combineWithAllErrors = n;
-  })(z || (z = {}));
-  function S(t) {
-    return new v(t);
+    e2.combineWithAllErrors = r2;
+  })(m ||= {});
+  function h(e2) {
+    return new _(e2);
   }
-  function d(t) {
-    return new w(t);
+  function g(e2) {
+    return new v(e2);
   }
-  class v {
-    constructor(r) {
-      this.value = r;
+  var _ = class {
+    constructor(e2) {
+      this.value = e2;
     }
     isOk() {
       return true;
@@ -443,73 +429,64 @@
     isErr() {
       return !this.isOk();
     }
-    map(r) {
-      return S(r(this.value));
+    map(e2) {
+      return h(e2(this.value));
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mapErr(r) {
-      return S(this.value);
+    mapErr(e2) {
+      return h(this.value);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    andThen(r) {
-      return r(this.value);
+    andThen(e2) {
+      return e2(this.value);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    andThrough(r) {
-      return r(this.value).map((e) => this.value);
+    andThrough(e2) {
+      return e2(this.value).map((e3) => this.value);
     }
-    andTee(r) {
+    andTee(e2) {
       try {
-        r(this.value);
+        e2(this.value);
       } catch {
       }
-      return S(this.value);
+      return h(this.value);
     }
-    orTee(r) {
-      return S(this.value);
+    orTee(e2) {
+      return h(this.value);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    orElse(r) {
-      return S(this.value);
+    orElse(e2) {
+      return h(this.value);
     }
-    asyncAndThen(r) {
-      return r(this.value);
+    asyncAndThen(e2) {
+      return e2(this.value);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    asyncAndThrough(r) {
-      return r(this.value).map(() => this.value);
+    asyncAndThrough(e2) {
+      return e2(this.value).map(() => this.value);
     }
-    asyncMap(r) {
-      return c.fromSafePromise(r(this.value));
+    asyncMap(e2) {
+      return c.fromSafePromise(e2(this.value));
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    unwrapOr(r) {
+    unwrapOr(e2) {
       return this.value;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    match(r, e) {
-      return r(this.value);
+    match(e2, t2) {
+      return e2(this.value);
     }
     safeUnwrap() {
-      const r = this.value;
+      let e2 = this.value;
       return (function* () {
-        return r;
+        return e2;
       })();
     }
-    _unsafeUnwrap(r) {
+    _unsafeUnwrap(e2) {
       return this.value;
     }
-    _unsafeUnwrapErr(r) {
-      throw Y("Called `_unsafeUnwrapErr` on an Ok", this, r);
+    _unsafeUnwrapErr(e2) {
+      throw t("Called `_unsafeUnwrapErr` on an Ok", this, e2);
     }
-    // eslint-disable-next-line @typescript-eslint/no-this-alias, require-yield
     *[Symbol.iterator]() {
       return this.value;
     }
-  }
-  class w {
-    constructor(r) {
-      this.error = r;
+  }, v = class {
+    constructor(e2) {
+      this.error = e2;
     }
     isOk() {
       return false;
@@ -517,228 +494,282 @@
     isErr() {
       return !this.isOk();
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    map(r) {
-      return d(this.error);
+    map(e2) {
+      return g(this.error);
     }
-    mapErr(r) {
-      return d(r(this.error));
+    mapErr(e2) {
+      return g(e2(this.error));
     }
-    andThrough(r) {
-      return d(this.error);
+    andThrough(e2) {
+      return g(this.error);
     }
-    andTee(r) {
-      return d(this.error);
+    andTee(e2) {
+      return g(this.error);
     }
-    orTee(r) {
+    orTee(e2) {
       try {
-        r(this.error);
+        e2(this.error);
       } catch {
       }
-      return d(this.error);
+      return g(this.error);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    andThen(r) {
-      return d(this.error);
+    andThen(e2) {
+      return g(this.error);
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-    orElse(r) {
-      return r(this.error);
+    orElse(e2) {
+      return e2(this.error);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    asyncAndThen(r) {
-      return M(this.error);
+    asyncAndThen(e2) {
+      return l(this.error);
     }
-    asyncAndThrough(r) {
-      return M(this.error);
+    asyncAndThrough(e2) {
+      return l(this.error);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    asyncMap(r) {
-      return M(this.error);
+    asyncMap(e2) {
+      return l(this.error);
     }
-    unwrapOr(r) {
-      return r;
+    unwrapOr(e2) {
+      return e2;
     }
-    match(r, e) {
-      return e(this.error);
+    match(e2, t2) {
+      return t2(this.error);
     }
     safeUnwrap() {
-      const r = this.error;
+      let e2 = this.error;
       return (function* () {
-        throw yield d(r), new Error("Do not use this generator out of `safeTry`");
+        throw yield g(e2), Error("Do not use this generator out of `safeTry`");
       })();
     }
-    _unsafeUnwrap(r) {
-      throw Y("Called `_unsafeUnwrap` on an Err", this, r);
+    _unsafeUnwrap(e2) {
+      throw t("Called `_unsafeUnwrap` on an Err", this, e2);
     }
-    _unsafeUnwrapErr(r) {
+    _unsafeUnwrapErr(e2) {
       return this.error;
     }
     *[Symbol.iterator]() {
-      const r = this;
-      return yield r, r;
+      let e2 = this;
+      return yield e2, e2;
     }
-  }
-  z.fromThrowable;
-  const _ = /* @__PURE__ */ Symbol.for("@ts-pattern/matcher"), cr = /* @__PURE__ */ Symbol.for("@ts-pattern/isVariadic"), B = "@ts-pattern/anonymous-select-key", D = (t) => !!(t && typeof t == "object"), $ = (t) => t && !!t[_], T = (t, r, e) => {
-    if ($(t)) {
-      const n = t[_](), { matched: i, selections: o } = n.match(r);
-      return i && o && Object.keys(o).forEach((s) => e(s, o[s])), i;
+  };
+  m.fromThrowable;
+  var y = Symbol.for("@ts-pattern/matcher"), b = Symbol.for("@ts-pattern/isVariadic"), x = "@ts-pattern/anonymous-select-key", S = (e2) => !!(e2 && typeof e2 == "object"), C = (e2) => e2 && !!e2[y], w = (e2, t2, n2) => {
+    if (C(e2)) {
+      let { matched: r2, selections: i2 } = e2[y]().match(t2);
+      return r2 && i2 && Object.keys(i2).forEach((e3) => n2(e3, i2[e3])), r2;
     }
-    if (D(t)) {
-      if (!D(r)) return false;
-      if (Array.isArray(t)) {
-        if (!Array.isArray(r)) return false;
-        let n = [], i = [], o = [];
-        for (const s of t.keys()) {
-          const a = t[s];
-          $(a) && a[cr] ? o.push(a) : o.length ? i.push(a) : n.push(a);
+    if (S(e2)) {
+      if (!S(t2)) return false;
+      if (Array.isArray(e2)) {
+        if (!Array.isArray(t2)) return false;
+        let r2 = [], i2 = [], a2 = [];
+        for (let t3 of e2.keys()) {
+          let n3 = e2[t3];
+          C(n3) && n3[b] ? a2.push(n3) : a2.length ? i2.push(n3) : r2.push(n3);
         }
-        if (o.length) {
-          if (o.length > 1) throw new Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
-          if (r.length < n.length + i.length) return false;
-          const s = r.slice(0, n.length), a = i.length === 0 ? [] : r.slice(-i.length), p = r.slice(n.length, i.length === 0 ? 1 / 0 : -i.length);
-          return n.every((h, m) => T(h, s[m], e)) && i.every((h, m) => T(h, a[m], e)) && (o.length === 0 || T(o[0], p, e));
+        if (a2.length) {
+          if (a2.length > 1) throw Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
+          if (t2.length < r2.length + i2.length) return false;
+          let e3 = t2.slice(0, r2.length), o2 = i2.length === 0 ? [] : t2.slice(-i2.length), s2 = t2.slice(r2.length, i2.length === 0 ? Infinity : -i2.length);
+          return r2.every((t3, r3) => w(t3, e3[r3], n2)) && i2.every((e4, t3) => w(e4, o2[t3], n2)) && (a2.length === 0 || w(a2[0], s2, n2));
         }
-        return t.length === r.length && t.every((s, a) => T(s, r[a], e));
+        return e2.length === t2.length && e2.every((e3, r3) => w(e3, t2[r3], n2));
       }
-      return Reflect.ownKeys(t).every((n) => {
-        const i = t[n];
-        return (n in r || $(o = i) && o[_]().matcherType === "optional") && T(i, r[n], e);
-        var o;
+      return Reflect.ownKeys(e2).every((r2) => {
+        let i2 = e2[r2];
+        return (r2 in t2 || C(a2 = i2) && a2[y]().matcherType === "optional") && w(i2, t2[r2], n2);
+        var a2;
       });
     }
-    return Object.is(r, t);
-  }, A = (t) => {
-    var r, e, n;
-    return D(t) ? $(t) ? (r = (e = (n = t[_]()).getSelectionKeys) == null ? void 0 : e.call(n)) != null ? r : [] : Array.isArray(t) ? C(t, A) : C(Object.values(t), A) : [];
-  }, C = (t, r) => t.reduce((e, n) => e.concat(r(n)), []);
-  function y(t) {
-    return Object.assign(t, { optional: () => lr(t), and: (r) => l(t, r), or: (r) => hr(t, r), select: (r) => r === void 0 ? Q(t) : Q(r, t) });
+    return Object.is(t2, e2);
+  }, T = (e2) => {
+    var t2;
+    return S(e2) ? C(e2) ? (t2 = e2[y]()).getSelectionKeys?.call(t2) ?? [] : E(Array.isArray(e2) ? e2 : Object.values(e2), T) : [];
+  }, E = (e2, t2) => e2.reduce((e3, n2) => e3.concat(t2(n2)), []);
+  function D(e2) {
+    return Object.assign(e2, {
+      optional: () => k(e2),
+      and: (t2) => A(e2, t2),
+      or: (t2) => ee(e2, t2),
+      select: (t2) => t2 === void 0 ? M(e2) : M(t2, e2)
+    });
   }
-  function lr(t) {
-    return y({ [_]: () => ({ match: (r) => {
-      let e = {};
-      const n = (i, o) => {
-        e[i] = o;
-      };
-      return r === void 0 ? (A(t).forEach((i) => n(i, void 0)), { matched: true, selections: e }) : { matched: T(t, r, n), selections: e };
-    }, getSelectionKeys: () => A(t), matcherType: "optional" }) });
+  function k(e2) {
+    return D({ [y]: () => ({
+      match: (t2) => {
+        let n2 = {}, r2 = (e3, t3) => {
+          n2[e3] = t3;
+        };
+        return t2 === void 0 ? (T(e2).forEach((e3) => r2(e3, void 0)), {
+          matched: true,
+          selections: n2
+        }) : {
+          matched: w(e2, t2, r2),
+          selections: n2
+        };
+      },
+      getSelectionKeys: () => T(e2),
+      matcherType: "optional"
+    }) });
   }
-  function l(...t) {
-    return y({ [_]: () => ({ match: (r) => {
-      let e = {};
-      const n = (i, o) => {
-        e[i] = o;
-      };
-      return { matched: t.every((i) => T(i, r, n)), selections: e };
-    }, getSelectionKeys: () => C(t, A), matcherType: "and" }) });
+  function A(...e2) {
+    return D({ [y]: () => ({
+      match: (t2) => {
+        let n2 = {}, r2 = (e3, t3) => {
+          n2[e3] = t3;
+        };
+        return {
+          matched: e2.every((e3) => w(e3, t2, r2)),
+          selections: n2
+        };
+      },
+      getSelectionKeys: () => E(e2, T),
+      matcherType: "and"
+    }) });
   }
-  function hr(...t) {
-    return y({ [_]: () => ({ match: (r) => {
-      let e = {};
-      const n = (i, o) => {
-        e[i] = o;
-      };
-      return C(t, A).forEach((i) => n(i, void 0)), { matched: t.some((i) => T(i, r, n)), selections: e };
-    }, getSelectionKeys: () => C(t, A), matcherType: "or" }) });
+  function ee(...e2) {
+    return D({ [y]: () => ({
+      match: (t2) => {
+        let n2 = {}, r2 = (e3, t3) => {
+          n2[e3] = t3;
+        };
+        return E(e2, T).forEach((e3) => r2(e3, void 0)), {
+          matched: e2.some((e3) => w(e3, t2, r2)),
+          selections: n2
+        };
+      },
+      getSelectionKeys: () => E(e2, T),
+      matcherType: "or"
+    }) });
   }
-  function u(t) {
-    return { [_]: () => ({ match: (r) => ({ matched: !!t(r) }) }) };
+  function j(e2) {
+    return { [y]: () => ({ match: (t2) => ({ matched: !!e2(t2) }) }) };
   }
-  function Q(...t) {
-    const r = typeof t[0] == "string" ? t[0] : void 0, e = t.length === 2 ? t[1] : typeof t[0] == "string" ? void 0 : t[0];
-    return y({ [_]: () => ({ match: (n) => {
-      let i = { [r ?? B]: n };
-      return { matched: e === void 0 || T(e, n, (o, s) => {
-        i[o] = s;
-      }), selections: i };
-    }, getSelectionKeys: () => [r ?? B].concat(e === void 0 ? [] : A(e)) }) });
+  function M(...e2) {
+    let t2 = typeof e2[0] == "string" ? e2[0] : void 0, n2 = e2.length === 2 ? e2[1] : typeof e2[0] == "string" ? void 0 : e2[0];
+    return D({ [y]: () => ({
+      match: (e3) => {
+        let r2 = { [t2 ?? x]: e3 };
+        return {
+          matched: n2 === void 0 || w(n2, e3, (e4, t3) => {
+            r2[e4] = t3;
+          }),
+          selections: r2
+        };
+      },
+      getSelectionKeys: () => [t2 ?? x].concat(n2 === void 0 ? [] : T(n2))
+    }) });
   }
-  function Z(t) {
+  function N(e2) {
     return true;
   }
-  function g(t) {
-    return typeof t == "number";
+  function P(e2) {
+    return typeof e2 == "number";
   }
-  function O(t) {
-    return typeof t == "string";
+  function F(e2) {
+    return typeof e2 == "string";
   }
-  function P(t) {
-    return typeof t == "bigint";
+  function I(e2) {
+    return typeof e2 == "bigint";
   }
-  y(u(Z));
-  y(u(Z));
-  const I = (t) => Object.assign(y(t), { startsWith: (r) => {
-    return I(l(t, (e = r, u((n) => O(n) && n.startsWith(e)))));
-    var e;
-  }, endsWith: (r) => {
-    return I(l(t, (e = r, u((n) => O(n) && n.endsWith(e)))));
-    var e;
-  }, minLength: (r) => I(l(t, ((e) => u((n) => O(n) && n.length >= e))(r))), length: (r) => I(l(t, ((e) => u((n) => O(n) && n.length === e))(r))), maxLength: (r) => I(l(t, ((e) => u((n) => O(n) && n.length <= e))(r))), includes: (r) => {
-    return I(l(t, (e = r, u((n) => O(n) && n.includes(e)))));
-    var e;
-  }, regex: (r) => {
-    return I(l(t, (e = r, u((n) => O(n) && !!n.match(e)))));
-    var e;
-  } });
-  I(u(O));
-  const b = (t) => Object.assign(y(t), { between: (r, e) => b(l(t, ((n, i) => u((o) => g(o) && n <= o && i >= o))(r, e))), lt: (r) => b(l(t, ((e) => u((n) => g(n) && n < e))(r))), gt: (r) => b(l(t, ((e) => u((n) => g(n) && n > e))(r))), lte: (r) => b(l(t, ((e) => u((n) => g(n) && n <= e))(r))), gte: (r) => b(l(t, ((e) => u((n) => g(n) && n >= e))(r))), int: () => b(l(t, u((r) => g(r) && Number.isInteger(r)))), finite: () => b(l(t, u((r) => g(r) && Number.isFinite(r)))), positive: () => b(l(t, u((r) => g(r) && r > 0))), negative: () => b(l(t, u((r) => g(r) && r < 0))) });
-  b(u(g));
-  const U = (t) => Object.assign(y(t), { between: (r, e) => U(l(t, ((n, i) => u((o) => P(o) && n <= o && i >= o))(r, e))), lt: (r) => U(l(t, ((e) => u((n) => P(n) && n < e))(r))), gt: (r) => U(l(t, ((e) => u((n) => P(n) && n > e))(r))), lte: (r) => U(l(t, ((e) => u((n) => P(n) && n <= e))(r))), gte: (r) => U(l(t, ((e) => u((n) => P(n) && n >= e))(r))), positive: () => U(l(t, u((r) => P(r) && r > 0))), negative: () => U(l(t, u((r) => P(r) && r < 0))) });
-  U(u(P));
-  y(u(function(t) {
-    return typeof t == "boolean";
+  D(j(N)), D(j(N));
+  var L = (e2) => Object.assign(D(e2), {
+    startsWith: (t2) => {
+      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.startsWith(n2)))));
+      var n2;
+    },
+    endsWith: (t2) => {
+      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.endsWith(n2)))));
+      var n2;
+    },
+    minLength: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length >= e3))(t2))),
+    length: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length === e3))(t2))),
+    maxLength: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length <= e3))(t2))),
+    includes: (t2) => {
+      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.includes(n2)))));
+      var n2;
+    },
+    regex: (t2) => {
+      return L(A(e2, (n2 = t2, j((e3) => F(e3) && !!e3.match(n2)))));
+      var n2;
+    }
+  });
+  L(j(F));
+  var R = (e2) => Object.assign(D(e2), {
+    between: (t2, n2) => R(A(e2, ((e3, t3) => j((n3) => P(n3) && e3 <= n3 && t3 >= n3))(t2, n2))),
+    lt: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 < e3))(t2))),
+    gt: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 > e3))(t2))),
+    lte: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 <= e3))(t2))),
+    gte: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 >= e3))(t2))),
+    int: () => R(A(e2, j((e3) => P(e3) && Number.isInteger(e3)))),
+    finite: () => R(A(e2, j((e3) => P(e3) && Number.isFinite(e3)))),
+    positive: () => R(A(e2, j((e3) => P(e3) && e3 > 0))),
+    negative: () => R(A(e2, j((e3) => P(e3) && e3 < 0)))
+  });
+  R(j(P));
+  var z = (e2) => Object.assign(D(e2), {
+    between: (t2, n2) => z(A(e2, ((e3, t3) => j((n3) => I(n3) && e3 <= n3 && t3 >= n3))(t2, n2))),
+    lt: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 < e3))(t2))),
+    gt: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 > e3))(t2))),
+    lte: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 <= e3))(t2))),
+    gte: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 >= e3))(t2))),
+    positive: () => z(A(e2, j((e3) => I(e3) && e3 > 0))),
+    negative: () => z(A(e2, j((e3) => I(e3) && e3 < 0)))
+  });
+  z(j(I)), D(j(function(e2) {
+    return typeof e2 == "boolean";
+  })), D(j(function(e2) {
+    return typeof e2 == "symbol";
+  })), D(j(function(e2) {
+    return e2 == null;
+  })), D(j(function(e2) {
+    return e2 != null;
   }));
-  y(u(function(t) {
-    return typeof t == "symbol";
-  }));
-  y(u(function(t) {
-    return t == null;
-  }));
-  y(u(function(t) {
-    return t != null;
-  }));
-  class fr extends Error {
-    constructor(r) {
-      let e;
+  var te = class extends Error {
+    constructor(e2) {
+      let t2;
       try {
-        e = JSON.stringify(r);
+        t2 = JSON.stringify(e2);
       } catch {
-        e = r;
+        t2 = e2;
       }
-      super(`Pattern matching error: no pattern matches value ${e}`), this.input = void 0, this.input = r;
+      super(`Pattern matching error: no pattern matches value ${t2}`), this.input = void 0, this.input = e2;
     }
+  }, B = {
+    matched: false,
+    value: void 0
+  };
+  function V(e2) {
+    return new ne(e2, B);
   }
-  const G = { matched: false, value: void 0 };
-  function mr(t) {
-    return new K(t, G);
-  }
-  class K {
-    constructor(r, e) {
-      this.input = void 0, this.state = void 0, this.input = r, this.state = e;
+  var ne = class e2 {
+    constructor(e3, t2) {
+      this.input = void 0, this.state = void 0, this.input = e3, this.state = t2;
     }
-    with(...r) {
+    with(...t2) {
       if (this.state.matched) return this;
-      const e = r[r.length - 1], n = [r[0]];
-      let i;
-      r.length === 3 && typeof r[1] == "function" ? i = r[1] : r.length > 2 && n.push(...r.slice(1, r.length - 1));
-      let o = false, s = {};
-      const a = (h, m) => {
-        o = true, s[h] = m;
-      }, p = !n.some((h) => T(h, this.input, a)) || i && !i(this.input) ? G : { matched: true, value: e(o ? B in s ? s[B] : s : this.input, this.input) };
-      return new K(this.input, p);
+      let n2 = t2[t2.length - 1], r2 = [t2[0]], i2;
+      t2.length === 3 && typeof t2[1] == "function" ? i2 = t2[1] : t2.length > 2 && r2.push(...t2.slice(1, t2.length - 1));
+      let a2 = false, o2 = {}, s2 = (e3, t3) => {
+        a2 = true, o2[e3] = t3;
+      }, c2 = !r2.some((e3) => w(e3, this.input, s2)) || i2 && !i2(this.input) ? B : {
+        matched: true,
+        value: n2(a2 ? x in o2 ? o2[x] : o2 : this.input, this.input)
+      };
+      return new e2(this.input, c2);
     }
-    when(r, e) {
+    when(t2, n2) {
       if (this.state.matched) return this;
-      const n = !!r(this.input);
-      return new K(this.input, n ? { matched: true, value: e(this.input, this.input) } : G);
+      let r2 = !!t2(this.input);
+      return new e2(this.input, r2 ? {
+        matched: true,
+        value: n2(this.input, this.input)
+      } : B);
     }
-    otherwise(r) {
-      return this.state.matched ? this.state.value : r(this.input);
+    otherwise(e3) {
+      return this.state.matched ? this.state.value : e3(this.input);
     }
-    exhaustive(r = pr) {
-      return this.state.matched ? this.state.value : r(this.input);
+    exhaustive(e3 = re) {
+      return this.state.matched ? this.state.value : e3(this.input);
     }
     run() {
       return this.exhaustive();
@@ -749,181 +780,109 @@
     narrow() {
       return this;
     }
-  }
-  function pr(t) {
-    throw new fr(t);
-  }
-  function R(t) {
-    const r = new Error(
-      `Chromium AI API is not available. To use Chrome AI:
-1. You must call this from a browser extension
-2. Use Chrome 138+ or supported Chromium browser
-3. Enable 'Prompt API for Gemini Nano' in chrome://flags
-4. Update 'Optimization Guide On Device Model' in chrome://components (Warning: This will download ~4GB)
-5. Join Chrome EPP for web: https://developer.chrome.com/docs/ai/join-epp`
-    );
-    return new c(
-      (async () => {
-        if (typeof LanguageModel > "u")
-          return d(r);
-        const e = await LanguageModel.availability();
-        return mr(e).with(
-          "unavailable",
-          "downloadable",
-          "downloading",
-          () => d(r)
-        ).with(
-          "available",
-          () => S({
-            systemPrompt: t,
-            instanceId: crypto.randomUUID()
-          })
-        ).exhaustive();
-      })()
-    );
-  }
-  function F(t, r) {
-    return new c(
-      (async () => {
-        try {
-          const e = {
-            ...r
-          };
-          r?.initialPrompts && r.initialPrompts.length > 0 ? e.initialPrompts = r.initialPrompts : t.systemPrompt && (e.initialPrompts = [
-            {
-              role: "system",
-              content: t.systemPrompt
-            }
-          ]);
-          const n = await LanguageModel.create(e);
-          return S(n);
-        } catch (e) {
-          return d(
-            new Error(
-              `Failed to create AI session: ${e instanceof Error ? e.message : "Unknown error"}. This might be due to rate limiting or resource constraints.`
-            )
-          );
-        }
-      })()
-    );
-  }
-  function N(t, r, e) {
-    return F(t, e).andThen((n) => r(n).map((i) => (n.destroy(), i)).mapErr((i) => (n.destroy(), i)));
-  }
-  function rr(t, r, e) {
-    return N(
-      t,
-      (n) => c.fromSafePromise(
-        (async () => {
-          const i = await n.measureInputUsage(r), o = n.inputQuota || 0, s = n.inputUsage || 0, a = o - s;
-          return {
-            promptTokens: i,
-            maxTokens: o,
-            tokensSoFar: s,
-            tokensAvailable: a,
-            willFit: i <= a
-          };
-        })()
-      ),
-      e
-    );
-  }
-  function er(t, r, e, n, i) {
-    return N(
-      t,
-      (o) => {
-        let s = null;
-        return c.fromPromise(
-          (async () => {
-            try {
-              let a = n || {};
-              if (e || a.signal) {
-                const h = [];
-                if (a.signal && h.push(a.signal), e) {
-                  const m = new AbortController();
-                  h.push(m.signal), s = setTimeout(
-                    () => m.abort(),
-                    e
-                  );
-                }
-                h.length > 1 && AbortSignal.any ? a = {
-                  ...a,
-                  signal: AbortSignal.any(h)
-                } : h.length === 1 && (a = {
-                  ...a,
-                  signal: h[0]
-                });
-              }
-              return await o.prompt(r, a);
-            } finally {
-              s && clearTimeout(s);
-            }
-          })(),
-          (a) => a instanceof Error ? a : new Error(String(a))
-        );
-      },
-      i
-    );
-  }
-  const dr = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    checkTokenUsage: rr,
-    createSession: F,
-    initialize: R,
-    prompt: er,
-    withSession: N
-  }, Symbol.toStringTag, { value: "Module" }));
-  function L(t) {
-    return t.match(
-      (r) => r,
-      (r) => {
-        throw r;
-      }
-    );
-  }
-  async function yr(t) {
-    const r = await R(t);
-    return L(r);
-  }
-  async function wr(t, r) {
-    const e = await F(t, r);
-    return L(e);
-  }
-  async function vr(t, r, e) {
-    const n = await N(
-      t,
-      (i) => c.fromPromise(
-        r(i),
-        (o) => o instanceof Error ? o : new Error(String(o))
-      ),
-      e
-    );
-    return L(n);
-  }
-  async function gr(t, r, e) {
-    const n = await rr(t, r, e);
-    return L(n);
-  }
-  async function br(t, r, e, n, i) {
-    const o = await er(
-      t,
-      r,
-      e,
-      n,
-      i
-    );
-    return L(o);
-  }
-  const Er = {
-    // Safe API namespace
-    Safe: dr,
-    // Default API (throws errors)
-    initialize: yr,
-    prompt: br,
-    createSession: wr,
-    withSession: vr,
-    checkTokenUsage: gr
   };
+  function re(e2) {
+    throw new te(e2);
+  }
+  function H(e2) {
+    return e2.match((e3) => e3, (e3) => {
+      throw e3;
+    });
+  }
+  function K(e2) {
+    let t2 = e2?.expectedInputs ?? [{
+      type: "text",
+      languages: ["en"]
+    }], n2 = e2?.expectedOutputs ?? [{
+      type: "text",
+      languages: ["en"]
+    }];
+    return new c((async () => {
+      if (typeof LanguageModel > "u") return g(/* @__PURE__ */ Error("LanguageModel API is not available in this browser. Ensure you are using Chrome 148+ or a supported Chromium-based browser."));
+      let r2 = V(await LanguageModel.availability({
+        expectedInputs: t2,
+        expectedOutputs: n2
+      })).with("unavailable", () => g(/* @__PURE__ */ Error("LanguageModel API is present but the model is unavailable on this device."))).with("downloadable", "downloading", "available", (e3) => h(e3)).exhaustive();
+      if (r2.isErr()) return r2;
+      if (r2.value !== "available") try {
+        (await LanguageModel.create({
+          expectedInputs: t2,
+          expectedOutputs: n2,
+          monitor: e2?.monitor,
+          signal: e2?.signal
+        })).destroy();
+      } catch (e3) {
+        return g(/* @__PURE__ */ Error(`Failed to download LanguageModel: ${e3 instanceof Error ? e3.message : String(e3)}`));
+      }
+      return h({
+        prompt: (e3, r3, i2, a2) => ae(t2, n2, e3, r3, i2, a2),
+        createSession: (e3) => q(t2, n2, e3),
+        withSession: (e3, r3) => J(t2, n2, e3, r3),
+        checkTokenUsage: (e3, r3) => ie(t2, n2, e3, r3)
+      });
+    })());
+  }
+  function q(e2, t2, n2) {
+    return new c((async () => {
+      try {
+        let r2 = { ...n2 };
+        return !r2.expectedInputs && e2.length > 0 && (r2.expectedInputs = e2), !r2.expectedOutputs && t2.length > 0 && (r2.expectedOutputs = t2), h(await LanguageModel.create(r2));
+      } catch (e3) {
+        return g(/* @__PURE__ */ Error(`Failed to create AI session: ${e3 instanceof Error ? e3.message : "Unknown error"}`));
+      }
+    })());
+  }
+  function J(e2, t2, n2, r2) {
+    return q(e2, t2, r2).andThen((e3) => n2(e3).map((t3) => (e3.destroy(), t3)).mapErr((t3) => (e3.destroy(), t3)));
+  }
+  function ie(e2, t2, n2, r2) {
+    return J(e2, t2, (e3) => c.fromSafePromise((async () => {
+      let t3 = await e3.measureContextUsage(n2), r3 = e3.contextWindow || 0, i2 = e3.contextUsage || 0, a2 = r3 - i2;
+      return {
+        promptTokens: t3,
+        maxTokens: r3,
+        tokensSoFar: i2,
+        tokensAvailable: a2,
+        willFit: t3 <= a2
+      };
+    })()), r2);
+  }
+  function ae(e2, t2, n2, r2, i2, a2) {
+    return J(e2, t2, (e3) => {
+      let t3 = null;
+      return c.fromPromise((async () => {
+        try {
+          let a3 = i2 || {};
+          if (r2 || a3.signal) {
+            let e4 = [];
+            if (a3.signal && e4.push(a3.signal), r2) {
+              let n3 = new AbortController();
+              e4.push(n3.signal), t3 = setTimeout(() => n3.abort(), r2);
+            }
+            e4.length > 1 && AbortSignal.any ? a3 = {
+              ...a3,
+              signal: AbortSignal.any(e4)
+            } : e4.length === 1 && (a3 = {
+              ...a3,
+              signal: e4[0]
+            });
+          }
+          return await e3.prompt(n2, a3);
+        } finally {
+          t3 && clearTimeout(t3);
+        }
+      })(), (e4) => e4 instanceof Error ? e4 : Error(String(e4)));
+    }, a2);
+  }
+  async function $(e2) {
+    let t2 = H(await K(e2));
+    return {
+      prompt: async (e3, n2, r2, i2) => H(await t2.prompt(e3, n2, r2, i2)),
+      createSession: async (e3) => H(await t2.createSession(e3)),
+      withSession: async (e3, n2) => H(await t2.withSession((t3) => c.fromPromise(e3(t3), (e4) => e4 instanceof Error ? e4 : Error(String(e4))), n2)),
+      checkTokenUsage: async (e3, n2) => H(await t2.checkTokenUsage(e3, n2))
+    };
+  }
   const TONES = {
     professional: {
       name: "Professional",
@@ -1100,9 +1059,27 @@ Paragraph:
 ${text}`;
   }
   let aiInstance = null;
+  let aiInstancePromise = null;
   let testMode = false;
   let dualBaseSessionPromise = null;
   let nextClonePromise = null;
+  let downloadProgress = null;
+  const progressListeners = /* @__PURE__ */ new Set();
+  function emitProgress(p2) {
+    downloadProgress = p2;
+    for (const fn of progressListeners) {
+      try {
+        fn(p2);
+      } catch (err) {
+        logSessionEvent(`Progress listener threw: ${String(err)}`);
+      }
+    }
+  }
+  function subscribeDownloadProgress(fn) {
+    progressListeners.add(fn);
+    fn(downloadProgress);
+    return () => progressListeners.delete(fn);
+  }
   function logSessionEvent(message) {
     console.debug(`[WriteGooderer AI] ${message}`);
   }
@@ -1111,15 +1088,33 @@ ${text}`;
     testMode = !!result.wgTestMode;
   }
   async function ensureModel() {
-    if (testMode) return { systemPrompt: "test", instanceId: "test" };
     if (aiInstance) return aiInstance;
-    aiInstance = await Er.initialize();
-    return aiInstance;
+    if (aiInstancePromise) return aiInstancePromise;
+    let sawProgress = false;
+    aiInstancePromise = $({
+      monitor(m2) {
+        m2.addEventListener("downloadprogress", (e2) => {
+          const loaded = e2.loaded;
+          sawProgress = true;
+          logSessionEvent(`Model download progress: ${(loaded * 100).toFixed(1)}%`);
+          emitProgress(loaded);
+        });
+      }
+    }).then((instance) => {
+      aiInstance = instance;
+      if (sawProgress) emitProgress(null);
+      return instance;
+    }).catch((err) => {
+      aiInstancePromise = null;
+      if (sawProgress) emitProgress(null);
+      throw err;
+    });
+    return aiInstancePromise;
   }
   async function createDualBaseSession() {
     logSessionEvent("Creating dual base session");
     const ai = await ensureModel();
-    const session = await Er.createSession(ai, {
+    const session = await ai.createSession({
       initialPrompts: DUAL_INITIAL_PROMPTS
     });
     logSessionEvent("Created dual base session");
@@ -1187,10 +1182,10 @@ ${text}`;
     dualBaseSessionPromise = null;
     nextClonePromise = null;
     const result = await Promise.allSettled(pending);
-    for (const r of result) {
-      if (r.status === "fulfilled" && r.value) {
+    for (const r2 of result) {
+      if (r2.status === "fulfilled" && r2.value) {
         try {
-          r.value.destroy();
+          r2.value.destroy();
         } catch (err) {
           logSessionEvent(`Session destroy failed: ${String(err)}`);
         }
@@ -1327,8 +1322,8 @@ ${text}`;
       ensureFieldId(field);
       reportValidField();
     }
-    function handleFocusIn(e) {
-      const target = e.target;
+    function handleFocusIn(e2) {
+      const target = e2.target;
       let field = null;
       if (target && isValidField(target)) {
         field = target;
@@ -1404,18 +1399,18 @@ ${text}`;
       this.el.setAttribute("tabindex", "0");
       this.el.setAttribute("aria-label", "Open WriteGooderer");
       this.el.textContent = "W";
-      this.el.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      this.el.addEventListener("mousedown", (e2) => {
+        e2.preventDefault();
+        e2.stopPropagation();
       });
-      this.el.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      this.el.addEventListener("click", (e2) => {
+        e2.preventDefault();
+        e2.stopPropagation();
         this.onClick();
       });
-      this.el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
+      this.el.addEventListener("keydown", (e2) => {
+        if (e2.key === "Enter" || e2.key === " ") {
+          e2.preventDefault();
           this.onClick();
         }
       });
@@ -1484,7 +1479,7 @@ ${text}`;
     if (prefersReducedMotion()) return;
     const root = document.createElement("div");
     root.className = "wg-confetti-root";
-    for (let i = 0; i < count; i++) {
+    for (let i2 = 0; i2 < count; i2++) {
       const piece = document.createElement("i");
       piece.className = "wg-confetto";
       const angle = Math.random() * Math.PI * 2;
@@ -1492,7 +1487,7 @@ ${text}`;
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance - 40;
       const rot = (Math.random() * 720 - 360).toFixed(0);
-      const color = COLORS[i % COLORS.length];
+      const color = COLORS[i2 % COLORS.length];
       const delay = (Math.random() * 120).toFixed(0);
       piece.style.setProperty("--wg-tx", `${tx.toFixed(0)}px`);
       piece.style.setProperty("--wg-ty", `${ty.toFixed(0)}px`);
@@ -1588,16 +1583,19 @@ ${text}`;
   }
   class LoadingState {
     el;
+    fillEl;
     quipEl;
     intervalId = null;
+    unsubscribeProgress = null;
+    downloadActive = false;
     constructor() {
       this.el = document.createElement("div");
       this.el.className = "wg-loading-state";
       const bar = document.createElement("div");
       bar.className = "wg-progress-bar";
-      const fill = document.createElement("div");
-      fill.className = "wg-progress-fill";
-      bar.appendChild(fill);
+      this.fillEl = document.createElement("div");
+      this.fillEl.className = "wg-progress-fill";
+      bar.appendChild(this.fillEl);
       this.quipEl = document.createElement("p");
       this.quipEl.className = "wg-quip";
       this.el.appendChild(bar);
@@ -1610,6 +1608,7 @@ ${text}`;
       this.el.style.display = "block";
       this.rotateQuip();
       this.intervalId = setInterval(() => this.rotateQuip(), 2500);
+      this.unsubscribeProgress = subscribeDownloadProgress((p2) => this.onProgress(p2));
     }
     hide() {
       this.el.style.display = "none";
@@ -1617,8 +1616,38 @@ ${text}`;
         clearInterval(this.intervalId);
         this.intervalId = null;
       }
+      this.unsubscribeProgress?.();
+      this.unsubscribeProgress = null;
+      this.downloadActive = false;
+      this.fillEl.style.width = "";
+      this.fillEl.style.animation = "";
+    }
+    onProgress(p2) {
+      if (p2 === null) {
+        if (this.downloadActive) {
+          this.downloadActive = false;
+          this.fillEl.style.width = "";
+          this.fillEl.style.animation = "";
+          if (!this.intervalId) {
+            this.intervalId = setInterval(() => this.rotateQuip(), 2500);
+          }
+          this.rotateQuip();
+        }
+        return;
+      }
+      this.downloadActive = true;
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
+      }
+      const pct = Math.max(0, Math.min(1, p2));
+      this.fillEl.style.animation = "none";
+      this.fillEl.style.width = `${(pct * 100).toFixed(1)}%`;
+      this.quipEl.classList.remove("wg-quip-fade");
+      this.quipEl.textContent = `Downloading model… ${Math.round(pct * 100)}%`;
     }
     rotateQuip() {
+      if (this.downloadActive) return;
       const quip = LOADING_QUIPS[Math.floor(Math.random() * LOADING_QUIPS.length)];
       this.quipEl.classList.remove("wg-quip-fade");
       void this.quipEl.offsetWidth;
@@ -1806,9 +1835,9 @@ ${text}`;
       }
     }
   }
-  function intentsEqual(a, b2) {
-    if (a.kind !== b2.kind) return false;
-    if (a.kind === "rewrite" && b2.kind === "rewrite") return a.tone === b2.tone;
+  function intentsEqual(a2, b2) {
+    if (a2.kind !== b2.kind) return false;
+    if (a2.kind === "rewrite" && b2.kind === "rewrite") return a2.tone === b2.tone;
     return true;
   }
   const POPUP_WIDTH = 520;
@@ -1927,14 +1956,14 @@ ${text}`;
       this.speculative = { intent, text, promise, abort };
     }
     takeSpeculative(intent, text) {
-      const s = this.speculative;
-      if (!s) return null;
-      if (s.text !== text || !intentsEqual(s.intent, intent)) {
+      const s2 = this.speculative;
+      if (!s2) return null;
+      if (s2.text !== text || !intentsEqual(s2.intent, intent)) {
         this.abortSpeculative();
         return null;
       }
       this.speculative = null;
-      return s.promise;
+      return s2.promise;
     }
     get isVisible() {
       return this.el.classList.contains("wg-visible");
@@ -2126,11 +2155,11 @@ ${text}`;
   function parseRgb(input) {
     const match = input.match(/rgba?\(([^)]+)\)/i);
     if (!match) return null;
-    const parts = match[1].split(",").map((p) => parseFloat(p.trim()));
-    if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return null;
-    const [r, g2, b2] = parts;
-    const a = parts.length >= 4 ? parts[3] : 1;
-    return [r, g2, b2, a];
+    const parts = match[1].split(",").map((p2) => parseFloat(p2.trim()));
+    if (parts.length < 3 || parts.some((n2) => Number.isNaN(n2))) return null;
+    const [r2, g2, b2] = parts;
+    const a2 = parts.length >= 4 ? parts[3] : 1;
+    return [r2, g2, b2, a2];
   }
   function detectHostTheme() {
     try {

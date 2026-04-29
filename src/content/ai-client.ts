@@ -1,5 +1,4 @@
-import ChromiumAI from "simple-chromium-ai";
-import type { ChromiumAIInstance } from "simple-chromium-ai";
+import { initLanguageModel } from "simple-chromium-ai";
 import type { ProofreadResult, RewriteResult, TonePreset } from "../shared/types";
 import { getTierForScore } from "../shared/constants";
 import {
@@ -10,12 +9,38 @@ import {
   buildRewriteInstruction,
 } from "../shared/prompts";
 
-let aiInstance: ChromiumAIInstance | null = null;
+type AIInstance = Awaited<ReturnType<typeof initLanguageModel>>;
+type AISession = Awaited<ReturnType<AIInstance["createSession"]>>;
+
+let aiInstance: AIInstance | null = null;
+let aiInstancePromise: Promise<AIInstance> | null = null;
 let testMode = false;
-type AISession = Awaited<ReturnType<typeof ChromiumAI.createSession>>;
 
 let dualBaseSessionPromise: Promise<AISession> | null = null;
 let nextClonePromise: Promise<AISession> | null = null;
+
+// Download progress: null = not downloading. 0..1 while download is in flight.
+let downloadProgress: number | null = null;
+const progressListeners = new Set<(p: number | null) => void>();
+
+function emitProgress(p: number | null): void {
+  downloadProgress = p;
+  for (const fn of progressListeners) {
+    try {
+      fn(p);
+    } catch (err) {
+      logSessionEvent(`Progress listener threw: ${String(err)}`);
+    }
+  }
+}
+
+export function subscribeDownloadProgress(
+  fn: (p: number | null) => void
+): () => void {
+  progressListeners.add(fn);
+  fn(downloadProgress);
+  return () => progressListeners.delete(fn);
+}
 
 function logSessionEvent(message: string): void {
   console.debug(`[WriteGooderer AI] ${message}`);
@@ -26,18 +51,40 @@ export async function checkTestMode(): Promise<void> {
   testMode = !!result.wgTestMode;
 }
 
-async function ensureModel(): Promise<ChromiumAIInstance> {
-  if (testMode) return { systemPrompt: "test", instanceId: "test" };
+async function ensureModel(): Promise<AIInstance> {
   if (aiInstance) return aiInstance;
-  aiInstance = await ChromiumAI.initialize();
-  return aiInstance;
+  if (aiInstancePromise) return aiInstancePromise;
+
+  let sawProgress = false;
+  aiInstancePromise = initLanguageModel({
+    monitor(m) {
+      m.addEventListener("downloadprogress", (e: Event) => {
+        const loaded = (e as ProgressEvent).loaded;
+        sawProgress = true;
+        logSessionEvent(`Model download progress: ${(loaded * 100).toFixed(1)}%`);
+        emitProgress(loaded);
+      });
+    },
+  })
+    .then((instance) => {
+      aiInstance = instance;
+      if (sawProgress) emitProgress(null);
+      return instance;
+    })
+    .catch((err) => {
+      aiInstancePromise = null;
+      if (sawProgress) emitProgress(null);
+      throw err;
+    });
+
+  return aiInstancePromise;
 }
 
 async function createDualBaseSession(): Promise<AISession> {
   logSessionEvent("Creating dual base session");
   const ai = await ensureModel();
-  const session = await ChromiumAI.createSession(ai, {
-    initialPrompts: DUAL_INITIAL_PROMPTS as any,
+  const session = await ai.createSession({
+    initialPrompts: DUAL_INITIAL_PROMPTS as unknown,
   });
   logSessionEvent("Created dual base session");
   return session;
@@ -165,7 +212,7 @@ export async function proofread(
     const raw = await session.prompt(buildProofreadInstruction(text), {
       responseConstraint: PROOFREAD_SCHEMA,
       signal: opts.signal,
-    } as any);
+    });
     return JSON.parse(raw) as ProofreadResult;
   } finally {
     try {
@@ -188,7 +235,7 @@ export async function rewrite(
     const raw = await session.prompt(buildRewriteInstruction(tone, text), {
       responseConstraint: TONE_REWRITE_SCHEMA,
       signal: opts.signal,
-    } as any);
+    });
     return JSON.parse(raw) as RewriteResult;
   } finally {
     try {

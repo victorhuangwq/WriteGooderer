@@ -16,7 +16,7 @@
     "test:e2e": "xvfb-run vitest run --config vitest.e2e.config.ts"
   },
   "dependencies": {
-    "simple-chromium-ai": "^0.1.0"
+    "simple-chromium-ai": "^0.2.1"
   },
   "devDependencies": {
     "@types/chrome": "^0.1.40",
