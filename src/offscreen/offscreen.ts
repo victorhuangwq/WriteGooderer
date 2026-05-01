@@ -1,6 +1,5 @@
 import { initLanguageModel } from "simple-chromium-ai";
 import type { ProofreadResult, RewriteResult, TonePreset } from "../shared/types";
-import { getTierForScore } from "../shared/constants";
 import {
   DUAL_INITIAL_PROMPTS,
   PROOFREAD_SCHEMA,
@@ -14,7 +13,6 @@ type AISession = Awaited<ReturnType<AIInstance["createSession"]>>;
 
 let aiInstance: AIInstance | null = null;
 let aiInstancePromise: Promise<AIInstance> | null = null;
-let testMode = false;
 
 let dualBaseSessionPromise: Promise<AISession> | null = null;
 let nextClonePromise: Promise<AISession> | null = null;
@@ -35,11 +33,6 @@ function emitProgress(p: number | null): void {
       logSessionEvent(`Progress post failed: ${String(err)}`);
     }
   }
-}
-
-async function loadTestMode(): Promise<void> {
-  const result = await chrome.storage.local.get("wgTestMode");
-  testMode = !!result.wgTestMode;
 }
 
 async function ensureModel(): Promise<AIInstance> {
@@ -138,48 +131,28 @@ async function takeClone(): Promise<AISession> {
 }
 
 async function prewarmSessions(): Promise<void> {
-  if (testMode) return;
   logSessionEvent("Prewarming dual base session");
   await getDualBaseSessionPromise();
   logSessionEvent("Prewarmed dual base session");
   refillClonePool();
 }
 
-function mockProofread(text: string): ProofreadResult {
-  const changes: ProofreadResult["changes"] = [];
-  if (text.includes("has went")) {
-    changes.push({ original: "has went", replacement: "went", reason: "Incorrect auxiliary verb" });
+function bailIfAborted(session: AISession, signal: AbortSignal): void {
+  if (!signal.aborted) return;
+  try {
+    session.destroy();
+  } catch (err) {
+    logSessionEvent(`Aborted-clone destroy failed: ${String(err)}`);
   }
-  if (text.includes("buyed")) {
-    changes.push({ original: "buyed", replacement: "bought", reason: "Irregular past tense" });
-  }
-  if (text.includes("stor ")) {
-    changes.push({ original: "stor", replacement: "store", reason: "Spelling" });
-  }
-  if (text.includes("mik")) {
-    changes.push({ original: "mik", replacement: "milk", reason: "Spelling" });
-  }
-
-  let corrected = text;
-  for (const c of changes) {
-    corrected = corrected.replace(c.original, c.replacement);
-  }
-
-  const score = changes.length === 0 ? 92 : Math.max(5, 80 - changes.length * 15);
-  const tier = getTierForScore(score);
-  return { corrected, changes, score, tier: tier.name };
-}
-
-function mockRewrite(text: string, tone: string): RewriteResult {
-  return { rewritten: `[${tone.toUpperCase()}] ${text}` };
+  throw new DOMException("Aborted", "AbortError");
 }
 
 async function proofread(
   text: string,
   signal: AbortSignal
 ): Promise<ProofreadResult> {
-  if (testMode) return mockProofread(text);
   const session = await takeClone();
+  bailIfAborted(session, signal);
   try {
     logSessionEvent("Proofread: running instruction");
     const raw = await session.prompt(buildProofreadInstruction(text), {
@@ -201,8 +174,8 @@ async function rewrite(
   tone: TonePreset,
   signal: AbortSignal
 ): Promise<RewriteResult> {
-  if (testMode) return mockRewrite(text, tone);
   const session = await takeClone();
+  bailIfAborted(session, signal);
   try {
     logSessionEvent(`Rewrite: running instruction for ${tone}`);
     const raw = await session.prompt(buildRewriteInstruction(tone, text), {
@@ -294,21 +267,10 @@ chrome.runtime.onConnect.addListener((port) => {
       handleProgressPort(port);
       return;
     default:
-      // Not ours — another extension context (e.g. service worker) will handle it.
       return;
   }
 });
 
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== "local" || !("wgTestMode" in changes)) return;
-  testMode = !!changes.wgTestMode.newValue;
+void prewarmSessions().catch((err) => {
+  logSessionEvent(`Initial prewarm failed: ${String(err)}`);
 });
-
-async function main(): Promise<void> {
-  await loadTestMode();
-  void prewarmSessions().catch((err) => {
-    logSessionEvent(`Initial prewarm failed: ${String(err)}`);
-  });
-}
-
-void main();

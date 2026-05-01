@@ -781,22 +781,6 @@ const TONES = {
     emoji: "📊"
   }
 };
-const SCORE_TIERS = [
-  { name: "Caveman", min: 0, max: 20, color: "#FF6B6B", emoji: "🪨" },
-  { name: "Txt Msg Veteran", min: 21, max: 40, color: "#FFA07A", emoji: "📱" },
-  { name: "Functional Adult", min: 41, max: 60, color: "#FFD93D", emoji: "☕" },
-  { name: "Word Wizard", min: 61, max: 80, color: "#4ECDC4", emoji: "🧙" },
-  { name: "Shakespeare Who?", min: 81, max: 95, color: "#2ECC71", emoji: "🎭" },
-  { name: "WriteGooderer", min: 96, max: 100, color: "#27AE60", emoji: "👑" }
-];
-function getTierForScore(score) {
-  for (const tier of SCORE_TIERS) {
-    if (score >= tier.min && score <= tier.max) {
-      return tier;
-    }
-  }
-  return SCORE_TIERS[0];
-}
 const PROOFREAD_SCHEMA = {
   type: "object",
   properties: {
@@ -890,7 +874,6 @@ ${text}`;
 }
 let aiInstance = null;
 let aiInstancePromise = null;
-let testMode = false;
 let dualBaseSessionPromise = null;
 let nextClonePromise = null;
 let downloadProgress = null;
@@ -907,10 +890,6 @@ function emitProgress(p2) {
       logSessionEvent(`Progress post failed: ${String(err)}`);
     }
   }
-}
-async function loadTestMode() {
-  const result = await chrome.storage.local.get("wgTestMode");
-  testMode = !!result.wgTestMode;
 }
 async function ensureModel() {
   if (aiInstance) return aiInstance;
@@ -995,40 +974,23 @@ async function takeClone() {
   return session;
 }
 async function prewarmSessions() {
-  if (testMode) return;
   logSessionEvent("Prewarming dual base session");
   await getDualBaseSessionPromise();
   logSessionEvent("Prewarmed dual base session");
   refillClonePool();
 }
-function mockProofread(text) {
-  const changes = [];
-  if (text.includes("has went")) {
-    changes.push({ original: "has went", replacement: "went", reason: "Incorrect auxiliary verb" });
+function bailIfAborted(session, signal) {
+  if (!signal.aborted) return;
+  try {
+    session.destroy();
+  } catch (err) {
+    logSessionEvent(`Aborted-clone destroy failed: ${String(err)}`);
   }
-  if (text.includes("buyed")) {
-    changes.push({ original: "buyed", replacement: "bought", reason: "Irregular past tense" });
-  }
-  if (text.includes("stor ")) {
-    changes.push({ original: "stor", replacement: "store", reason: "Spelling" });
-  }
-  if (text.includes("mik")) {
-    changes.push({ original: "mik", replacement: "milk", reason: "Spelling" });
-  }
-  let corrected = text;
-  for (const c2 of changes) {
-    corrected = corrected.replace(c2.original, c2.replacement);
-  }
-  const score = changes.length === 0 ? 92 : Math.max(5, 80 - changes.length * 15);
-  const tier = getTierForScore(score);
-  return { corrected, changes, score, tier: tier.name };
-}
-function mockRewrite(text, tone) {
-  return { rewritten: `[${tone.toUpperCase()}] ${text}` };
+  throw new DOMException("Aborted", "AbortError");
 }
 async function proofread(text, signal) {
-  if (testMode) return mockProofread(text);
   const session = await takeClone();
+  bailIfAborted(session, signal);
   try {
     logSessionEvent("Proofread: running instruction");
     const raw = await session.prompt(buildProofreadInstruction(text), {
@@ -1045,8 +1007,8 @@ async function proofread(text, signal) {
   }
 }
 async function rewrite(text, tone, signal) {
-  if (testMode) return mockRewrite(text, tone);
   const session = await takeClone();
+  bailIfAborted(session, signal);
   try {
     logSessionEvent(`Rewrite: running instruction for ${tone}`);
     const raw = await session.prompt(buildRewriteInstruction(tone, text), {
@@ -1132,14 +1094,6 @@ chrome.runtime.onConnect.addListener((port) => {
       return;
   }
 });
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== "local" || !("wgTestMode" in changes)) return;
-  testMode = !!changes.wgTestMode.newValue;
+void prewarmSessions().catch((err) => {
+  logSessionEvent(`Initial prewarm failed: ${String(err)}`);
 });
-async function main() {
-  await loadTestMode();
-  void prewarmSessions().catch((err) => {
-    logSessionEvent(`Initial prewarm failed: ${String(err)}`);
-  });
-}
-void main();

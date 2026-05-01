@@ -18,9 +18,6 @@ async function ensureOffscreen() {
     url: OFFSCREEN_URL,
     reasons: ["WORKERS"],
     justification: "Hosts a single shared on-device language-model session so all tabs share one set of weights and KV-cache."
-  }).catch((err) => {
-    if (String(err).includes("Only a single offscreen")) return;
-    throw err;
   }).finally(() => {
     creatingOffscreen = null;
   });

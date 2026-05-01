@@ -24,11 +24,6 @@ async function ensureOffscreen(): Promise<void> {
       justification:
         "Hosts a single shared on-device language-model session so all tabs share one set of weights and KV-cache.",
     })
-    .catch((err) => {
-      // If something else created it in the gap, swallow the duplicate-document error.
-      if (String(err).includes("Only a single offscreen")) return;
-      throw err;
-    })
     .finally(() => {
       creatingOffscreen = null;
     });
