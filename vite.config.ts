@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { cpSync, mkdirSync, rmSync } from "fs";
 
 // Which entry to build is controlled by the ENTRY env var.
-// The build script runs this config 3 times with different ENTRY values.
+// The build script runs this config once per entry.
 const ENTRIES: Record<string, { input: string; format: "iife" | "es" }> = {
   "service-worker": {
     input: resolve(__dirname, "src/background/service-worker.ts"),
@@ -16,6 +16,10 @@ const ENTRIES: Record<string, { input: string; format: "iife" | "es" }> = {
   popup: {
     input: resolve(__dirname, "src/popup/popup.ts"),
     format: "iife",
+  },
+  offscreen: {
+    input: resolve(__dirname, "src/offscreen/offscreen.ts"),
+    format: "es",
   },
 };
 
@@ -69,6 +73,10 @@ export default defineConfig({
         cpSync(
           resolve(__dirname, "src/popup/popup.css"),
           resolve(__dirname, "dist/popup.css")
+        );
+        cpSync(
+          resolve(__dirname, "src/offscreen/offscreen.html"),
+          resolve(__dirname, "dist/offscreen.html")
         );
       },
     },

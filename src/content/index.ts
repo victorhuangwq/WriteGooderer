@@ -4,7 +4,7 @@ import {
   tokensToCssVars,
   type ThemeMode,
 } from "../shared/design-tokens";
-import { checkTestMode, destroySessions, prewarmSessions } from "./ai-client";
+import { checkTestMode, prewarmSessions } from "./ai-client";
 import { ensureFieldId, initFieldDetector } from "./field-detector";
 import { FloatingIcon } from "./floating-icon";
 import { PopupCard } from "./popup-card";
@@ -167,7 +167,6 @@ async function main() {
     () => {
       globalWindow[INIT_FLAG] = false;
       darkMq.removeEventListener?.("change", onSchemeChange);
-      void destroySessions().catch(() => {});
     },
     { once: true }
   );

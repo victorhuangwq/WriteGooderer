@@ -1,48 +1,10 @@
-import { initLanguageModel } from "simple-chromium-ai";
 import type { ProofreadResult, RewriteResult, TonePreset } from "../shared/types";
 import { getTierForScore } from "../shared/constants";
-import {
-  DUAL_INITIAL_PROMPTS,
-  PROOFREAD_SCHEMA,
-  TONE_REWRITE_SCHEMA,
-  buildProofreadInstruction,
-  buildRewriteInstruction,
-} from "../shared/prompts";
 
-type AIInstance = Awaited<ReturnType<typeof initLanguageModel>>;
-type AISession = Awaited<ReturnType<AIInstance["createSession"]>>;
-
-let aiInstance: AIInstance | null = null;
-let aiInstancePromise: Promise<AIInstance> | null = null;
 let testMode = false;
+let ensureOffscreenPromise: Promise<void> | null = null;
 
-let dualBaseSessionPromise: Promise<AISession> | null = null;
-let nextClonePromise: Promise<AISession> | null = null;
-
-// Download progress: null = not downloading. 0..1 while download is in flight.
-let downloadProgress: number | null = null;
-const progressListeners = new Set<(p: number | null) => void>();
-
-function emitProgress(p: number | null): void {
-  downloadProgress = p;
-  for (const fn of progressListeners) {
-    try {
-      fn(p);
-    } catch (err) {
-      logSessionEvent(`Progress listener threw: ${String(err)}`);
-    }
-  }
-}
-
-export function subscribeDownloadProgress(
-  fn: (p: number | null) => void
-): () => void {
-  progressListeners.add(fn);
-  fn(downloadProgress);
-  return () => progressListeners.delete(fn);
-}
-
-function logSessionEvent(message: string): void {
+function logEvent(message: string): void {
   console.debug(`[WriteGooderer AI] ${message}`);
 }
 
@@ -51,125 +13,103 @@ export async function checkTestMode(): Promise<void> {
   testMode = !!result.wgTestMode;
 }
 
-async function ensureModel(): Promise<AIInstance> {
-  if (aiInstance) return aiInstance;
-  if (aiInstancePromise) return aiInstancePromise;
-
-  let sawProgress = false;
-  aiInstancePromise = initLanguageModel({
-    monitor(m) {
-      m.addEventListener("downloadprogress", (e: Event) => {
-        const loaded = (e as ProgressEvent).loaded;
-        sawProgress = true;
-        logSessionEvent(`Model download progress: ${(loaded * 100).toFixed(1)}%`);
-        emitProgress(loaded);
-      });
-    },
-  })
-    .then((instance) => {
-      aiInstance = instance;
-      if (sawProgress) emitProgress(null);
-      return instance;
+function ensureOffscreen(): Promise<void> {
+  if (ensureOffscreenPromise) return ensureOffscreenPromise;
+  ensureOffscreenPromise = chrome.runtime
+    .sendMessage({ type: "wg/ensure-offscreen" })
+    .then((resp: { ok?: boolean; error?: string } | undefined) => {
+      if (!resp?.ok) {
+        throw new Error(resp?.error || "Failed to start offscreen document");
+      }
     })
     .catch((err) => {
-      aiInstancePromise = null;
-      if (sawProgress) emitProgress(null);
+      ensureOffscreenPromise = null;
       throw err;
     });
-
-  return aiInstancePromise;
+  return ensureOffscreenPromise;
 }
 
-async function createDualBaseSession(): Promise<AISession> {
-  logSessionEvent("Creating dual base session");
-  const ai = await ensureModel();
-  const session = await ai.createSession({
-    initialPrompts: DUAL_INITIAL_PROMPTS as unknown,
-  });
-  logSessionEvent("Created dual base session");
-  return session;
-}
-
-function getDualBaseSessionPromise(): Promise<AISession> {
-  if (dualBaseSessionPromise) return dualBaseSessionPromise;
-
-  const sessionPromise = createDualBaseSession().catch((error) => {
-    logSessionEvent(`Dual base session creation failed: ${String(error)}`);
-    dualBaseSessionPromise = null;
-    throw error;
-  });
-
-  dualBaseSessionPromise = sessionPromise;
-  return sessionPromise;
-}
-
-async function cloneDualSession(): Promise<AISession> {
-  try {
-    const baseSession = await getDualBaseSessionPromise();
-    logSessionEvent("Cloning dual session");
-    const clonedSession = await baseSession.clone();
-    logSessionEvent("Cloned dual session");
-    return clonedSession;
-  } catch (error) {
-    logSessionEvent(`Clone failed, rebuilding dual base session: ${String(error)}`);
-    dualBaseSessionPromise = null;
-    const rebuiltSession = await getDualBaseSessionPromise();
-    const clonedSession = await rebuiltSession.clone();
-    logSessionEvent("Rebuilt and cloned dual session");
-    return clonedSession;
-  }
-}
-
-function refillClonePool(): void {
-  if (nextClonePromise) return;
-  nextClonePromise = cloneDualSession().catch((err) => {
-    logSessionEvent(`Clone pool refill failed: ${String(err)}`);
-    nextClonePromise = null;
-    throw err;
-  });
-}
-
-export async function takeClone(): Promise<AISession> {
-  if (nextClonePromise) {
-    const pending = nextClonePromise;
-    nextClonePromise = null;
+function runOnPort<TReq, TRes>(
+  name: string,
+  request: TReq,
+  signal?: AbortSignal
+): Promise<TRes> {
+  return new Promise<TRes>((resolve, reject) => {
+    let port: chrome.runtime.Port;
     try {
-      const session = await pending;
-      refillClonePool();
-      return session;
-    } catch {
-      // Fall through to a direct clone below.
+      port = chrome.runtime.connect({ name });
+    } catch (err) {
+      reject(err instanceof Error ? err : new Error(String(err)));
+      return;
     }
-  }
-  const session = await cloneDualSession();
-  refillClonePool();
-  return session;
-}
 
-export async function prewarmSessions(): Promise<void> {
-  if (testMode) return;
-  logSessionEvent("Prewarming dual base session");
-  await getDualBaseSessionPromise();
-  logSessionEvent("Prewarmed dual base session");
-  refillClonePool();
-}
+    let settled = false;
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      fn();
+    };
 
-export async function destroySessions(): Promise<void> {
-  logSessionEvent("Destroying cached base session");
-  const pending = [dualBaseSessionPromise, nextClonePromise];
-  dualBaseSessionPromise = null;
-  nextClonePromise = null;
-  const result = await Promise.allSettled(pending);
-  for (const r of result) {
-    if (r.status === "fulfilled" && r.value) {
-      try {
-        r.value.destroy();
-      } catch (err) {
-        logSessionEvent(`Session destroy failed: ${String(err)}`);
+    const onAbort = () => {
+      settle(() => {
+        try {
+          port.disconnect();
+        } catch {
+          // ignore
+        }
+        reject(new DOMException("Aborted", "AbortError"));
+      });
+    };
+
+    if (signal) {
+      if (signal.aborted) {
+        onAbort();
+        return;
       }
+      signal.addEventListener("abort", onAbort, { once: true });
     }
-  }
-  logSessionEvent("Destroyed cached base session");
+
+    port.onMessage.addListener((msg: { ok?: boolean; result?: TRes; error?: string }) => {
+      if (msg?.ok) {
+        settle(() => {
+          signal?.removeEventListener("abort", onAbort);
+          try {
+            port.disconnect();
+          } catch {
+            // ignore
+          }
+          resolve(msg.result as TRes);
+        });
+      } else {
+        settle(() => {
+          signal?.removeEventListener("abort", onAbort);
+          try {
+            port.disconnect();
+          } catch {
+            // ignore
+          }
+          reject(new Error(msg?.error || "Request failed"));
+        });
+      }
+    });
+
+    port.onDisconnect.addListener(() => {
+      settle(() => {
+        signal?.removeEventListener("abort", onAbort);
+        const err = chrome.runtime.lastError;
+        reject(new Error(err?.message || "Offscreen disconnected"));
+      });
+    });
+
+    try {
+      port.postMessage(request);
+    } catch (err) {
+      settle(() => {
+        signal?.removeEventListener("abort", onAbort);
+        reject(err instanceof Error ? err : new Error(String(err)));
+      });
+    }
+  });
 }
 
 function mockProofread(text: string): ProofreadResult {
@@ -186,12 +126,10 @@ function mockProofread(text: string): ProofreadResult {
   if (text.includes("mik")) {
     changes.push({ original: "mik", replacement: "milk", reason: "Spelling" });
   }
-
   let corrected = text;
   for (const c of changes) {
     corrected = corrected.replace(c.original, c.replacement);
   }
-
   const score = changes.length === 0 ? 92 : Math.max(5, 80 - changes.length * 15);
   const tier = getTierForScore(score);
   return { corrected, changes, score, tier: tier.name };
@@ -201,26 +139,24 @@ function mockRewrite(text: string, tone: string): RewriteResult {
   return { rewritten: `[${tone.toUpperCase()}] ${text}` };
 }
 
+export async function prewarmSessions(): Promise<void> {
+  if (testMode) return;
+  // Triggering offscreen creation is enough — the offscreen prewarms itself on startup.
+  await ensureOffscreen();
+}
+
 export async function proofread(
   text: string,
   opts: { signal?: AbortSignal } = {}
 ): Promise<ProofreadResult> {
   if (testMode) return mockProofread(text);
-  const session = await takeClone();
-  try {
-    logSessionEvent("Proofread: running instruction");
-    const raw = await session.prompt(buildProofreadInstruction(text), {
-      responseConstraint: PROOFREAD_SCHEMA,
-      signal: opts.signal,
-    });
-    return JSON.parse(raw) as ProofreadResult;
-  } finally {
-    try {
-      session.destroy();
-    } catch (err) {
-      logSessionEvent(`Proofread session destroy failed: ${String(err)}`);
-    }
-  }
+  await ensureOffscreen();
+  logEvent("Proofread: dispatching to offscreen");
+  return runOnPort<{ text: string }, ProofreadResult>(
+    "wg/proofread",
+    { text },
+    opts.signal
+  );
 }
 
 export async function rewrite(
@@ -229,19 +165,48 @@ export async function rewrite(
   opts: { signal?: AbortSignal } = {}
 ): Promise<RewriteResult> {
   if (testMode) return mockRewrite(text, tone);
-  const session = await takeClone();
-  try {
-    logSessionEvent(`Rewrite: running instruction for ${tone}`);
-    const raw = await session.prompt(buildRewriteInstruction(tone, text), {
-      responseConstraint: TONE_REWRITE_SCHEMA,
-      signal: opts.signal,
+  await ensureOffscreen();
+  logEvent(`Rewrite: dispatching to offscreen for ${tone}`);
+  return runOnPort<{ text: string; tone: TonePreset }, RewriteResult>(
+    "wg/rewrite",
+    { text, tone },
+    opts.signal
+  );
+}
+
+export function subscribeDownloadProgress(
+  fn: (p: number | null) => void
+): () => void {
+  let port: chrome.runtime.Port | null = null;
+  let cancelled = false;
+
+  void ensureOffscreen()
+    .then(() => {
+      if (cancelled) return;
+      port = chrome.runtime.connect({ name: "wg/download-progress" });
+      port.onMessage.addListener((msg: { progress?: number | null }) => {
+        if (cancelled) return;
+        try {
+          fn(msg?.progress ?? null);
+        } catch (err) {
+          logEvent(`Progress listener threw: ${String(err)}`);
+        }
+      });
+      port.onDisconnect.addListener(() => {
+        port = null;
+      });
+    })
+    .catch((err) => {
+      logEvent(`Progress subscribe failed: ${String(err)}`);
     });
-    return JSON.parse(raw) as RewriteResult;
-  } finally {
+
+  return () => {
+    cancelled = true;
     try {
-      session.destroy();
-    } catch (err) {
-      logSessionEvent(`Rewrite session destroy failed: ${String(err)}`);
+      port?.disconnect();
+    } catch {
+      // ignore
     }
-  }
+    port = null;
+  };
 }
