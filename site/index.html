@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WriteGooderer — Makes your writing gooderer</title>
+    <meta
+      name="description"
+      content="On-device proofreading and tone rewrites in Chrome, right where you type. Powered by Gemini Nano. Nothing leaves your browser."
+    />
+    <meta property="og:title" content="WriteGooderer" />
+    <meta
+      property="og:description"
+      content="On-device proofreading and tone rewrites in Chrome. Nothing leaves your browser."
+    />
+    <meta property="og:image" content="assets/screenshot.png" />
+    <meta name="theme-color" content="#ff7a3e" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="WriteGooderer home">
+        <img src="assets/icon.svg" alt="" width="28" height="28" />
+        <span>WriteGooderer</span>
+      </a>
+      <a class="ghost-link" href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>
+            Makes your writing
+            <span class="grad">gooderer</span>.
+          </h1>
+          <p class="lede">
+            On-device proofreading and tone rewrites in Chrome, right where you type.
+            Nothing you type leaves the browser.
+          </p>
+          <div class="cta-row">
+            <a
+              class="btn-primary"
+              href="https://github.com/victorhuangwq/WriteGooderer#install"
+              >Install from GitHub</a
+            >
+            <a
+              class="btn-ghost"
+              href="https://github.com/victorhuangwq/WriteGooderer"
+              >View source</a
+            >
+          </div>
+          <p class="meta">Chrome 138+ · Gemini Nano · MIT</p>
+        </div>
+        <div class="hero-mark" aria-hidden="true">
+          <div class="w-mark">W</div>
+        </div>
+      </section>
+
+      <section class="screenshot-wrap" aria-label="Screenshot">
+        <div class="screenshot-card">
+          <img
+            src="assets/screenshot.png"
+            alt="WriteGooderer proofreading a paragraph with a Gooderness score and inline diff"
+          />
+        </div>
+      </section>
+
+      <section class="features" aria-label="Features">
+        <article class="pill">
+          <h3>100% on-device</h3>
+          <p>Runs on Chrome's built-in Gemini Nano. Zero network calls, zero accounts.</p>
+        </article>
+        <article class="pill">
+          <h3>Diff-style preview</h3>
+          <p>See every grammar, spelling, and clarity fix before anything is applied.</p>
+        </article>
+        <article class="pill">
+          <h3>Four tone presets</h3>
+          <p>Professional, Friendly, LinkedIn Influencer, and Passive Aggressive.</p>
+        </article>
+      </section>
+
+      <section class="how">
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <p>Click into any text field. A floating <code>W</code> shows up.</p>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <p>Open the card to proofread, see your Gooderness score, or pick a tone.</p>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <p>Look over the diff or rewrite, then apply it back into the field.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="install">
+        <h2>Install</h2>
+        <ol class="install-steps">
+          <li>
+            Clone the repo:
+            <code>git clone https://github.com/victorhuangwq/WriteGooderer.git</code>
+          </li>
+          <li>
+            Open <code>chrome://extensions</code> and turn on
+            <strong>Developer mode</strong>.
+          </li>
+          <li>
+            Click <strong>Load unpacked</strong> and select the
+            <code>dist/</code> folder.
+          </li>
+        </ol>
+        <p class="install-note">
+          If the popup says the Prompt API is unavailable, check
+          <a href="https://github.com/victorhuangwq/WriteGooderer#requirements"
+            >the requirements</a
+          >
+          for the flag and on-device model setup.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <span>MIT License</span>
+      <span class="dot">·</span>
+      <a href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
+      <span class="dot">·</span>
+      <span>Made with Chrome's built-in AI</span>
+    </footer>
+  </body>
+</html>
