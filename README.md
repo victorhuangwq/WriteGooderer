@@ -7,7 +7,9 @@
 
 A Chrome extension that proofreads and rewrites text in the page you're already typing in. Runs on Chrome's built-in, on-device AI (Gemini Nano via the Prompt API). Nothing you type leaves the browser.
 
-![WriteGooderer in action](assets/screenshot.png)
+<p align="center">
+  <img src="site/assets/screenshot.png" alt="WriteGooderer in action" width="640" />
+</p>
 
 Click into a text field, a floating `W` appears. From there you can proofread, see a score for the current text, or rewrite it in a different tone.
 
