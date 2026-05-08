@@ -417,6 +417,11 @@ h2 {
   color: var(--text-2);
   font-size: 16px;
 }
+.star-cta-foot {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+}
 
 footer {
   max-width: 880px;
