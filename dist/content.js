@@ -99,44 +99,44 @@
     dark: DARK_TOKENS
   };
   function tokensToCssVars(mode) {
-    const t2 = THEME_TOKENS[mode];
+    const t = THEME_TOKENS[mode];
     return `
-    --wg-gradient: ${t2.gradient};
-    --wg-bg-soft: ${t2.bgSoft};
-    --wg-bg-muted: ${t2.bgMuted};
-    --wg-card-bg: ${t2.cardBg};
-    --wg-popup-bg: ${t2.popupBg};
-    --wg-popup-header-bg: ${t2.popupHeaderBg};
-    --wg-section-bg: ${t2.sectionBg};
-    --wg-text: ${t2.text};
-    --wg-text-secondary: ${t2.textSecondary};
-    --wg-text-tertiary: ${t2.textTertiary};
-    --wg-accent-strong: ${t2.accentStrong};
-    --wg-accent-soft: ${t2.accentSoft};
-    --wg-link: ${t2.link};
-    --wg-border: ${t2.border};
-    --wg-border-soft: ${t2.borderSoft};
-    --wg-shadow: ${t2.shadow};
-    --wg-shadow-soft: ${t2.shadowSoft};
-    --wg-pill-bg: ${t2.pillBg};
-    --wg-button-secondary-bg: ${t2.buttonSecondaryBg};
-    --wg-button-secondary-hover-bg: ${t2.buttonSecondaryHoverBg};
-    --wg-toggle-track: ${t2.toggleTrack};
-    --wg-focus-ring: ${t2.focusRing};
-    --wg-glass-highlight: ${t2.glassHighlight};
-    --wg-surface-raised: ${t2.surfaceRaised};
-    --wg-gauge-track: ${t2.gaugeTrack};
-    --wg-diff-remove-bg: ${t2.diffRemoveBg};
-    --wg-diff-remove-fg: ${t2.diffRemoveFg};
-    --wg-diff-add-bg: ${t2.diffAddBg};
-    --wg-diff-add-fg: ${t2.diffAddFg};
-    --wg-error-bg: ${t2.errorBg};
-    --wg-error-border: ${t2.errorBorder};
-    --wg-error-fg: ${t2.errorFg};
-    --wg-tone-selected-bg: ${t2.toneSelectedBg};
-    --wg-tone-selected-border: ${t2.toneSelectedBorder};
-    --wg-tone-hover-bg: ${t2.toneHoverBg};
-    --wg-icon-shadow: ${t2.iconShadow};
+    --wg-gradient: ${t.gradient};
+    --wg-bg-soft: ${t.bgSoft};
+    --wg-bg-muted: ${t.bgMuted};
+    --wg-card-bg: ${t.cardBg};
+    --wg-popup-bg: ${t.popupBg};
+    --wg-popup-header-bg: ${t.popupHeaderBg};
+    --wg-section-bg: ${t.sectionBg};
+    --wg-text: ${t.text};
+    --wg-text-secondary: ${t.textSecondary};
+    --wg-text-tertiary: ${t.textTertiary};
+    --wg-accent-strong: ${t.accentStrong};
+    --wg-accent-soft: ${t.accentSoft};
+    --wg-link: ${t.link};
+    --wg-border: ${t.border};
+    --wg-border-soft: ${t.borderSoft};
+    --wg-shadow: ${t.shadow};
+    --wg-shadow-soft: ${t.shadowSoft};
+    --wg-pill-bg: ${t.pillBg};
+    --wg-button-secondary-bg: ${t.buttonSecondaryBg};
+    --wg-button-secondary-hover-bg: ${t.buttonSecondaryHoverBg};
+    --wg-toggle-track: ${t.toggleTrack};
+    --wg-focus-ring: ${t.focusRing};
+    --wg-glass-highlight: ${t.glassHighlight};
+    --wg-surface-raised: ${t.surfaceRaised};
+    --wg-gauge-track: ${t.gaugeTrack};
+    --wg-diff-remove-bg: ${t.diffRemoveBg};
+    --wg-diff-remove-fg: ${t.diffRemoveFg};
+    --wg-diff-add-bg: ${t.diffAddBg};
+    --wg-diff-add-fg: ${t.diffAddFg};
+    --wg-error-bg: ${t.errorBg};
+    --wg-error-border: ${t.errorBorder};
+    --wg-error-fg: ${t.errorFg};
+    --wg-tone-selected-bg: ${t.toneSelectedBg};
+    --wg-tone-selected-border: ${t.toneSelectedBorder};
+    --wg-tone-hover-bg: ${t.toneHoverBg};
+    --wg-icon-shadow: ${t.iconShadow};
   `.trim();
   }
   const FONT_TOKENS_CSS = `
@@ -149,739 +149,6 @@
   };
   function getReadableBadgeBg(color) {
     return SCORE_BADGE_COLORS[color] ?? color;
-  }
-  var e = { withStackTrace: false }, t = (t2, n2, r2 = e) => ({
-    data: n2.isOk() ? {
-      type: "Ok",
-      value: n2.value
-    } : {
-      type: "Err",
-      value: n2.error
-    },
-    message: t2,
-    stack: r2.withStackTrace ? (/* @__PURE__ */ Error()).stack : void 0
-  });
-  function n(e2, t2, n2, r2) {
-    function i2(e3) {
-      return e3 instanceof n2 ? e3 : new n2(function(t3) {
-        t3(e3);
-      });
-    }
-    return new (n2 ||= Promise)(function(n3, a2) {
-      function o2(e3) {
-        try {
-          c2(r2.next(e3));
-        } catch (e4) {
-          a2(e4);
-        }
-      }
-      function s2(e3) {
-        try {
-          c2(r2.throw(e3));
-        } catch (e4) {
-          a2(e4);
-        }
-      }
-      function c2(e3) {
-        e3.done ? n3(e3.value) : i2(e3.value).then(o2, s2);
-      }
-      c2((r2 = r2.apply(e2, [])).next());
-    });
-  }
-  function r(e2) {
-    var t2 = typeof Symbol == "function" && Symbol.iterator, n2 = t2 && e2[t2], r2 = 0;
-    if (n2) return n2.call(e2);
-    if (e2 && typeof e2.length == "number") return { next: function() {
-      return e2 && r2 >= e2.length && (e2 = void 0), {
-        value: e2 && e2[r2++],
-        done: !e2
-      };
-    } };
-    throw TypeError(t2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
-  }
-  function i(e2) {
-    return this instanceof i ? (this.v = e2, this) : new i(e2);
-  }
-  function a(e2, t2, n2) {
-    if (!Symbol.asyncIterator) throw TypeError("Symbol.asyncIterator is not defined.");
-    var r2 = n2.apply(e2, t2 || []), a2, o2 = [];
-    return a2 = Object.create((typeof AsyncIterator == "function" ? AsyncIterator : Object).prototype), c2("next"), c2("throw"), c2("return", s2), a2[Symbol.asyncIterator] = function() {
-      return this;
-    }, a2;
-    function s2(e3) {
-      return function(t3) {
-        return Promise.resolve(t3).then(e3, f2);
-      };
-    }
-    function c2(e3, t3) {
-      r2[e3] && (a2[e3] = function(t4) {
-        return new Promise(function(n3, r3) {
-          o2.push([
-            e3,
-            t4,
-            n3,
-            r3
-          ]) > 1 || l2(e3, t4);
-        });
-      }, t3 && (a2[e3] = t3(a2[e3])));
-    }
-    function l2(e3, t3) {
-      try {
-        u2(r2[e3](t3));
-      } catch (e4) {
-        p2(o2[0][3], e4);
-      }
-    }
-    function u2(e3) {
-      e3.value instanceof i ? Promise.resolve(e3.value.v).then(d2, f2) : p2(o2[0][2], e3);
-    }
-    function d2(e3) {
-      l2("next", e3);
-    }
-    function f2(e3) {
-      l2("throw", e3);
-    }
-    function p2(e3, t3) {
-      e3(t3), o2.shift(), o2.length && l2(o2[0][0], o2[0][1]);
-    }
-  }
-  function o(e2) {
-    var t2, n2;
-    return t2 = {}, r2("next"), r2("throw", function(e3) {
-      throw e3;
-    }), r2("return"), t2[Symbol.iterator] = function() {
-      return this;
-    }, t2;
-    function r2(r3, a2) {
-      t2[r3] = e2[r3] ? function(t3) {
-        return (n2 = !n2) ? {
-          value: i(e2[r3](t3)),
-          done: false
-        } : a2 ? a2(t3) : t3;
-      } : a2;
-    }
-  }
-  function s(e2) {
-    if (!Symbol.asyncIterator) throw TypeError("Symbol.asyncIterator is not defined.");
-    var t2 = e2[Symbol.asyncIterator], n2;
-    return t2 ? t2.call(e2) : (e2 = typeof r == "function" ? r(e2) : e2[Symbol.iterator](), n2 = {}, i2("next"), i2("throw"), i2("return"), n2[Symbol.asyncIterator] = function() {
-      return this;
-    }, n2);
-    function i2(t3) {
-      n2[t3] = e2[t3] && function(n3) {
-        return new Promise(function(r2, i3) {
-          n3 = e2[t3](n3), a2(r2, i3, n3.done, n3.value);
-        });
-      };
-    }
-    function a2(e3, t3, n3, r2) {
-      Promise.resolve(r2).then(function(t4) {
-        e3({
-          value: t4,
-          done: n3
-        });
-      }, t3);
-    }
-  }
-  var c = class e2 {
-    constructor(e3) {
-      this._promise = e3;
-    }
-    static fromSafePromise(t2) {
-      return new e2(t2.then((e3) => new _(e3)));
-    }
-    static fromPromise(t2, n2) {
-      return new e2(t2.then((e3) => new _(e3)).catch((e3) => new v(n2(e3))));
-    }
-    static fromThrowable(t2, r2) {
-      return (...i2) => new e2(n(this, void 0, void 0, function* () {
-        try {
-          return new _(yield t2(...i2));
-        } catch (e3) {
-          return new v(r2 ? r2(e3) : e3);
-        }
-      }));
-    }
-    static combine(e3) {
-      return d(e3);
-    }
-    static combineWithAllErrors(e3) {
-      return p(e3);
-    }
-    map(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        return e3.isErr() ? new v(e3.error) : new _(yield t2(e3.value));
-      })));
-    }
-    andThrough(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        if (e3.isErr()) return new v(e3.error);
-        let n2 = yield t2(e3.value);
-        return n2.isErr() ? new v(n2.error) : new _(e3.value);
-      })));
-    }
-    andTee(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        if (e3.isErr()) return new v(e3.error);
-        try {
-          yield t2(e3.value);
-        } catch {
-        }
-        return new _(e3.value);
-      })));
-    }
-    orTee(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        if (e3.isOk()) return new _(e3.value);
-        try {
-          yield t2(e3.error);
-        } catch {
-        }
-        return new v(e3.error);
-      })));
-    }
-    mapErr(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        return e3.isOk() ? new _(e3.value) : new v(yield t2(e3.error));
-      })));
-    }
-    andThen(t2) {
-      return new e2(this._promise.then((n2) => {
-        if (n2.isErr()) return new v(n2.error);
-        let r2 = t2(n2.value);
-        return r2 instanceof e2 ? r2._promise : r2;
-      }));
-    }
-    orElse(t2) {
-      return new e2(this._promise.then((e3) => n(this, void 0, void 0, function* () {
-        return e3.isErr() ? t2(e3.error) : new _(e3.value);
-      })));
-    }
-    match(e3, t2) {
-      return this._promise.then((n2) => n2.match(e3, t2));
-    }
-    unwrapOr(e3) {
-      return this._promise.then((t2) => t2.unwrapOr(e3));
-    }
-    safeUnwrap() {
-      return a(this, arguments, function* () {
-        return yield i(yield i(yield* o(s(yield i(this._promise.then((e3) => e3.safeUnwrap()))))));
-      });
-    }
-    then(e3, t2) {
-      return this._promise.then(e3, t2);
-    }
-    [Symbol.asyncIterator]() {
-      return a(this, arguments, function* () {
-        let e3 = yield i(this._promise);
-        return e3.isErr() && (yield yield i(l(e3.error))), yield i(e3.value);
-      });
-    }
-  };
-  function l(e2) {
-    return new c(Promise.resolve(new v(e2)));
-  }
-  var u = (e2) => {
-    let t2 = h([]);
-    for (let n2 of e2) if (n2.isErr()) {
-      t2 = g(n2.error);
-      break;
-    } else t2.map((e3) => e3.push(n2.value));
-    return t2;
-  }, d = (e2) => c.fromSafePromise(Promise.all(e2)).andThen(u), f = (e2) => {
-    let t2 = h([]);
-    for (let n2 of e2) n2.isErr() && t2.isErr() ? t2.error.push(n2.error) : n2.isErr() && t2.isOk() ? t2 = g([n2.error]) : n2.isOk() && t2.isOk() && t2.value.push(n2.value);
-    return t2;
-  }, p = (e2) => c.fromSafePromise(Promise.all(e2)).andThen(f), m;
-  (function(e2) {
-    function t2(e3, t3) {
-      return (...n3) => {
-        try {
-          return h(e3(...n3));
-        } catch (e4) {
-          return g(t3 ? t3(e4) : e4);
-        }
-      };
-    }
-    e2.fromThrowable = t2;
-    function n2(e3) {
-      return u(e3);
-    }
-    e2.combine = n2;
-    function r2(e3) {
-      return f(e3);
-    }
-    e2.combineWithAllErrors = r2;
-  })(m ||= {});
-  function h(e2) {
-    return new _(e2);
-  }
-  function g(e2) {
-    return new v(e2);
-  }
-  var _ = class {
-    constructor(e2) {
-      this.value = e2;
-    }
-    isOk() {
-      return true;
-    }
-    isErr() {
-      return !this.isOk();
-    }
-    map(e2) {
-      return h(e2(this.value));
-    }
-    mapErr(e2) {
-      return h(this.value);
-    }
-    andThen(e2) {
-      return e2(this.value);
-    }
-    andThrough(e2) {
-      return e2(this.value).map((e3) => this.value);
-    }
-    andTee(e2) {
-      try {
-        e2(this.value);
-      } catch {
-      }
-      return h(this.value);
-    }
-    orTee(e2) {
-      return h(this.value);
-    }
-    orElse(e2) {
-      return h(this.value);
-    }
-    asyncAndThen(e2) {
-      return e2(this.value);
-    }
-    asyncAndThrough(e2) {
-      return e2(this.value).map(() => this.value);
-    }
-    asyncMap(e2) {
-      return c.fromSafePromise(e2(this.value));
-    }
-    unwrapOr(e2) {
-      return this.value;
-    }
-    match(e2, t2) {
-      return e2(this.value);
-    }
-    safeUnwrap() {
-      let e2 = this.value;
-      return (function* () {
-        return e2;
-      })();
-    }
-    _unsafeUnwrap(e2) {
-      return this.value;
-    }
-    _unsafeUnwrapErr(e2) {
-      throw t("Called `_unsafeUnwrapErr` on an Ok", this, e2);
-    }
-    *[Symbol.iterator]() {
-      return this.value;
-    }
-  }, v = class {
-    constructor(e2) {
-      this.error = e2;
-    }
-    isOk() {
-      return false;
-    }
-    isErr() {
-      return !this.isOk();
-    }
-    map(e2) {
-      return g(this.error);
-    }
-    mapErr(e2) {
-      return g(e2(this.error));
-    }
-    andThrough(e2) {
-      return g(this.error);
-    }
-    andTee(e2) {
-      return g(this.error);
-    }
-    orTee(e2) {
-      try {
-        e2(this.error);
-      } catch {
-      }
-      return g(this.error);
-    }
-    andThen(e2) {
-      return g(this.error);
-    }
-    orElse(e2) {
-      return e2(this.error);
-    }
-    asyncAndThen(e2) {
-      return l(this.error);
-    }
-    asyncAndThrough(e2) {
-      return l(this.error);
-    }
-    asyncMap(e2) {
-      return l(this.error);
-    }
-    unwrapOr(e2) {
-      return e2;
-    }
-    match(e2, t2) {
-      return t2(this.error);
-    }
-    safeUnwrap() {
-      let e2 = this.error;
-      return (function* () {
-        throw yield g(e2), Error("Do not use this generator out of `safeTry`");
-      })();
-    }
-    _unsafeUnwrap(e2) {
-      throw t("Called `_unsafeUnwrap` on an Err", this, e2);
-    }
-    _unsafeUnwrapErr(e2) {
-      return this.error;
-    }
-    *[Symbol.iterator]() {
-      let e2 = this;
-      return yield e2, e2;
-    }
-  };
-  m.fromThrowable;
-  var y = Symbol.for("@ts-pattern/matcher"), b = Symbol.for("@ts-pattern/isVariadic"), x = "@ts-pattern/anonymous-select-key", S = (e2) => !!(e2 && typeof e2 == "object"), C = (e2) => e2 && !!e2[y], w = (e2, t2, n2) => {
-    if (C(e2)) {
-      let { matched: r2, selections: i2 } = e2[y]().match(t2);
-      return r2 && i2 && Object.keys(i2).forEach((e3) => n2(e3, i2[e3])), r2;
-    }
-    if (S(e2)) {
-      if (!S(t2)) return false;
-      if (Array.isArray(e2)) {
-        if (!Array.isArray(t2)) return false;
-        let r2 = [], i2 = [], a2 = [];
-        for (let t3 of e2.keys()) {
-          let n3 = e2[t3];
-          C(n3) && n3[b] ? a2.push(n3) : a2.length ? i2.push(n3) : r2.push(n3);
-        }
-        if (a2.length) {
-          if (a2.length > 1) throw Error("Pattern error: Using `...P.array(...)` several times in a single pattern is not allowed.");
-          if (t2.length < r2.length + i2.length) return false;
-          let e3 = t2.slice(0, r2.length), o2 = i2.length === 0 ? [] : t2.slice(-i2.length), s2 = t2.slice(r2.length, i2.length === 0 ? Infinity : -i2.length);
-          return r2.every((t3, r3) => w(t3, e3[r3], n2)) && i2.every((e4, t3) => w(e4, o2[t3], n2)) && (a2.length === 0 || w(a2[0], s2, n2));
-        }
-        return e2.length === t2.length && e2.every((e3, r3) => w(e3, t2[r3], n2));
-      }
-      return Reflect.ownKeys(e2).every((r2) => {
-        let i2 = e2[r2];
-        return (r2 in t2 || C(a2 = i2) && a2[y]().matcherType === "optional") && w(i2, t2[r2], n2);
-        var a2;
-      });
-    }
-    return Object.is(t2, e2);
-  }, T = (e2) => {
-    var t2;
-    return S(e2) ? C(e2) ? (t2 = e2[y]()).getSelectionKeys?.call(t2) ?? [] : E(Array.isArray(e2) ? e2 : Object.values(e2), T) : [];
-  }, E = (e2, t2) => e2.reduce((e3, n2) => e3.concat(t2(n2)), []);
-  function D(e2) {
-    return Object.assign(e2, {
-      optional: () => k(e2),
-      and: (t2) => A(e2, t2),
-      or: (t2) => ee(e2, t2),
-      select: (t2) => t2 === void 0 ? M(e2) : M(t2, e2)
-    });
-  }
-  function k(e2) {
-    return D({ [y]: () => ({
-      match: (t2) => {
-        let n2 = {}, r2 = (e3, t3) => {
-          n2[e3] = t3;
-        };
-        return t2 === void 0 ? (T(e2).forEach((e3) => r2(e3, void 0)), {
-          matched: true,
-          selections: n2
-        }) : {
-          matched: w(e2, t2, r2),
-          selections: n2
-        };
-      },
-      getSelectionKeys: () => T(e2),
-      matcherType: "optional"
-    }) });
-  }
-  function A(...e2) {
-    return D({ [y]: () => ({
-      match: (t2) => {
-        let n2 = {}, r2 = (e3, t3) => {
-          n2[e3] = t3;
-        };
-        return {
-          matched: e2.every((e3) => w(e3, t2, r2)),
-          selections: n2
-        };
-      },
-      getSelectionKeys: () => E(e2, T),
-      matcherType: "and"
-    }) });
-  }
-  function ee(...e2) {
-    return D({ [y]: () => ({
-      match: (t2) => {
-        let n2 = {}, r2 = (e3, t3) => {
-          n2[e3] = t3;
-        };
-        return E(e2, T).forEach((e3) => r2(e3, void 0)), {
-          matched: e2.some((e3) => w(e3, t2, r2)),
-          selections: n2
-        };
-      },
-      getSelectionKeys: () => E(e2, T),
-      matcherType: "or"
-    }) });
-  }
-  function j(e2) {
-    return { [y]: () => ({ match: (t2) => ({ matched: !!e2(t2) }) }) };
-  }
-  function M(...e2) {
-    let t2 = typeof e2[0] == "string" ? e2[0] : void 0, n2 = e2.length === 2 ? e2[1] : typeof e2[0] == "string" ? void 0 : e2[0];
-    return D({ [y]: () => ({
-      match: (e3) => {
-        let r2 = { [t2 ?? x]: e3 };
-        return {
-          matched: n2 === void 0 || w(n2, e3, (e4, t3) => {
-            r2[e4] = t3;
-          }),
-          selections: r2
-        };
-      },
-      getSelectionKeys: () => [t2 ?? x].concat(n2 === void 0 ? [] : T(n2))
-    }) });
-  }
-  function N(e2) {
-    return true;
-  }
-  function P(e2) {
-    return typeof e2 == "number";
-  }
-  function F(e2) {
-    return typeof e2 == "string";
-  }
-  function I(e2) {
-    return typeof e2 == "bigint";
-  }
-  D(j(N)), D(j(N));
-  var L = (e2) => Object.assign(D(e2), {
-    startsWith: (t2) => {
-      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.startsWith(n2)))));
-      var n2;
-    },
-    endsWith: (t2) => {
-      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.endsWith(n2)))));
-      var n2;
-    },
-    minLength: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length >= e3))(t2))),
-    length: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length === e3))(t2))),
-    maxLength: (t2) => L(A(e2, ((e3) => j((t3) => F(t3) && t3.length <= e3))(t2))),
-    includes: (t2) => {
-      return L(A(e2, (n2 = t2, j((e3) => F(e3) && e3.includes(n2)))));
-      var n2;
-    },
-    regex: (t2) => {
-      return L(A(e2, (n2 = t2, j((e3) => F(e3) && !!e3.match(n2)))));
-      var n2;
-    }
-  });
-  L(j(F));
-  var R = (e2) => Object.assign(D(e2), {
-    between: (t2, n2) => R(A(e2, ((e3, t3) => j((n3) => P(n3) && e3 <= n3 && t3 >= n3))(t2, n2))),
-    lt: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 < e3))(t2))),
-    gt: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 > e3))(t2))),
-    lte: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 <= e3))(t2))),
-    gte: (t2) => R(A(e2, ((e3) => j((t3) => P(t3) && t3 >= e3))(t2))),
-    int: () => R(A(e2, j((e3) => P(e3) && Number.isInteger(e3)))),
-    finite: () => R(A(e2, j((e3) => P(e3) && Number.isFinite(e3)))),
-    positive: () => R(A(e2, j((e3) => P(e3) && e3 > 0))),
-    negative: () => R(A(e2, j((e3) => P(e3) && e3 < 0)))
-  });
-  R(j(P));
-  var z = (e2) => Object.assign(D(e2), {
-    between: (t2, n2) => z(A(e2, ((e3, t3) => j((n3) => I(n3) && e3 <= n3 && t3 >= n3))(t2, n2))),
-    lt: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 < e3))(t2))),
-    gt: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 > e3))(t2))),
-    lte: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 <= e3))(t2))),
-    gte: (t2) => z(A(e2, ((e3) => j((t3) => I(t3) && t3 >= e3))(t2))),
-    positive: () => z(A(e2, j((e3) => I(e3) && e3 > 0))),
-    negative: () => z(A(e2, j((e3) => I(e3) && e3 < 0)))
-  });
-  z(j(I)), D(j(function(e2) {
-    return typeof e2 == "boolean";
-  })), D(j(function(e2) {
-    return typeof e2 == "symbol";
-  })), D(j(function(e2) {
-    return e2 == null;
-  })), D(j(function(e2) {
-    return e2 != null;
-  }));
-  var te = class extends Error {
-    constructor(e2) {
-      let t2;
-      try {
-        t2 = JSON.stringify(e2);
-      } catch {
-        t2 = e2;
-      }
-      super(`Pattern matching error: no pattern matches value ${t2}`), this.input = void 0, this.input = e2;
-    }
-  }, B = {
-    matched: false,
-    value: void 0
-  };
-  function V(e2) {
-    return new ne(e2, B);
-  }
-  var ne = class e2 {
-    constructor(e3, t2) {
-      this.input = void 0, this.state = void 0, this.input = e3, this.state = t2;
-    }
-    with(...t2) {
-      if (this.state.matched) return this;
-      let n2 = t2[t2.length - 1], r2 = [t2[0]], i2;
-      t2.length === 3 && typeof t2[1] == "function" ? i2 = t2[1] : t2.length > 2 && r2.push(...t2.slice(1, t2.length - 1));
-      let a2 = false, o2 = {}, s2 = (e3, t3) => {
-        a2 = true, o2[e3] = t3;
-      }, c2 = !r2.some((e3) => w(e3, this.input, s2)) || i2 && !i2(this.input) ? B : {
-        matched: true,
-        value: n2(a2 ? x in o2 ? o2[x] : o2 : this.input, this.input)
-      };
-      return new e2(this.input, c2);
-    }
-    when(t2, n2) {
-      if (this.state.matched) return this;
-      let r2 = !!t2(this.input);
-      return new e2(this.input, r2 ? {
-        matched: true,
-        value: n2(this.input, this.input)
-      } : B);
-    }
-    otherwise(e3) {
-      return this.state.matched ? this.state.value : e3(this.input);
-    }
-    exhaustive(e3 = re) {
-      return this.state.matched ? this.state.value : e3(this.input);
-    }
-    run() {
-      return this.exhaustive();
-    }
-    returnType() {
-      return this;
-    }
-    narrow() {
-      return this;
-    }
-  };
-  function re(e2) {
-    throw new te(e2);
-  }
-  function H(e2) {
-    return e2.match((e3) => e3, (e3) => {
-      throw e3;
-    });
-  }
-  function K(e2) {
-    let t2 = e2?.expectedInputs ?? [{
-      type: "text",
-      languages: ["en"]
-    }], n2 = e2?.expectedOutputs ?? [{
-      type: "text",
-      languages: ["en"]
-    }];
-    return new c((async () => {
-      if (typeof LanguageModel > "u") return g(/* @__PURE__ */ Error("LanguageModel API is not available in this browser. Ensure you are using Chrome 148+ or a supported Chromium-based browser."));
-      let r2 = V(await LanguageModel.availability({
-        expectedInputs: t2,
-        expectedOutputs: n2
-      })).with("unavailable", () => g(/* @__PURE__ */ Error("LanguageModel API is present but the model is unavailable on this device."))).with("downloadable", "downloading", "available", (e3) => h(e3)).exhaustive();
-      if (r2.isErr()) return r2;
-      if (r2.value !== "available") try {
-        (await LanguageModel.create({
-          expectedInputs: t2,
-          expectedOutputs: n2,
-          monitor: e2?.monitor,
-          signal: e2?.signal
-        })).destroy();
-      } catch (e3) {
-        return g(/* @__PURE__ */ Error(`Failed to download LanguageModel: ${e3 instanceof Error ? e3.message : String(e3)}`));
-      }
-      return h({
-        prompt: (e3, r3, i2, a2) => ae(t2, n2, e3, r3, i2, a2),
-        createSession: (e3) => q(t2, n2, e3),
-        withSession: (e3, r3) => J(t2, n2, e3, r3),
-        checkTokenUsage: (e3, r3) => ie(t2, n2, e3, r3)
-      });
-    })());
-  }
-  function q(e2, t2, n2) {
-    return new c((async () => {
-      try {
-        let r2 = { ...n2 };
-        return !r2.expectedInputs && e2.length > 0 && (r2.expectedInputs = e2), !r2.expectedOutputs && t2.length > 0 && (r2.expectedOutputs = t2), h(await LanguageModel.create(r2));
-      } catch (e3) {
-        return g(/* @__PURE__ */ Error(`Failed to create AI session: ${e3 instanceof Error ? e3.message : "Unknown error"}`));
-      }
-    })());
-  }
-  function J(e2, t2, n2, r2) {
-    return q(e2, t2, r2).andThen((e3) => n2(e3).map((t3) => (e3.destroy(), t3)).mapErr((t3) => (e3.destroy(), t3)));
-  }
-  function ie(e2, t2, n2, r2) {
-    return J(e2, t2, (e3) => c.fromSafePromise((async () => {
-      let t3 = await e3.measureContextUsage(n2), r3 = e3.contextWindow || 0, i2 = e3.contextUsage || 0, a2 = r3 - i2;
-      return {
-        promptTokens: t3,
-        maxTokens: r3,
-        tokensSoFar: i2,
-        tokensAvailable: a2,
-        willFit: t3 <= a2
-      };
-    })()), r2);
-  }
-  function ae(e2, t2, n2, r2, i2, a2) {
-    return J(e2, t2, (e3) => {
-      let t3 = null;
-      return c.fromPromise((async () => {
-        try {
-          let a3 = i2 || {};
-          if (r2 || a3.signal) {
-            let e4 = [];
-            if (a3.signal && e4.push(a3.signal), r2) {
-              let n3 = new AbortController();
-              e4.push(n3.signal), t3 = setTimeout(() => n3.abort(), r2);
-            }
-            e4.length > 1 && AbortSignal.any ? a3 = {
-              ...a3,
-              signal: AbortSignal.any(e4)
-            } : e4.length === 1 && (a3 = {
-              ...a3,
-              signal: e4[0]
-            });
-          }
-          return await e3.prompt(n2, a3);
-        } finally {
-          t3 && clearTimeout(t3);
-        }
-      })(), (e4) => e4 instanceof Error ? e4 : Error(String(e4)));
-    }, a2);
-  }
-  async function $(e2) {
-    let t2 = H(await K(e2));
-    return {
-      prompt: async (e3, n2, r2, i2) => H(await t2.prompt(e3, n2, r2, i2)),
-      createSession: async (e3) => H(await t2.createSession(e3)),
-      withSession: async (e3, n2) => H(await t2.withSession((t3) => c.fromPromise(e3(t3), (e4) => e4 instanceof Error ? e4 : Error(String(e4))), n2)),
-      checkTokenUsage: async (e3, n2) => H(await t2.checkTokenUsage(e3, n2))
-    };
   }
   const TONES = {
     professional: {
@@ -967,231 +234,95 @@
     "Thinking really hard on your behalf...",
     "Pretending to be a $30/month writing tool..."
   ];
-  const PROOFREAD_SCHEMA = {
-    type: "object",
-    properties: {
-      corrected: { type: "string" },
-      changes: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            original: { type: "string" },
-            replacement: { type: "string" },
-            reason: { type: "string" }
-          },
-          required: ["original", "replacement", "reason"]
-        }
-      },
-      score: { type: "number", minimum: 0, maximum: 100 },
-      tier: {
-        type: "string",
-        enum: [
-          "Caveman",
-          "Txt Msg Veteran",
-          "Functional Adult",
-          "Word Wizard",
-          "Shakespeare Who?",
-          "WriteGooderer"
-        ]
-      }
-    },
-    required: ["corrected", "changes", "score", "tier"]
-  };
-  const TONE_REWRITE_SCHEMA = {
-    type: "object",
-    properties: {
-      rewritten: { type: "string" }
-    },
-    required: ["rewritten"]
-  };
-  const DUAL_SYSTEM_PROMPT = "You are WriteGooderer. You handle two tasks on user text: (a) proofread — return corrections, a 0-100 quality score, and a tier name; (b) rewrite in a specified tone — preserve meaning, commit fully to the tone. Respond only with JSON matching the requested schema. Honest scoring: perfect text 90+, minor issues 60-80, significant issues below 50.";
-  const DUAL_INITIAL_PROMPTS = [
-    { role: "system", content: DUAL_SYSTEM_PROMPT },
-    {
-      role: "user",
-      content: "Proofread this paragraph:\n\nI has went to the stor yesterday and buyed some mik."
-    },
-    {
-      role: "assistant",
-      content: JSON.stringify({
-        corrected: "I went to the store yesterday and bought some milk.",
-        changes: [
-          {
-            original: "has went",
-            replacement: "went",
-            reason: "Incorrect auxiliary verb"
-          },
-          { original: "stor", replacement: "store", reason: "Spelling" },
-          {
-            original: "buyed",
-            replacement: "bought",
-            reason: "Irregular past tense"
-          },
-          { original: "mik", replacement: "milk", reason: "Spelling" }
-        ],
-        score: 18,
-        tier: "Caveman"
-      })
-    },
-    {
-      role: "user",
-      content: "Rewrite this paragraph in this tone: LinkedIn Influencer (performative self-help hustle energy).\n\nParagraph:\n\nI got promoted at work today."
-    },
-    {
-      role: "assistant",
-      content: JSON.stringify({
-        rewritten: "I'm thrilled to announce that after years of dedication, countless late nights, and unwavering belief in myself...\n\nI got a promotion.\n\nBut this isn't about the title. It's about the JOURNEY.\n\nHere are 3 lessons I learned along the way:\n\n1. Show up every day\n2. Be authentic\n3. Never stop grinding\n\nAgree? 👇"
-      })
-    }
-  ];
-  function buildProofreadInstruction(text) {
-    return `Proofread this paragraph:
-
-${text}`;
-  }
-  function buildRewriteInstruction(tone, text) {
-    const config = TONES[tone];
-    return `Rewrite this paragraph in this tone: ${config.name} (${config.description}).
-
-Paragraph:
-
-${text}`;
-  }
-  let aiInstance = null;
-  let aiInstancePromise = null;
   let testMode = false;
-  let dualBaseSessionPromise = null;
-  let nextClonePromise = null;
-  let downloadProgress = null;
-  const progressListeners = /* @__PURE__ */ new Set();
-  function emitProgress(p2) {
-    downloadProgress = p2;
-    for (const fn of progressListeners) {
-      try {
-        fn(p2);
-      } catch (err) {
-        logSessionEvent(`Progress listener threw: ${String(err)}`);
-      }
-    }
-  }
-  function subscribeDownloadProgress(fn) {
-    progressListeners.add(fn);
-    fn(downloadProgress);
-    return () => progressListeners.delete(fn);
-  }
-  function logSessionEvent(message) {
+  let ensureOffscreenPromise = null;
+  function logEvent(message) {
     console.debug(`[WriteGooderer AI] ${message}`);
   }
   async function checkTestMode() {
     const result = await chrome.storage.local.get("wgTestMode");
     testMode = !!result.wgTestMode;
   }
-  async function ensureModel() {
-    if (aiInstance) return aiInstance;
-    if (aiInstancePromise) return aiInstancePromise;
-    let sawProgress = false;
-    aiInstancePromise = $({
-      monitor(m2) {
-        m2.addEventListener("downloadprogress", (e2) => {
-          const loaded = e2.loaded;
-          sawProgress = true;
-          logSessionEvent(`Model download progress: ${(loaded * 100).toFixed(1)}%`);
-          emitProgress(loaded);
+  function ensureOffscreen() {
+    if (ensureOffscreenPromise) return ensureOffscreenPromise;
+    ensureOffscreenPromise = chrome.runtime.sendMessage({ type: "wg/ensure-offscreen" }).then((resp) => {
+      if (!resp?.ok) {
+        throw new Error(resp?.error || "Failed to start offscreen document");
+      }
+    }).catch((err) => {
+      ensureOffscreenPromise = null;
+      throw err;
+    });
+    return ensureOffscreenPromise;
+  }
+  function runOnPort(name, request, signal) {
+    return new Promise((resolve, reject) => {
+      let port;
+      try {
+        port = chrome.runtime.connect({ name });
+      } catch (err) {
+        reject(err instanceof Error ? err : new Error(String(err)));
+        return;
+      }
+      let settled = false;
+      const settle = (fn) => {
+        if (settled) return;
+        settled = true;
+        fn();
+      };
+      const onAbort = () => {
+        settle(() => {
+          try {
+            port.disconnect();
+          } catch {
+          }
+          reject(new DOMException("Aborted", "AbortError"));
+        });
+      };
+      if (signal) {
+        if (signal.aborted) {
+          onAbort();
+          return;
+        }
+        signal.addEventListener("abort", onAbort, { once: true });
+      }
+      port.onMessage.addListener((msg) => {
+        if (msg?.ok) {
+          settle(() => {
+            signal?.removeEventListener("abort", onAbort);
+            try {
+              port.disconnect();
+            } catch {
+            }
+            resolve(msg.result);
+          });
+        } else {
+          settle(() => {
+            signal?.removeEventListener("abort", onAbort);
+            try {
+              port.disconnect();
+            } catch {
+            }
+            reject(new Error(msg?.error || "Request failed"));
+          });
+        }
+      });
+      port.onDisconnect.addListener(() => {
+        settle(() => {
+          signal?.removeEventListener("abort", onAbort);
+          const err = chrome.runtime.lastError;
+          reject(new Error(err?.message || "Offscreen disconnected"));
+        });
+      });
+      try {
+        port.postMessage(request);
+      } catch (err) {
+        settle(() => {
+          signal?.removeEventListener("abort", onAbort);
+          reject(err instanceof Error ? err : new Error(String(err)));
         });
       }
-    }).then((instance) => {
-      aiInstance = instance;
-      if (sawProgress) emitProgress(null);
-      return instance;
-    }).catch((err) => {
-      aiInstancePromise = null;
-      if (sawProgress) emitProgress(null);
-      throw err;
     });
-    return aiInstancePromise;
-  }
-  async function createDualBaseSession() {
-    logSessionEvent("Creating dual base session");
-    const ai = await ensureModel();
-    const session = await ai.createSession({
-      initialPrompts: DUAL_INITIAL_PROMPTS
-    });
-    logSessionEvent("Created dual base session");
-    return session;
-  }
-  function getDualBaseSessionPromise() {
-    if (dualBaseSessionPromise) return dualBaseSessionPromise;
-    const sessionPromise = createDualBaseSession().catch((error) => {
-      logSessionEvent(`Dual base session creation failed: ${String(error)}`);
-      dualBaseSessionPromise = null;
-      throw error;
-    });
-    dualBaseSessionPromise = sessionPromise;
-    return sessionPromise;
-  }
-  async function cloneDualSession() {
-    try {
-      const baseSession = await getDualBaseSessionPromise();
-      logSessionEvent("Cloning dual session");
-      const clonedSession = await baseSession.clone();
-      logSessionEvent("Cloned dual session");
-      return clonedSession;
-    } catch (error) {
-      logSessionEvent(`Clone failed, rebuilding dual base session: ${String(error)}`);
-      dualBaseSessionPromise = null;
-      const rebuiltSession = await getDualBaseSessionPromise();
-      const clonedSession = await rebuiltSession.clone();
-      logSessionEvent("Rebuilt and cloned dual session");
-      return clonedSession;
-    }
-  }
-  function refillClonePool() {
-    if (nextClonePromise) return;
-    nextClonePromise = cloneDualSession().catch((err) => {
-      logSessionEvent(`Clone pool refill failed: ${String(err)}`);
-      nextClonePromise = null;
-      throw err;
-    });
-  }
-  async function takeClone() {
-    if (nextClonePromise) {
-      const pending = nextClonePromise;
-      nextClonePromise = null;
-      try {
-        const session2 = await pending;
-        refillClonePool();
-        return session2;
-      } catch {
-      }
-    }
-    const session = await cloneDualSession();
-    refillClonePool();
-    return session;
-  }
-  async function prewarmSessions() {
-    if (testMode) return;
-    logSessionEvent("Prewarming dual base session");
-    await getDualBaseSessionPromise();
-    logSessionEvent("Prewarmed dual base session");
-    refillClonePool();
-  }
-  async function destroySessions() {
-    logSessionEvent("Destroying cached base session");
-    const pending = [dualBaseSessionPromise, nextClonePromise];
-    dualBaseSessionPromise = null;
-    nextClonePromise = null;
-    const result = await Promise.allSettled(pending);
-    for (const r2 of result) {
-      if (r2.status === "fulfilled" && r2.value) {
-        try {
-          r2.value.destroy();
-        } catch (err) {
-          logSessionEvent(`Session destroy failed: ${String(err)}`);
-        }
-      }
-    }
-    logSessionEvent("Destroyed cached base session");
   }
   function mockProofread(text) {
     const changes = [];
@@ -1208,8 +339,8 @@ ${text}`;
       changes.push({ original: "mik", replacement: "milk", reason: "Spelling" });
     }
     let corrected = text;
-    for (const c2 of changes) {
-      corrected = corrected.replace(c2.original, c2.replacement);
+    for (const c of changes) {
+      corrected = corrected.replace(c.original, c.replacement);
     }
     const score = changes.length === 0 ? 92 : Math.max(5, 80 - changes.length * 15);
     const tier = getTierForScore(score);
@@ -1218,41 +349,58 @@ ${text}`;
   function mockRewrite(text, tone) {
     return { rewritten: `[${tone.toUpperCase()}] ${text}` };
   }
+  async function prewarmSessions() {
+    if (testMode) return;
+    await ensureOffscreen();
+  }
   async function proofread(text, opts = {}) {
     if (testMode) return mockProofread(text);
-    const session = await takeClone();
-    try {
-      logSessionEvent("Proofread: running instruction");
-      const raw = await session.prompt(buildProofreadInstruction(text), {
-        responseConstraint: PROOFREAD_SCHEMA,
-        signal: opts.signal
-      });
-      return JSON.parse(raw);
-    } finally {
-      try {
-        session.destroy();
-      } catch (err) {
-        logSessionEvent(`Proofread session destroy failed: ${String(err)}`);
-      }
-    }
+    await ensureOffscreen();
+    logEvent("Proofread: dispatching to offscreen");
+    return runOnPort(
+      "wg/proofread",
+      { text },
+      opts.signal
+    );
   }
   async function rewrite(text, tone, opts = {}) {
     if (testMode) return mockRewrite(text, tone);
-    const session = await takeClone();
-    try {
-      logSessionEvent(`Rewrite: running instruction for ${tone}`);
-      const raw = await session.prompt(buildRewriteInstruction(tone, text), {
-        responseConstraint: TONE_REWRITE_SCHEMA,
-        signal: opts.signal
+    await ensureOffscreen();
+    logEvent(`Rewrite: dispatching to offscreen for ${tone}`);
+    return runOnPort(
+      "wg/rewrite",
+      { text, tone },
+      opts.signal
+    );
+  }
+  function subscribeDownloadProgress(fn) {
+    let port = null;
+    let cancelled = false;
+    void ensureOffscreen().then(() => {
+      if (cancelled) return;
+      port = chrome.runtime.connect({ name: "wg/download-progress" });
+      port.onMessage.addListener((msg) => {
+        if (cancelled) return;
+        try {
+          fn(msg?.progress ?? null);
+        } catch (err) {
+          logEvent(`Progress listener threw: ${String(err)}`);
+        }
       });
-      return JSON.parse(raw);
-    } finally {
+      port.onDisconnect.addListener(() => {
+        port = null;
+      });
+    }).catch((err) => {
+      logEvent(`Progress subscribe failed: ${String(err)}`);
+    });
+    return () => {
+      cancelled = true;
       try {
-        session.destroy();
-      } catch (err) {
-        logSessionEvent(`Rewrite session destroy failed: ${String(err)}`);
+        port?.disconnect();
+      } catch {
       }
-    }
+      port = null;
+    };
   }
   const IGNORED_TYPES = /* @__PURE__ */ new Set(["search", "password", "email", "number", "tel", "url", "date"]);
   const MIN_FIELD_HEIGHT = 24;
@@ -1322,8 +470,8 @@ ${text}`;
       ensureFieldId(field);
       reportValidField();
     }
-    function handleFocusIn(e2) {
-      const target = e2.target;
+    function handleFocusIn(e) {
+      const target = e.target;
       let field = null;
       if (target && isValidField(target)) {
         field = target;
@@ -1399,18 +547,18 @@ ${text}`;
       this.el.setAttribute("tabindex", "0");
       this.el.setAttribute("aria-label", "Open WriteGooderer");
       this.el.textContent = "W";
-      this.el.addEventListener("mousedown", (e2) => {
-        e2.preventDefault();
-        e2.stopPropagation();
+      this.el.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
       });
-      this.el.addEventListener("click", (e2) => {
-        e2.preventDefault();
-        e2.stopPropagation();
+      this.el.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         this.onClick();
       });
-      this.el.addEventListener("keydown", (e2) => {
-        if (e2.key === "Enter" || e2.key === " ") {
-          e2.preventDefault();
+      this.el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
           this.onClick();
         }
       });
@@ -1479,7 +627,7 @@ ${text}`;
     if (prefersReducedMotion()) return;
     const root = document.createElement("div");
     root.className = "wg-confetti-root";
-    for (let i2 = 0; i2 < count; i2++) {
+    for (let i = 0; i < count; i++) {
       const piece = document.createElement("i");
       piece.className = "wg-confetto";
       const angle = Math.random() * Math.PI * 2;
@@ -1487,7 +635,7 @@ ${text}`;
       const tx = Math.cos(angle) * distance;
       const ty = Math.sin(angle) * distance - 40;
       const rot = (Math.random() * 720 - 360).toFixed(0);
-      const color = COLORS[i2 % COLORS.length];
+      const color = COLORS[i % COLORS.length];
       const delay = (Math.random() * 120).toFixed(0);
       piece.style.setProperty("--wg-tx", `${tx.toFixed(0)}px`);
       piece.style.setProperty("--wg-ty", `${ty.toFixed(0)}px`);
@@ -1608,7 +756,7 @@ ${text}`;
       this.el.style.display = "block";
       this.rotateQuip();
       this.intervalId = setInterval(() => this.rotateQuip(), 2500);
-      this.unsubscribeProgress = subscribeDownloadProgress((p2) => this.onProgress(p2));
+      this.unsubscribeProgress = subscribeDownloadProgress((p) => this.onProgress(p));
     }
     hide() {
       this.el.style.display = "none";
@@ -1622,8 +770,8 @@ ${text}`;
       this.fillEl.style.width = "";
       this.fillEl.style.animation = "";
     }
-    onProgress(p2) {
-      if (p2 === null) {
+    onProgress(p) {
+      if (p === null) {
         if (this.downloadActive) {
           this.downloadActive = false;
           this.fillEl.style.width = "";
@@ -1640,7 +788,7 @@ ${text}`;
         clearInterval(this.intervalId);
         this.intervalId = null;
       }
-      const pct = Math.max(0, Math.min(1, p2));
+      const pct = Math.max(0, Math.min(1, p));
       this.fillEl.style.animation = "none";
       this.fillEl.style.width = `${(pct * 100).toFixed(1)}%`;
       this.quipEl.classList.remove("wg-quip-fade");
@@ -1835,9 +983,9 @@ ${text}`;
       }
     }
   }
-  function intentsEqual(a2, b2) {
-    if (a2.kind !== b2.kind) return false;
-    if (a2.kind === "rewrite" && b2.kind === "rewrite") return a2.tone === b2.tone;
+  function intentsEqual(a, b) {
+    if (a.kind !== b.kind) return false;
+    if (a.kind === "rewrite" && b.kind === "rewrite") return a.tone === b.tone;
     return true;
   }
   const POPUP_WIDTH = 520;
@@ -1956,14 +1104,14 @@ ${text}`;
       this.speculative = { intent, text, promise, abort };
     }
     takeSpeculative(intent, text) {
-      const s2 = this.speculative;
-      if (!s2) return null;
-      if (s2.text !== text || !intentsEqual(s2.intent, intent)) {
+      const s = this.speculative;
+      if (!s) return null;
+      if (s.text !== text || !intentsEqual(s.intent, intent)) {
         this.abortSpeculative();
         return null;
       }
       this.speculative = null;
-      return s2.promise;
+      return s.promise;
     }
     get isVisible() {
       return this.el.classList.contains("wg-visible");
@@ -2155,11 +1303,11 @@ ${text}`;
   function parseRgb(input) {
     const match = input.match(/rgba?\(([^)]+)\)/i);
     if (!match) return null;
-    const parts = match[1].split(",").map((p2) => parseFloat(p2.trim()));
-    if (parts.length < 3 || parts.some((n2) => Number.isNaN(n2))) return null;
-    const [r2, g2, b2] = parts;
-    const a2 = parts.length >= 4 ? parts[3] : 1;
-    return [r2, g2, b2, a2];
+    const parts = match[1].split(",").map((p) => parseFloat(p.trim()));
+    if (parts.length < 3 || parts.some((n) => Number.isNaN(n))) return null;
+    const [r, g, b] = parts;
+    const a = parts.length >= 4 ? parts[3] : 1;
+    return [r, g, b, a];
   }
   function detectHostTheme() {
     try {
@@ -2283,8 +1431,6 @@ ${text}`;
       () => {
         globalWindow[INIT_FLAG] = false;
         darkMq.removeEventListener?.("change", onSchemeChange);
-        void destroySessions().catch(() => {
-        });
       },
       { once: true }
     );
