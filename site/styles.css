@@ -302,6 +302,30 @@ h2 {
   margin: 0 0 24px;
 }
 
+.why {
+  margin: 0 0 64px;
+  padding: 36px 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+}
+.why h2 {
+  margin: 0 0 14px;
+  font-size: clamp(26px, 3.6vw, 34px);
+  line-height: 1.15;
+}
+.why p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text-2);
+  font-size: 16px;
+}
+.why em {
+  font-style: italic;
+  color: var(--text);
+}
+
 .how {
   margin-bottom: 64px;
 }
