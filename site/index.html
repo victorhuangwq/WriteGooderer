@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>WriteGooderer — Makes your writing gooderer</title>
+    <title>WriteGooderer — A private writing assistant for Chrome</title>
     <meta
       name="description"
-      content="On-device proofreading and tone rewrites in Chrome, right where you type. Powered by Gemini Nano. Nothing leaves your browser."
+      content="A private writing assistant for Chrome. Proofread, rewrite, and tone-shift in any text field — powered by Chrome's on-device Gemini Nano, so nothing you type leaves the browser."
     />
-    <meta property="og:title" content="WriteGooderer" />
+    <meta property="og:title" content="WriteGooderer — A private writing assistant for Chrome" />
     <meta
       property="og:description"
-      content="On-device proofreading and tone rewrites in Chrome. Nothing leaves your browser."
+      content="Proofread, rewrite, and tone-shift in any text field. Runs on Chrome's on-device Gemini Nano — nothing you type leaves the browser."
     />
     <meta property="og:image" content="assets/screenshot.png" />
     <meta name="theme-color" content="#ff7a3e" />
@@ -30,33 +30,52 @@
         <img src="assets/icon.svg" alt="" width="28" height="28" />
         <span>WriteGooderer</span>
       </a>
-      <a class="ghost-link" href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
+      <a
+        class="ghost-link star-pill"
+        href="https://github.com/victorhuangwq/WriteGooderer"
+        aria-label="Star WriteGooderer on GitHub"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+        </svg>
+        <span>Star</span>
+        <span class="star-count" data-star-count aria-live="polite">—</span>
+      </a>
     </header>
 
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
+          <p class="eyebrow">A Chrome extension</p>
           <h1>
             Makes your writing
             <span class="grad">gooderer</span>.
           </h1>
           <p class="lede">
-            On-device proofreading and tone rewrites in Chrome, right where you type.
-            Nothing you type leaves the browser.
+            A private writing assistant that puts Chrome's on-device Gemini
+            Nano to use. Proofread, rewrite, and tone-shift in any text field
+            on the web — all on your own machine, so nothing you type is
+            uploaded, logged, or used to train a model.
           </p>
           <div class="cta-row">
             <a
-              class="btn-primary"
-              href="https://github.com/victorhuangwq/WriteGooderer#install"
-              >Install from GitHub</a
+              class="btn-primary star-btn"
+              href="https://github.com/victorhuangwq/WriteGooderer"
+              aria-label="Star WriteGooderer on GitHub"
             >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+              </svg>
+              <span>Star on GitHub</span>
+              <span class="star-count" data-star-count aria-live="polite">—</span>
+            </a>
             <a
               class="btn-ghost"
-              href="https://github.com/victorhuangwq/WriteGooderer"
-              >View source</a
+              href="https://github.com/victorhuangwq/WriteGooderer#install"
+              >Install for Chrome</a
             >
           </div>
-          <p class="meta">Chrome 138+ · Gemini Nano · MIT</p>
+          <p class="meta">Free and open source · Chrome 138+ · Powered by Gemini Nano</p>
         </div>
         <div class="hero-mark" aria-hidden="true">
           <div class="w-mark">W</div>
@@ -70,43 +89,85 @@
             alt="WriteGooderer proofreading a paragraph with a Gooderness score and inline diff"
           />
         </div>
+        <p class="works-on">
+          Works in Gmail, Slack, Notion, GitHub, LinkedIn, and the rest of the
+          textareas you live in.
+        </p>
+      </section>
+
+      <section class="why" aria-label="Why this exists">
+        <p class="eyebrow">Why this exists</p>
+        <h2>
+          Chrome bundled a 4GB AI model.
+          <span class="grad">We gave it a job.</span>
+        </h2>
+        <p>
+          Out of the box, Chrome's on-device Gemini Nano mostly powers
+          <em>Help me write</em> inside the omnibox. For most of us, that's a
+          4GB roommate sitting around doing nothing. WriteGooderer points the
+          same model at every other text field on the web, so the AI already
+          on your disk has actual work to do.
+        </p>
       </section>
 
       <section class="features" aria-label="Features">
         <article class="pill">
-          <h3>100% on-device</h3>
-          <p>Runs on Chrome's built-in Gemini Nano. Zero network calls, zero accounts.</p>
+          <p class="eyebrow">Privacy</p>
+          <h3>Private by default</h3>
+          <p>
+            Every keystroke stays on-device. No accounts, no servers, no
+            telemetry — just Chrome's built-in Gemini Nano, doing the work
+            locally.
+          </p>
         </article>
         <article class="pill">
-          <h3>Diff-style preview</h3>
-          <p>See every grammar, spelling, and clarity fix before anything is applied.</p>
+          <p class="eyebrow">Review</p>
+          <h3>Edit before you commit</h3>
+          <p>
+            A side-by-side diff shows every fix before it touches your draft.
+            Apply the whole rewrite, or only the changes you actually want.
+          </p>
         </article>
         <article class="pill">
-          <h3>Four tone presets</h3>
-          <p>Professional, Friendly, LinkedIn Influencer, and Passive Aggressive.</p>
+          <p class="eyebrow">Tone</p>
+          <h3>Sound how you want</h3>
+          <p>
+            Switch between Professional, Friendly, LinkedIn Influencer, and
+            Passive Aggressive in one click. Same point — different voice.
+          </p>
         </article>
       </section>
 
       <section class="how">
-        <h2>How it works</h2>
+        <p class="eyebrow">How it works</p>
+        <h2>Three clicks, zero context-switching.</h2>
         <ol class="steps">
           <li>
             <span class="step-num">1</span>
-            <p>Click into any text field. A floating <code>W</code> shows up.</p>
+            <p>
+              Click into any text field on the page. A small floating
+              <code>W</code> appears beside it.
+            </p>
           </li>
           <li>
             <span class="step-num">2</span>
-            <p>Open the card to proofread, see your Gooderness score, or pick a tone.</p>
+            <p>
+              Open the card to proofread, check your Gooderness score, or pick a
+              tone.
+            </p>
           </li>
           <li>
             <span class="step-num">3</span>
-            <p>Look over the diff or rewrite, then apply it back into the field.</p>
+            <p>
+              Skim the diff, then send the edits straight back into your draft.
+            </p>
           </li>
         </ol>
       </section>
 
       <section class="install">
-        <h2>Install</h2>
+        <p class="eyebrow">Install</p>
+        <h2>Up and running in under a minute.</h2>
         <ol class="install-steps">
           <li>
             Clone the repo:
@@ -129,14 +190,54 @@
           for the flag and on-device model setup.
         </p>
       </section>
+
+      <section class="star-cta" aria-label="Star on GitHub">
+        <p class="eyebrow">Open source</p>
+        <h2>If it earned its keep, <span class="grad">star it.</span></h2>
+        <p class="star-cta-lede">
+          WriteGooderer is free, MIT-licensed, and built in the open by one
+          person in spare hours. A star takes a second, helps other writers
+          find the project, and is the clearest signal to keep shipping
+          updates.
+        </p>
+        <a
+          class="btn-primary star-btn"
+          href="https://github.com/victorhuangwq/WriteGooderer"
+          aria-label="Star WriteGooderer on GitHub"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+          </svg>
+          <span>Star on GitHub</span>
+          <span class="star-count" data-star-count aria-live="polite">—</span>
+        </a>
+        <p class="star-cta-foot">Takes a second. Genuinely makes a difference.</p>
+      </section>
     </main>
+
+    <script>
+      (function () {
+        var els = document.querySelectorAll('[data-star-count]');
+        if (!els.length) return;
+        fetch('https://api.github.com/repos/victorhuangwq/WriteGooderer', {
+          headers: { Accept: 'application/vnd.github+json' },
+        })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data || typeof data.stargazers_count !== 'number') return;
+            var n = data.stargazers_count.toLocaleString();
+            els.forEach(function (el) { el.textContent = n; });
+          })
+          .catch(function () {});
+      })();
+    </script>
 
     <footer>
       <span>MIT License</span>
       <span class="dot">·</span>
       <a href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
       <span class="dot">·</span>
-      <span>Made with Chrome's built-in AI</span>
+      <span>Built on Chrome's on-device AI</span>
     </footer>
   </body>
 </html>
