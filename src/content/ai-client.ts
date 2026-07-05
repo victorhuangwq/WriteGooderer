@@ -4,6 +4,11 @@ import { getTierForScore } from "../shared/constants";
 let testMode = false;
 let ensureOffscreenPromise: Promise<void> | null = null;
 
+// The port dropped before any response arrived — the offscreen document is
+// gone (crashed, killed via Task Manager, or closed). Distinguished from
+// ordinary request errors so callers can re-ensure the offscreen and retry.
+class PortDisconnectedError extends Error {}
+
 function logEvent(message: string): void {
   console.debug(`[WriteGooderer AI] ${message}`);
 }
@@ -97,7 +102,7 @@ function runOnPort<TReq, TRes>(
       settle(() => {
         signal?.removeEventListener("abort", onAbort);
         const err = chrome.runtime.lastError;
-        reject(new Error(err?.message || "Offscreen disconnected"));
+        reject(new PortDisconnectedError(err?.message || "Offscreen disconnected"));
       });
     });
 
@@ -110,6 +115,24 @@ function runOnPort<TReq, TRes>(
       });
     }
   });
+}
+
+async function requestViaOffscreen<TReq, TRes>(
+  name: string,
+  request: TReq,
+  signal?: AbortSignal
+): Promise<TRes> {
+  await ensureOffscreen();
+  try {
+    return await runOnPort<TReq, TRes>(name, request, signal);
+  } catch (err) {
+    if (!(err instanceof PortDisconnectedError) || signal?.aborted) throw err;
+    // The offscreen died since we last ensured it. Re-create it and retry once.
+    logEvent(`Offscreen gone (${err.message}); recreating and retrying`);
+    ensureOffscreenPromise = null;
+    await ensureOffscreen();
+    return runOnPort<TReq, TRes>(name, request, signal);
+  }
 }
 
 function mockProofread(text: string): ProofreadResult {
@@ -150,9 +173,8 @@ export async function proofread(
   opts: { signal?: AbortSignal } = {}
 ): Promise<ProofreadResult> {
   if (testMode) return mockProofread(text);
-  await ensureOffscreen();
   logEvent("Proofread: dispatching to offscreen");
-  return runOnPort<{ text: string }, ProofreadResult>(
+  return requestViaOffscreen<{ text: string }, ProofreadResult>(
     "wg/proofread",
     { text },
     opts.signal
@@ -165,9 +187,8 @@ export async function rewrite(
   opts: { signal?: AbortSignal } = {}
 ): Promise<RewriteResult> {
   if (testMode) return mockRewrite(text, tone);
-  await ensureOffscreen();
   logEvent(`Rewrite: dispatching to offscreen for ${tone}`);
-  return runOnPort<{ text: string; tone: TonePreset }, RewriteResult>(
+  return requestViaOffscreen<{ text: string; tone: TonePreset }, RewriteResult>(
     "wg/rewrite",
     { text, tone },
     opts.signal
@@ -193,6 +214,10 @@ export function subscribeDownloadProgress(
         }
       });
       port.onDisconnect.addListener(() => {
+        // Only fires when the other end goes away (self-disconnect doesn't
+        // trigger local listeners) — the offscreen died, so force the next
+        // operation to re-ensure it.
+        ensureOffscreenPromise = null;
         port = null;
       });
     })

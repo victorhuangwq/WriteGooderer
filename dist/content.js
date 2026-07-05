@@ -236,6 +236,8 @@
   ];
   let testMode = false;
   let ensureOffscreenPromise = null;
+  class PortDisconnectedError extends Error {
+  }
   function logEvent(message) {
     console.debug(`[WriteGooderer AI] ${message}`);
   }
@@ -311,7 +313,7 @@
         settle(() => {
           signal?.removeEventListener("abort", onAbort);
           const err = chrome.runtime.lastError;
-          reject(new Error(err?.message || "Offscreen disconnected"));
+          reject(new PortDisconnectedError(err?.message || "Offscreen disconnected"));
         });
       });
       try {
@@ -323,6 +325,18 @@
         });
       }
     });
+  }
+  async function requestViaOffscreen(name, request, signal) {
+    await ensureOffscreen();
+    try {
+      return await runOnPort(name, request, signal);
+    } catch (err) {
+      if (!(err instanceof PortDisconnectedError) || signal?.aborted) throw err;
+      logEvent(`Offscreen gone (${err.message}); recreating and retrying`);
+      ensureOffscreenPromise = null;
+      await ensureOffscreen();
+      return runOnPort(name, request, signal);
+    }
   }
   function mockProofread(text) {
     const changes = [];
@@ -355,9 +369,8 @@
   }
   async function proofread(text, opts = {}) {
     if (testMode) return mockProofread(text);
-    await ensureOffscreen();
     logEvent("Proofread: dispatching to offscreen");
-    return runOnPort(
+    return requestViaOffscreen(
       "wg/proofread",
       { text },
       opts.signal
@@ -365,9 +378,8 @@
   }
   async function rewrite(text, tone, opts = {}) {
     if (testMode) return mockRewrite(text, tone);
-    await ensureOffscreen();
     logEvent(`Rewrite: dispatching to offscreen for ${tone}`);
-    return runOnPort(
+    return requestViaOffscreen(
       "wg/rewrite",
       { text, tone },
       opts.signal
@@ -388,6 +400,7 @@
         }
       });
       port.onDisconnect.addListener(() => {
+        ensureOffscreenPromise = null;
         port = null;
       });
     }).catch((err) => {
