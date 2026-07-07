@@ -14,24 +14,24 @@
       content="Proofread, rewrite, and shift tone in any text field. Runs on Chrome's on-device Gemini Nano. Nothing you type leaves the browser."
     />
     <meta property="og:image" content="assets/screenshot.png" />
-    <meta name="theme-color" content="#ff7a3e" />
+    <meta name="theme-color" content="#fdfaf5" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..800;1,9..144,500..800&family=Inter:wght@400;500;600;700&display=swap"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="topbar">
       <a class="brand" href="#top" aria-label="WriteGooderer home">
-        <img src="assets/icon.svg" alt="" width="28" height="28" />
+        <img src="assets/icon.svg" alt="" width="26" height="26" />
         <span>WriteGooderer</span>
       </a>
       <a
-        class="ghost-link star-pill"
+        class="star-pill"
         href="https://github.com/victorhuangwq/WriteGooderer"
         aria-label="Star WriteGooderer on GitHub"
       >
@@ -45,128 +45,216 @@
 
     <main id="top">
       <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">Now hiring: Gemini Nano</p>
-          <h1>
-            Makes your writing
-            <span class="grad">gooderer</span>.
-          </h1>
-          <p class="lede">
-            Proofread, rewrite, and shift tone in any text field. Runs on
-            Chrome's on-device Gemini Nano, so nothing you type leaves the
-            browser.
-          </p>
-          <div class="cta-row">
-            <a
-              class="btn-primary star-btn"
-              href="https://github.com/victorhuangwq/WriteGooderer"
-              aria-label="Star WriteGooderer on GitHub"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
-              </svg>
-              <span>Star on GitHub</span>
-              <span class="star-count" data-star-count aria-live="polite">—</span>
-            </a>
-            <a
-              class="btn-ghost"
-              href="https://github.com/victorhuangwq/WriteGooderer#install"
-              >Install for Chrome</a
-            >
-          </div>
-          <p class="meta">Free and open source · Chrome 138+ · Powered by Gemini Nano</p>
+        <p class="eyebrow">Now hiring: Gemini Nano</p>
+        <h1>
+          Makes your writing<br />
+          <span class="strike">better</span>
+          <span class="grad">gooderer</span>.
+        </h1>
+        <p class="lede">
+          Proofread, rewrite, and shift tone in any text field on the web.
+          Runs on Chrome's on-device Gemini Nano, so nothing you type leaves
+          the browser.
+        </p>
+        <div class="cta-row">
+          <a
+            class="btn-primary star-btn"
+            href="https://github.com/victorhuangwq/WriteGooderer"
+            aria-label="Star WriteGooderer on GitHub"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z" />
+            </svg>
+            <span>Star on GitHub</span>
+            <span class="star-count" data-star-count aria-live="polite">—</span>
+          </a>
+          <a class="btn-ghost" href="#install">Install for Chrome</a>
         </div>
-        <div class="hero-mark" aria-hidden="true">
-          <div class="w-mark">W</div>
-        </div>
+        <p class="meta">Free and open source · Chrome 138+ · No account, no servers, no telemetry</p>
       </section>
 
       <section class="screenshot-wrap" aria-label="Screenshot">
-        <div class="screenshot-card">
+        <figure class="browser-frame">
+          <div class="browser-bar" aria-hidden="true">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="url-pill">any-textarea-you-live-in.com</span>
+          </div>
           <img
             src="assets/screenshot.png"
             alt="WriteGooderer proofreading a paragraph with a Gooderness score and inline diff"
           />
-        </div>
+        </figure>
         <p class="works-on">
-          Works in Gmail, Slack, Notion, GitHub, LinkedIn, and the rest of the
-          textareas you live in.
+          Works in Gmail, Slack, Notion, GitHub, LinkedIn, and everywhere else
+          you type things you later regret.
         </p>
       </section>
 
       <section class="why" aria-label="Why this exists">
-        <p class="eyebrow">Why this exists</p>
-        <h2>
-          Chrome bundled a 4GB AI model.
-          <span class="grad">We gave it a job.</span>
-        </h2>
-        <p>
+        <div class="section-head">
+          <p class="eyebrow">Why this exists</p>
+          <h2>Chrome bundled a 4GB AI model. We gave it a job.</h2>
+        </div>
+        <p class="why-body">
           Out of the box, Chrome's on-device Gemini Nano mostly powers
-          <em>Help me write</em> inside the omnibox. For most of us, that's a
-          4GB roommate sitting around doing nothing. WriteGooderer points the
-          same model at every other text field on the web, so the AI already
-          on your disk has actual work to do.
+          <em>Help me write</em> in the omnibox. For most of us, that's a 4GB
+          roommate who doesn't pay rent. WriteGooderer points the same model at
+          every other text field on the web, so the AI already on your disk
+          finally earns its disk space.
         </p>
       </section>
 
       <section class="features" aria-label="Features">
-        <article class="pill">
-          <p class="eyebrow">Privacy</p>
-          <h3>Private by default</h3>
-          <p>
-            Every keystroke stays on-device. No accounts, no servers, no
-            telemetry. Just Chrome's built-in Gemini Nano, doing the work
-            locally.
-          </p>
-        </article>
-        <article class="pill">
-          <p class="eyebrow">Review</p>
-          <h3>Edit before you commit</h3>
-          <p>
-            A side-by-side diff shows every fix before it touches your draft.
-            Apply the whole rewrite, or only the changes you actually want.
-          </p>
-        </article>
-        <article class="pill">
-          <p class="eyebrow">Tone</p>
-          <h3>Sound how you want</h3>
-          <p>
-            Switch between Professional, Friendly, LinkedIn Influencer, and
-            Passive Aggressive in one click. Same point, different voice.
-          </p>
-        </article>
+        <div class="section-head">
+          <p class="eyebrow">What it does</p>
+          <h2>Small extension. Strong opinions about your commas.</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <h3>Private by default</h3>
+            <p>
+              Every keystroke stays on-device. No accounts, no servers, no
+              telemetry. The only thing judging your grammar is your own
+              laptop.
+            </p>
+          </article>
+          <article class="feature">
+            <h3>Edit before you commit</h3>
+            <p>
+              A side-by-side diff shows every fix before it touches your draft.
+              Apply the whole rewrite, or keep the typos you're emotionally
+              attached to.
+            </p>
+          </article>
+          <article class="feature">
+            <h3>Zero context-switching</h3>
+            <p>
+              Click into any text field and a small floating <code>W</code>
+              appears beside it. No copy-pasting your draft into another tab
+              like it's 2019.
+            </p>
+          </article>
+        </div>
       </section>
 
-      <section class="how">
-        <p class="eyebrow">How it works</p>
-        <h2>Three clicks, zero context-switching.</h2>
-        <ol class="steps">
-          <li>
-            <span class="step-num">1</span>
-            <p>
-              Click into any text field on the page. A small floating
-              <code>W</code> appears beside it.
-            </p>
+      <section class="scale" aria-label="Gooderness score">
+        <div class="section-head">
+          <p class="eyebrow">The Gooderness score</p>
+          <h2>Every proofread comes with a grade.</h2>
+          <p class="section-lede">
+            Zero to one hundred, with a tier you'll either screenshot or never
+            speak of again.
+          </p>
+        </div>
+        <ol class="tiers">
+          <li class="tier" style="--tier: #ff6b6b">
+            <span class="tier-emoji" aria-hidden="true">🪨</span>
+            <span class="tier-name">Caveman</span>
+            <span class="tier-range">0–20</span>
           </li>
-          <li>
-            <span class="step-num">2</span>
-            <p>
-              Open the card to proofread, check your Gooderness score, or pick a
-              tone.
-            </p>
+          <li class="tier" style="--tier: #ffa07a">
+            <span class="tier-emoji" aria-hidden="true">📱</span>
+            <span class="tier-name">Txt Msg Veteran</span>
+            <span class="tier-range">21–40</span>
           </li>
-          <li>
-            <span class="step-num">3</span>
-            <p>
-              Skim the diff, then send the edits straight back into your draft.
-            </p>
+          <li class="tier" style="--tier: #eec33d">
+            <span class="tier-emoji" aria-hidden="true">☕</span>
+            <span class="tier-name">Functional Adult</span>
+            <span class="tier-range">41–60</span>
+          </li>
+          <li class="tier" style="--tier: #4ecdc4">
+            <span class="tier-emoji" aria-hidden="true">🧙</span>
+            <span class="tier-name">Word Wizard</span>
+            <span class="tier-range">61–80</span>
+          </li>
+          <li class="tier" style="--tier: #2ecc71">
+            <span class="tier-emoji" aria-hidden="true">🎭</span>
+            <span class="tier-name">Shakespeare Who?</span>
+            <span class="tier-range">81–95</span>
+          </li>
+          <li class="tier" style="--tier: #27ae60">
+            <span class="tier-emoji" aria-hidden="true">👑</span>
+            <span class="tier-name">WriteGooderer</span>
+            <span class="tier-range">96–100</span>
           </li>
         </ol>
       </section>
 
-      <section class="install">
-        <p class="eyebrow">Install</p>
-        <h2>Up and running in under a minute.</h2>
+      <section class="tones" aria-label="Tones">
+        <div class="section-head">
+          <p class="eyebrow">Tones</p>
+          <h2>One sentence, four personalities.</h2>
+          <p class="section-lede">
+            Rewrite any selection in a preset tone. Here's
+            <em>"the report is late"</em> in all four:
+          </p>
+        </div>
+        <div class="tone-grid">
+          <figure class="tone-card">
+            <figcaption>Professional</figcaption>
+            <blockquote>
+              I wanted to flag that the report is running behind schedule.
+            </blockquote>
+          </figure>
+          <figure class="tone-card">
+            <figcaption>Friendly</figcaption>
+            <blockquote>
+              Hey, quick heads up! The report's running a little late, sorry
+              about that!
+            </blockquote>
+          </figure>
+          <figure class="tone-card">
+            <figcaption>LinkedIn Influencer</figcaption>
+            <blockquote>
+              The report being late taught me more about resilience than my
+              MBA ever did. Agree? ♻️
+            </blockquote>
+          </figure>
+          <figure class="tone-card">
+            <figcaption>Passive Aggressive</figcaption>
+            <blockquote>
+              Per my last email, the report was due yesterday. But no rush at
+              all.
+            </blockquote>
+          </figure>
+        </div>
+      </section>
+
+      <section class="how" aria-label="How it works">
+        <div class="section-head">
+          <p class="eyebrow">How it works</p>
+          <h2>Three clicks, start to gooderer.</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <h3>Click into a text field</h3>
+              <p>A small floating <code>W</code> appears beside it, minding its own business until you need it.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <h3>Proofread or pick a tone</h3>
+              <p>Open the card to check your Gooderness score, fix mistakes, or rewrite the whole thing.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <h3>Apply what you like</h3>
+              <p>Skim the diff, then send the edits straight back into your draft. No copy-paste round trip.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="install" id="install" aria-label="Install">
+        <div class="section-head">
+          <p class="eyebrow">Install</p>
+          <h2>Up and running in under a minute.</h2>
+        </div>
         <ol class="install-steps">
           <li>
             Clone the repo:
@@ -191,13 +279,11 @@
       </section>
 
       <section class="star-cta" aria-label="Star on GitHub">
-        <p class="eyebrow">Open source</p>
         <h2>If it earned its keep, <span class="grad">star it.</span></h2>
         <p class="star-cta-lede">
-          WriteGooderer is free, MIT-licensed, and built in the open by one
-          person in spare hours. A star takes a second, helps other writers
-          find the project, and is the clearest signal to keep shipping
-          updates.
+          WriteGooderer is free, MIT-licensed, and built by one person in
+          spare hours. A star takes a second and is the clearest signal to
+          keep shipping updates.
         </p>
         <a
           class="btn-primary star-btn"
@@ -210,33 +296,52 @@
           <span>Star on GitHub</span>
           <span class="star-count" data-star-count aria-live="polite">—</span>
         </a>
-        <p class="star-cta-foot">Takes a second. Genuinely makes a difference.</p>
       </section>
     </main>
+
+    <footer>
+      <p class="quip">“<span data-quip>Making your words gooderer...</span>”</p>
+      <p class="footer-links">
+        <span>MIT License</span>
+        <span class="dot">·</span>
+        <a href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
+        <span class="dot">·</span>
+        <span>Built on Chrome's on-device AI</span>
+      </p>
+    </footer>
 
     <script>
       (function () {
         var els = document.querySelectorAll('[data-star-count]');
-        if (!els.length) return;
-        fetch('https://api.github.com/repos/victorhuangwq/WriteGooderer', {
-          headers: { Accept: 'application/vnd.github+json' },
-        })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (data) {
-            if (!data || typeof data.stargazers_count !== 'number') return;
-            var n = data.stargazers_count.toLocaleString();
-            els.forEach(function (el) { el.textContent = n; });
+        if (els.length) {
+          fetch('https://api.github.com/repos/victorhuangwq/WriteGooderer', {
+            headers: { Accept: 'application/vnd.github+json' },
           })
-          .catch(function () {});
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+              if (!data || typeof data.stargazers_count !== 'number') return;
+              var n = data.stargazers_count.toLocaleString();
+              els.forEach(function (el) { el.textContent = n; });
+            })
+            .catch(function () {});
+        }
+
+        // Real loading quips from the extension.
+        var quips = [
+          'Making your words gooderer...',
+          'Judging your grammar silently...',
+          'Teaching electrons to spell...',
+          'Asking Gemini Nano nicely...',
+          'Running 4 billion parameters for your 12 words...',
+          'Channeling the spirit of your English teacher...',
+          'Pretending to be a $30/month writing tool...',
+          'Your CPU is working harder than you did on this text...',
+        ];
+        var quipEl = document.querySelector('[data-quip]');
+        if (quipEl) {
+          quipEl.textContent = quips[Math.floor(Math.random() * quips.length)];
+        }
       })();
     </script>
-
-    <footer>
-      <span>MIT License</span>
-      <span class="dot">·</span>
-      <a href="https://github.com/victorhuangwq/WriteGooderer">GitHub</a>
-      <span class="dot">·</span>
-      <span>Built on Chrome's on-device AI</span>
-    </footer>
   </body>
 </html>
